@@ -1,0 +1,54 @@
+"""
+Main FastAPI app — this is the file you actually run.
+Run with: uvicorn app.main:app --reload --port 8000
+"""
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from contextlib import asynccontextmanager
+
+from app.core.config import settings
+from app.core.database import connect_to_mongo, close_mongo_connection
+from app.routes import auth_routes, client_routes, invoice_routes, chat_routes, dashboard_routes
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Runs once on startup
+    await connect_to_mongo()
+    yield
+    # Runs once on shutdown
+    await close_mongo_connection()
+
+
+app = FastAPI(
+    title="BizPilot AI",
+    description="Autonomous business assistant for freelancers and small businesses",
+    version="1.0.0",
+    lifespan=lifespan,
+)
+
+# CORS — lets the React frontend (running on a different port) talk to this API
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.CORS_ORIGINS.split(","),
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Register all route modules
+app.include_router(auth_routes.router)
+app.include_router(client_routes.router)
+app.include_router(invoice_routes.router)
+app.include_router(chat_routes.router)
+app.include_router(dashboard_routes.router)
+
+
+@app.get("/")
+async def root():
+    return {"message": "BizPilot AI backend is running", "docs": "/docs"}
+
+
+@app.get("/health")
+async def health_check():
+    return {"status": "healthy"}

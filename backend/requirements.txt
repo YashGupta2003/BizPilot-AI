@@ -1,0 +1,37 @@
+# --- Web framework ---
+fastapi>=0.111.0
+uvicorn[standard]>=0.30.1
+python-multipart>=0.0.9
+
+# --- MongoDB ---
+pymongo>=4.7.2
+motor>=3.4.0
+
+# --- Auth & security ---
+python-jose[cryptography]>=3.3.0
+passlib[bcrypt]>=1.7.4
+python-dotenv>=1.0.1
+
+# --- Data validation ---
+pydantic>=2.7.1
+pydantic-settings>=2.2.1
+email-validator>=2.1.1
+
+# --- LLM / Agentic AI ---
+openai>=1.30.1
+anthropic>=0.25.7
+
+# --- RAG ---
+sentence-transformers>=2.7.0
+
+# --- Document parsing ---
+pypdf>=4.2.0
+python-docx>=1.1.0
+pandas>=2.2.2
+openpyxl>=3.1.2
+
+# --- PDF generation for invoices ---
+reportlab>=4.2.0
+
+# --- Utilities ---
+python-dateutil>=2.9.0

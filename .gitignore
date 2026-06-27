@@ -1,0 +1,23 @@
+# Python
+backend/venv/
+backend/__pycache__/
+backend/**/__pycache__/
+backend/*.pyc
+backend/.env
+
+# Data
+backend/data/uploads/*
+backend/data/invoices/*
+!backend/data/uploads/.gitkeep
+!backend/data/invoices/.gitkeep
+
+# Node / React
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# Editors / OS
+.DS_Store
+.vscode/
+.idea/
+*.log
