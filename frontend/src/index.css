@@ -144,3 +144,12 @@ th {
 .badge-sent { background: #dbeafe; color: #1d4ed8; }
 .badge-paid { background: #dcfce7; color: #15803d; }
 .badge-overdue { background: #fee2e2; color: #b91c1c; }
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

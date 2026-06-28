@@ -3,6 +3,7 @@ import { Send } from 'lucide-react'
 import AppLayout from '../components/layout/AppLayout'
 import ChatBubble from '../components/chat/ChatBubble'
 import DocumentUpload from '../components/chat/DocumentUpload'
+import RiskReportPanel from '../components/chat/RiskReportPanel'
 import { sendChatMessage } from '../services/chatService'
 
 export default function AssistantPage() {
@@ -11,6 +12,7 @@ export default function AssistantPage() {
   ])
   const [input, setInput] = useState('')
   const [sending, setSending] = useState(false)
+  const [riskReport, setRiskReport] = useState(null)
   const bottomRef = useRef(null)
 
   useEffect(() => {
@@ -42,28 +44,34 @@ export default function AssistantPage() {
       <p className="page-subtitle">Chat with your business assistant, powered by RAG over your documents</p>
 
       <div style={{ display: 'grid', gridTemplateColumns: '260px 1fr', gap: 16 }}>
-        <DocumentUpload />
+        <DocumentUpload onReportReady={setRiskReport} />
 
-        <div className="card" style={{ display: 'flex', flexDirection: 'column', height: 560 }}>
-          <div style={{ flex: 1, overflowY: 'auto', padding: '4px 4px 12px' }}>
-            {messages.map((m, i) => (
-              <ChatBubble key={i} role={m.role} text={m.text} sources={m.sources} />
-            ))}
-            {sending && <ChatBubble role="assistant" text="Thinking..." />}
-            <div ref={bottomRef} />
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          {riskReport && (
+            <RiskReportPanel report={riskReport} onClose={() => setRiskReport(null)} />
+          )}
+
+          <div className="card" style={{ display: 'flex', flexDirection: 'column', height: 560 }}>
+            <div style={{ flex: 1, overflowY: 'auto', padding: '4px 4px 12px' }}>
+              {messages.map((m, i) => (
+                <ChatBubble key={i} role={m.role} text={m.text} sources={m.sources} />
+              ))}
+              {sending && <ChatBubble role="assistant" text="Thinking..." />}
+              <div ref={bottomRef} />
+            </div>
+
+            <form onSubmit={handleSend} style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+              <input
+                className="input-field"
+                placeholder="Ask about your business, or a document you uploaded..."
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+              />
+              <button className="btn-primary" type="submit" disabled={sending}>
+                <Send size={16} />
+              </button>
+            </form>
           </div>
-
-          <form onSubmit={handleSend} style={{ display: 'flex', gap: 8, marginTop: 8 }}>
-            <input
-              className="input-field"
-              placeholder="Ask about your business, or a document you uploaded..."
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-            />
-            <button className="btn-primary" type="submit" disabled={sending}>
-              <Send size={16} />
-            </button>
-          </form>
         </div>
       </div>
     </AppLayout>
