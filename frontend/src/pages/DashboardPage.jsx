@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { getDashboardSummary } from '../services/chatService'
 import AppLayout from '../components/layout/AppLayout'
+import CashFlowForecast from '../components/dashboard/CashFlowForecast'
 
 export default function DashboardPage() {
   const [summary, setSummary] = useState(null)
@@ -30,6 +31,10 @@ export default function DashboardPage() {
             <StatCard label="Pending" value={formatCurrency(summary.total_pending)} color="#1d4ed8" />
             <StatCard label="Overdue" value={formatCurrency(summary.total_overdue)} color="#b91c1c" />
             <StatCard label="Total clients" value={summary.total_clients} color="#4f46e5" />
+          </div>
+
+          <div style={{ marginBottom: 24 }}>
+            <CashFlowForecast />
           </div>
 
           <div className="card">
