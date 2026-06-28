@@ -36,18 +36,35 @@ async def store_document_chunks(db, owner_id, filename: str, chunks: list[str], 
     embeddings = embed_texts(chunks)
 
     documents = []
-    for chunk, embedding in zip(chunks, embeddings):
+    for index, (chunk, embedding) in enumerate(zip(chunks, embeddings)):
         documents.append({
             "owner_id": owner_id,
             "client_id": client_id,
             "filename": filename,
             "chunk_text": chunk,
+            "chunk_index": index,  # preserves original document order for full-text reconstruction
             "embedding": embedding.tolist(),  # numpy array -> plain list so MongoDB can store it
         })
 
     # insert_many = bulk insert, much faster than looping insert_one
     await db.documents.insert_many(documents)
     return len(documents)
+
+
+async def get_full_document_text(db, owner_id, filename: str) -> str:
+    """
+    Reassembles a document's full text from its stored chunks, in original
+    order. Used by features (like the risk analyzer) that need to see the
+    WHOLE document rather than a few similarity-matched chunks.
+
+    NOTE: chunks were created with overlap (see document_loader.chunk_text),
+    so the reassembled text will have some duplicated text at chunk
+    boundaries. That's fine for an LLM to read — it's redundant, not wrong —
+    but don't use this reconstructed text for exact-match operations.
+    """
+    cursor = db.documents.find({"owner_id": owner_id, "filename": filename}).sort("chunk_index", 1)
+    chunks = await cursor.to_list(length=5000)
+    return "\n".join(c["chunk_text"] for c in chunks)
 
 
 async def search_similar_chunks(db, owner_id, query: str, client_id=None, top_k: int = 4) -> list[dict]:

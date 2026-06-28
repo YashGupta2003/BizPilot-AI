@@ -11,6 +11,7 @@ from openai import OpenAI
 from app.core.config import settings
 from app.rag.retriever import search_similar_chunks
 
+
 if settings.GROQ_API_KEY:
     client = OpenAI(api_key=settings.GROQ_API_KEY, base_url="https://api.groq.com/openai/v1")
     MODEL_NAME = settings.GROQ_MODEL
