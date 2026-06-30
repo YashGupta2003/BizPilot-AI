@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
-import { Sparkles, Download, Trash2 } from 'lucide-react'
+import { Sparkles, Download, Trash2, Mic } from 'lucide-react'
 import AppLayout from '../components/layout/AppLayout'
 import AIInvoiceModal from '../components/invoices/AIInvoiceModal'
+import VoiceInvoiceModal from '../components/invoices/VoiceInvoiceModal'
 import { getInvoices, deleteInvoice, updateInvoiceStatus, getInvoicePdfUrl } from '../services/invoiceService'
 
 const STATUS_OPTIONS = ['draft', 'sent', 'paid', 'overdue', 'cancelled']
@@ -10,6 +11,7 @@ export default function InvoicesPage() {
   const [invoices, setInvoices] = useState([])
   const [loading, setLoading] = useState(true)
   const [showAIModal, setShowAIModal] = useState(false)
+  const [showVoiceModal, setShowVoiceModal] = useState(false)
 
   useEffect(() => {
     loadInvoices()
@@ -22,8 +24,13 @@ export default function InvoicesPage() {
     setLoading(false)
   }
 
-  async function handleCreated() {
+  async function handleAICreated() {
     setShowAIModal(false)
+    await loadInvoices()
+  }
+
+  async function handleVoiceCreated() {
+    setShowVoiceModal(false)
     await loadInvoices()
   }
 
@@ -50,13 +57,22 @@ export default function InvoicesPage() {
           <h1 className="page-title">Invoices</h1>
           <p className="page-subtitle">Create, track, and send invoices</p>
         </div>
-        <button
-          className="btn-primary"
-          onClick={() => setShowAIModal(true)}
-          style={{ display: 'flex', alignItems: 'center', gap: 6 }}
-        >
-          <Sparkles size={16} /> Generate with AI
-        </button>
+        <div style={{ display: 'flex', gap: 10 }}>
+          <button
+            className="btn-secondary"
+            onClick={() => setShowVoiceModal(true)}
+            style={{ display: 'flex', alignItems: 'center', gap: 6 }}
+          >
+            <Mic size={16} /> Voice invoice
+          </button>
+          <button
+            className="btn-primary"
+            onClick={() => setShowAIModal(true)}
+            style={{ display: 'flex', alignItems: 'center', gap: 6 }}
+          >
+            <Sparkles size={16} /> Generate with AI
+          </button>
+        </div>
       </div>
 
       <div className="card">
@@ -64,7 +80,7 @@ export default function InvoicesPage() {
           <p>Loading...</p>
         ) : invoices.length === 0 ? (
           <p style={{ color: '#6b7280', fontSize: 14 }}>
-            No invoices yet. Click "Generate with AI" and describe the work you did — the agent will build the invoice for you.
+            No invoices yet. Click "Generate with AI" or try "Voice invoice" to create your first one.
           </p>
         ) : (
           <table>
@@ -107,7 +123,8 @@ export default function InvoicesPage() {
         )}
       </div>
 
-      {showAIModal && <AIInvoiceModal onClose={() => setShowAIModal(false)} onCreated={handleCreated} />}
+      {showAIModal && <AIInvoiceModal onClose={() => setShowAIModal(false)} onCreated={handleAICreated} />}
+      {showVoiceModal && <VoiceInvoiceModal onClose={() => setShowVoiceModal(false)} onCreated={handleVoiceCreated} />}
     </AppLayout>
   )
 }
