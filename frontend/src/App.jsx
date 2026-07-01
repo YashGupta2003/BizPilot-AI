@@ -8,6 +8,7 @@ import DashboardPage from './pages/DashboardPage'
 import ClientsPage from './pages/ClientsPage'
 import InvoicesPage from './pages/InvoicesPage'
 import AssistantPage from './pages/AssistantPage'
+import RemindersPage from './pages/RemindersPage'
 
 export default function App() {
   return (
@@ -21,6 +22,7 @@ export default function App() {
           <Route path="/clients" element={<ProtectedRoute><ClientsPage /></ProtectedRoute>} />
           <Route path="/invoices" element={<ProtectedRoute><InvoicesPage /></ProtectedRoute>} />
           <Route path="/assistant" element={<ProtectedRoute><AssistantPage /></ProtectedRoute>} />
+          <Route path="/reminders" element={<ProtectedRoute><RemindersPage /></ProtectedRoute>} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>

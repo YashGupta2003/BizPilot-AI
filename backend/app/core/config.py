@@ -21,6 +21,11 @@ class Settings(BaseSettings):
     GROQ_API_KEY: str = ""
     GROQ_MODEL: str = "llama-3.3-70b-versatile"
 
+    # Twilio WhatsApp (for Payment Reminder Agent)
+    TWILIO_ACCOUNT_SID: str = ""
+    TWILIO_AUTH_TOKEN: str = ""
+    TWILIO_WHATSAPP_FROM: str = "whatsapp:+14155238886"
+
     # App
     ENVIRONMENT: str = "development"
     CORS_ORIGINS: str = "http://localhost:5173"

@@ -1,11 +1,12 @@
 import { NavLink } from 'react-router-dom'
-import { LayoutDashboard, Users, FileText, MessageSquare, LogOut } from 'lucide-react'
+import { LayoutDashboard, Users, FileText, MessageSquare, Bell, LogOut } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
 
 const navItems = [
   { to: '/', label: 'Dashboard', icon: LayoutDashboard },
   { to: '/clients', label: 'Clients', icon: Users },
   { to: '/invoices', label: 'Invoices', icon: FileText },
+  { to: '/reminders', label: 'Reminders', icon: Bell },
   { to: '/assistant', label: 'AI Assistant', icon: MessageSquare },
 ]
 
@@ -33,6 +34,7 @@ export default function Sidebar() {
           <NavLink
             key={to}
             to={to}
+            end={to === '/'}
             style={({ isActive }) => ({
               display: 'flex',
               alignItems: 'center',
@@ -43,6 +45,7 @@ export default function Sidebar() {
               fontWeight: 500,
               color: isActive ? '#fff' : '#9ca3af',
               background: isActive ? '#4f46e5' : 'transparent',
+              textDecoration: 'none',
             })}
           >
             <Icon size={18} />
@@ -63,6 +66,7 @@ export default function Sidebar() {
           color: '#9ca3af',
           background: 'transparent',
           border: 'none',
+          cursor: 'pointer',
         }}
       >
         <LogOut size={18} />
