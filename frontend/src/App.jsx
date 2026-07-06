@@ -9,6 +9,7 @@ import ClientsPage from './pages/ClientsPage'
 import InvoicesPage from './pages/InvoicesPage'
 import AssistantPage from './pages/AssistantPage'
 import RemindersPage from './pages/RemindersPage'
+import CurrencyGSTPage from './pages/CurrencyGSTPage'
 
 export default function App() {
   return (
@@ -17,12 +18,12 @@ export default function App() {
         <Routes>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
-
           <Route path="/" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
           <Route path="/clients" element={<ProtectedRoute><ClientsPage /></ProtectedRoute>} />
           <Route path="/invoices" element={<ProtectedRoute><InvoicesPage /></ProtectedRoute>} />
           <Route path="/assistant" element={<ProtectedRoute><AssistantPage /></ProtectedRoute>} />
           <Route path="/reminders" element={<ProtectedRoute><RemindersPage /></ProtectedRoute>} />
+          <Route path="/currency" element={<ProtectedRoute><CurrencyGSTPage /></ProtectedRoute>} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
