@@ -46,6 +46,8 @@ async def connect_to_mongo():
     await mongodb.db.contract_risk_reports.create_index("filename")
     await mongodb.db.whatsapp_reminders.create_index("owner_id")
     await mongodb.db.whatsapp_reminders.create_index([("invoice_id", 1), ("sent_date", 1)])
+    await mongodb.db.negotiation_sessions.create_index("owner_id")
+    await mongodb.db.negotiation_sessions.create_index("status")
 
 
 async def close_mongo_connection():
