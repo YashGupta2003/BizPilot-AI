@@ -11,6 +11,7 @@ import AssistantPage from './pages/AssistantPage'
 import RemindersPage from './pages/RemindersPage'
 import CurrencyGSTPage from './pages/CurrencyGSTPage'
 import NegotiationPage from './pages/NegotiationPage'
+import ProfilerPage from './pages/ProfilerPage'
 
 export default function App() {
   return (
@@ -26,6 +27,7 @@ export default function App() {
           <Route path="/reminders" element={<ProtectedRoute><RemindersPage /></ProtectedRoute>} />
           <Route path="/currency" element={<ProtectedRoute><CurrencyGSTPage /></ProtectedRoute>} />
           <Route path="/negotiate" element={<ProtectedRoute><NegotiationPage /></ProtectedRoute>} />
+          <Route path="/profiler" element={<ProtectedRoute><ProfilerPage /></ProtectedRoute>} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>

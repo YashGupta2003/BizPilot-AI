@@ -1,5 +1,8 @@
 import { NavLink } from 'react-router-dom'
-import { LayoutDashboard, Users, FileText, MessageSquare, Bell, Globe, Swords, LogOut } from 'lucide-react'
+import {
+  LayoutDashboard, Users, FileText, MessageSquare,
+  Bell, Globe, Swords, Brain, LogOut
+} from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
 
 const navItems = [
@@ -9,6 +12,7 @@ const navItems = [
   { to: '/reminders', label: 'Reminders', icon: Bell },
   { to: '/currency', label: 'Currency & GST', icon: Globe },
   { to: '/negotiate', label: 'Negotiation Sim', icon: Swords },
+  { to: '/profiler', label: 'Client Profiler', icon: Brain },
   { to: '/assistant', label: 'AI Assistant', icon: MessageSquare },
 ]
 
