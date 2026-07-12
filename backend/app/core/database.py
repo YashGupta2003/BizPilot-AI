@@ -50,6 +50,8 @@ async def connect_to_mongo():
     await mongodb.db.negotiation_sessions.create_index("status")
     await mongodb.db.client_profiles.create_index("owner_id")
     await mongodb.db.client_profiles.create_index("analyzed_at")
+    await mongodb.db.contracts.create_index("owner_id")
+    await mongodb.db.contracts.create_index("client_id")
 
 
 async def close_mongo_connection():

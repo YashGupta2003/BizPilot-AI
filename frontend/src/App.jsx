@@ -12,6 +12,8 @@ import RemindersPage from './pages/RemindersPage'
 import CurrencyGSTPage from './pages/CurrencyGSTPage'
 import NegotiationPage from './pages/NegotiationPage'
 import ProfilerPage from './pages/ProfilerPage'
+import BurnoutPage from './pages/BurnoutPage'
+import ContractPage from './pages/ContractPage'
 
 export default function App() {
   return (
@@ -28,6 +30,8 @@ export default function App() {
           <Route path="/currency" element={<ProtectedRoute><CurrencyGSTPage /></ProtectedRoute>} />
           <Route path="/negotiate" element={<ProtectedRoute><NegotiationPage /></ProtectedRoute>} />
           <Route path="/profiler" element={<ProtectedRoute><ProfilerPage /></ProtectedRoute>} />
+          <Route path="/burnout" element={<ProtectedRoute><BurnoutPage /></ProtectedRoute>} />
+          <Route path="/contracts" element={<ProtectedRoute><ContractPage /></ProtectedRoute>} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
