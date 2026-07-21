@@ -1,7 +1,8 @@
 import { NavLink } from 'react-router-dom'
 import {
   LayoutDashboard, Users, FileText, MessageSquare,
-  Bell, Globe, Swords, Brain, Activity, ScrollText, LogOut
+  Bell, Globe, Swords, Brain, Activity, ScrollText,
+  Mic2, PieChart, LogOut
 } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
 
@@ -10,8 +11,10 @@ const navItems = [
   { to: '/clients', label: 'Clients', icon: Users },
   { to: '/invoices', label: 'Invoices', icon: FileText },
   { to: '/contracts', label: 'Contracts', icon: ScrollText },
+  { to: '/meetings', label: 'Meeting Notes', icon: Mic2 },
   { to: '/reminders', label: 'Reminders', icon: Bell },
   { to: '/burnout', label: 'Income Stability', icon: Activity },
+  { to: '/portfolio', label: 'Portfolio ROI', icon: PieChart },
   { to: '/currency', label: 'Currency & GST', icon: Globe },
   { to: '/negotiate', label: 'Negotiation Sim', icon: Swords },
   { to: '/profiler', label: 'Client Profiler', icon: Brain },
@@ -21,24 +24,24 @@ const navItems = [
 export default function Sidebar() {
   const { user, logout } = useAuth()
   return (
-    <aside style={{ width: 240, background: '#1a1d23', color: '#fff', display: 'flex', flexDirection: 'column', padding: '20px 14px' }}>
-      <div style={{ fontSize: 18, fontWeight: 700, marginBottom: 4, padding: '0 8px' }}>BizPilot AI</div>
-      <div style={{ fontSize: 12, color: '#9ca3af', marginBottom: 24, padding: '0 8px' }}>{user?.business_name}</div>
+    <aside style={{ width: 230, background: '#1a1d23', color: '#fff', display: 'flex', flexDirection: 'column', padding: '18px 12px', overflowY: 'auto' }}>
+      <div style={{ fontSize: 17, fontWeight: 700, marginBottom: 2, padding: '0 6px' }}>BizPilot AI</div>
+      <div style={{ fontSize: 11, color: '#9ca3af', marginBottom: 20, padding: '0 6px' }}>{user?.business_name}</div>
       <nav style={{ display: 'flex', flexDirection: 'column', gap: 2, flex: 1 }}>
         {navItems.map(({ to, label, icon: Icon }) => (
           <NavLink key={to} to={to} end={to === '/'} style={({ isActive }) => ({
-            display: 'flex', alignItems: 'center', gap: 9,
-            padding: '9px 10px', borderRadius: 7, fontSize: 13.5, fontWeight: 500,
+            display: 'flex', alignItems: 'center', gap: 8,
+            padding: '8px 9px', borderRadius: 7, fontSize: 13, fontWeight: 500,
             color: isActive ? '#fff' : '#9ca3af',
             background: isActive ? '#4f46e5' : 'transparent',
             textDecoration: 'none',
           })}>
-            <Icon size={16} />{label}
+            <Icon size={15} />{label}
           </NavLink>
         ))}
       </nav>
-      <button onClick={logout} style={{ display: 'flex', alignItems: 'center', gap: 9, padding: '9px 10px', borderRadius: 7, fontSize: 13.5, color: '#9ca3af', background: 'transparent', border: 'none', cursor: 'pointer' }}>
-        <LogOut size={16} />Log out
+      <button onClick={logout} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 9px', borderRadius: 7, fontSize: 13, color: '#9ca3af', background: 'transparent', border: 'none', cursor: 'pointer', marginTop: 8 }}>
+        <LogOut size={15} />Log out
       </button>
     </aside>
   )

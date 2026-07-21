@@ -14,6 +14,8 @@ import NegotiationPage from './pages/NegotiationPage'
 import ProfilerPage from './pages/ProfilerPage'
 import BurnoutPage from './pages/BurnoutPage'
 import ContractPage from './pages/ContractPage'
+import MeetingPage from './pages/MeetingPage'
+import PortfolioPage from './pages/PortfolioPage'
 
 export default function App() {
   return (
@@ -32,6 +34,8 @@ export default function App() {
           <Route path="/profiler" element={<ProtectedRoute><ProfilerPage /></ProtectedRoute>} />
           <Route path="/burnout" element={<ProtectedRoute><BurnoutPage /></ProtectedRoute>} />
           <Route path="/contracts" element={<ProtectedRoute><ContractPage /></ProtectedRoute>} />
+          <Route path="/meetings" element={<ProtectedRoute><MeetingPage /></ProtectedRoute>} />
+          <Route path="/portfolio" element={<ProtectedRoute><PortfolioPage /></ProtectedRoute>} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
