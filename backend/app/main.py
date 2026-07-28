@@ -8,7 +8,7 @@ from contextlib import asynccontextmanager
 
 from app.core.config import settings
 from app.core.database import connect_to_mongo, close_mongo_connection
-from app.routes import auth_routes, client_routes, invoice_routes, chat_routes, dashboard_routes, risk_routes, forecast_routes, voice_routes, whatsapp_routes, currency_routes, negotiation_routes, profiler_routes, burnout_routes, contract_routes,meeting_routes, portfolio_routes
+from app.routes import auth_routes, client_routes, invoice_routes, chat_routes, dashboard_routes, risk_routes, forecast_routes, voice_routes, whatsapp_routes, currency_routes, negotiation_routes, profiler_routes, burnout_routes, contract_routes,meeting_routes, portfolio_routes,client_360_routes, activity_routes
 
 
 @asynccontextmanager
@@ -53,6 +53,8 @@ app.include_router(burnout_routes.router)
 app.include_router(contract_routes.router)
 app.include_router(meeting_routes.router)
 app.include_router(portfolio_routes.router)
+app.include_router(client_360_routes.router)
+app.include_router(activity_routes.router)
 
 @app.get("/")
 async def root():
