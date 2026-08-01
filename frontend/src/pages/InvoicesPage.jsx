@@ -4,6 +4,7 @@ import AppLayout from '../components/layout/AppLayout'
 import AIInvoiceModal from '../components/invoices/AIInvoiceModal'
 import VoiceInvoiceModal from '../components/invoices/VoiceInvoiceModal'
 import { getInvoices, deleteInvoice, updateInvoiceStatus, getInvoicePdfUrl } from '../services/invoiceService'
+import { useNavigate } from 'react-router-dom'
 
 const STATUS_OPTIONS = ['draft', 'sent', 'paid', 'overdue', 'cancelled']
 
@@ -12,6 +13,7 @@ export default function InvoicesPage() {
   const [loading, setLoading] = useState(true)
   const [showAIModal, setShowAIModal] = useState(false)
   const [showVoiceModal, setShowVoiceModal] = useState(false)
+  const navigate = useNavigate()
 
   useEffect(() => {
     loadInvoices()
@@ -39,9 +41,15 @@ export default function InvoicesPage() {
     await deleteInvoice(id)
     await loadInvoices()
   }
-
+  
   async function handleStatusChange(id, status) {
     await updateInvoiceStatus(id, status)
+    if (status === 'paid') {
+    const log = confirm(
+      'Invoice marked as paid! Did this come from a proposal? Click OK to log the win.'
+    )
+    if (log) navigate('/winrate')
+  }
     await loadInvoices()
   }
 

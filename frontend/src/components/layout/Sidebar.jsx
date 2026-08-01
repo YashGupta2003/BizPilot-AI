@@ -2,7 +2,7 @@ import { NavLink } from 'react-router-dom'
 import {
   LayoutDashboard, Users, FileText, MessageSquare,
   Bell, Globe, Swords, Brain, Activity, ScrollText,
-  Mic2, PieChart, LogOut, Scale,  TrendingUp
+  Mic2, PieChart, LogOut, Scale,  TrendingUp, Target
 } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
 import ActivityFeed from './ActivityFeed'
@@ -19,6 +19,7 @@ const navItems = [
   { to: '/currency', label: 'Currency & GST', icon: Globe },
   { to: '/negotiate', label: 'Negotiation Sim', icon: Swords },
   { to: '/ltv', label: 'Client LTV', icon: TrendingUp },
+  { to: '/winrate', label: 'Win Rate', icon: Target },
   { to: '/disputes', label: 'Dispute Resolver', icon: Scale },
   { to: '/profiler', label: 'Client Profiler', icon: Brain },
   { to: '/assistant', label: 'AI Assistant', icon: MessageSquare },
