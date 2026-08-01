@@ -3,10 +3,11 @@ import { useParams, useNavigate } from 'react-router-dom'
 import {
   Users, FileText, ScrollText, Mic2, MessageSquare,
   Brain, AlertTriangle, CheckCircle2, TrendingUp,
-  Clock, DollarSign, Activity, ArrowRight, ChevronRight
+  Clock, DollarSign, Activity, ChevronRight
 } from 'lucide-react'
 import AppLayout from '../components/layout/AppLayout'
 import api from '../services/api'
+import { getClientLTV } from '../services/ltvService'
 
 const HEALTH_COLORS = {
   Healthy: { bg: '#dcfce7', text: '#15803d', border: '#86efac' },
@@ -24,6 +25,21 @@ const TIMELINE_ICONS = {
   profile: { icon: Brain, color: '#0891b2' },
 }
 
+const SEGMENT_STYLES = {
+  Champion:  { bg: '#dcfce7', text: '#15803d' },
+  Loyal:     { bg: '#dbeafe', text: '#1d4ed8' },
+  Promising: { bg: '#ede9fe', text: '#6d28d9' },
+  'At Risk': { bg: '#ffedd5', text: '#9a3412' },
+  'One-Time':{ bg: '#f3f4f6', text: '#4b5563' },
+  New:       { bg: '#e0f2fe', text: '#0369a1' },
+}
+
+const CONFIDENCE_COLORS = {
+  HIGH: '#15803d',
+  MEDIUM: '#d97706',
+  LOW: '#6b7280',
+}
+
 function StatCard({ label, value, color, icon: Icon }) {
   return (
     <div style={{ background: 'white', border: '1px solid #e5e7eb', borderRadius: 10, padding: '14px 16px' }}>
@@ -37,8 +53,8 @@ function StatCard({ label, value, color, icon: Icon }) {
 }
 
 function HealthMeter({ score, label, color }) {
-  const bgColor = { green: '#dcfce7', yellow: '#fef3c7', orange: '#ffedd5', red: '#fee2e2' }[color] || '#f3f4f6'
-  const fgColor = { green: '#22c55e', yellow: '#eab308', orange: '#f97316', red: '#ef4444' }[color] || '#6b7280'
+  const bgColor  = { green: '#dcfce7', yellow: '#fef3c7', orange: '#ffedd5', red: '#fee2e2' }[color] || '#f3f4f6'
+  const fgColor  = { green: '#22c55e', yellow: '#eab308', orange: '#f97316', red: '#ef4444' }[color] || '#6b7280'
   const textColor = { green: '#15803d', yellow: '#854d0e', orange: '#9a3412', red: '#991b1b' }[color] || '#374151'
 
   return (
@@ -73,13 +89,13 @@ function TimelineItem({ event }) {
 }
 
 function NextActionBanner({ action }) {
+  const navigate = useNavigate()
   const priorityColors = {
     URGENT: { bg: '#fee2e2', border: '#fecaca', text: '#b91c1c' },
-    HIGH: { bg: '#ffedd5', border: '#fdba74', text: '#9a3412' },
+    HIGH:   { bg: '#ffedd5', border: '#fdba74', text: '#9a3412' },
     MEDIUM: { bg: '#fef3c7', border: '#fde68a', text: '#854d0e' },
-    LOW: { bg: '#dcfce7', border: '#86efac', text: '#15803d' },
+    LOW:    { bg: '#dcfce7', border: '#86efac', text: '#15803d' },
   }
-  const navigate = useNavigate()
   const colors = priorityColors[action.priority] || priorityColors.LOW
 
   return (
@@ -100,14 +116,19 @@ function NextActionBanner({ action }) {
 
 export default function Client360Page() {
   const { clientId } = useParams()
+  const navigate = useNavigate()
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(true)
-  const navigate = useNavigate()
+  const [ltv, setLtv] = useState(null)
 
   useEffect(() => {
     api.get(`/client360/${clientId}`)
       .then((res) => setData(res.data))
       .finally(() => setLoading(false))
+
+    getClientLTV(clientId)
+      .then(setLtv)
+      .catch(() => {})
   }, [clientId])
 
   if (loading) return (
@@ -121,34 +142,30 @@ export default function Client360Page() {
 
   if (!data) return <AppLayout><p>Client not found.</p></AppLayout>
 
-  const { client, summary, payment_behavior, health_score, next_action, timeline,
-    invoices, contracts, meetings } = data
-
+  const { client, summary, payment_behavior, health_score, next_action, timeline, invoices } = data
   const fmt = (n) => `₹${(n || 0).toLocaleString('en-IN', { maximumFractionDigits: 0 })}`
 
   return (
     <AppLayout>
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20 }}>
-        <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
-            <div style={{ width: 40, height: 40, borderRadius: '50%', background: '#4f46e5', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <span style={{ color: 'white', fontSize: 16, fontWeight: 700 }}>{client.name?.[0]}</span>
-            </div>
-            <div>
-              <h1 style={{ fontSize: 22, fontWeight: 700 }}>{client.name}</h1>
-              <p style={{ fontSize: 13, color: '#6b7280' }}>{client.company || client.email || 'No company'}</p>
-            </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <div style={{ width: 44, height: 44, borderRadius: '50%', background: '#4f46e5', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <span style={{ color: 'white', fontSize: 18, fontWeight: 700 }}>{client.name?.[0]}</span>
+          </div>
+          <div>
+            <h1 style={{ fontSize: 22, fontWeight: 700 }}>{client.name}</h1>
+            <p style={{ fontSize: 13, color: '#6b7280' }}>{client.company || client.email || 'No company'}</p>
           </div>
         </div>
+
         <div style={{ display: 'flex', gap: 8 }}>
           {[
-            { label: 'New Invoice', icon: FileText, link: '/invoices' },
-            { label: 'New Contract', icon: ScrollText, link: '/contracts' },
-            { label: 'Log Meeting', icon: Mic2, link: '/meetings' },
+            { label: 'New Invoice',   icon: FileText,  link: '/invoices'  },
+            { label: 'New Contract',  icon: ScrollText, link: '/contracts' },
+            { label: 'Log Meeting',   icon: Mic2,       link: '/meetings'  },
           ].map(({ label, icon: Icon, link }) => (
-            <button key={label} onClick={() => navigate(link)}
-              className="btn-secondary"
+            <button key={label} onClick={() => navigate(link)} className="btn-secondary"
               style={{ fontSize: 12, padding: '7px 12px', display: 'flex', alignItems: 'center', gap: 5 }}>
               <Icon size={13} /> {label}
             </button>
@@ -156,21 +173,23 @@ export default function Client360Page() {
         </div>
       </div>
 
-      {/* Next Action */}
+      {/* Next Action Banner */}
       {next_action && (
         <div style={{ marginBottom: 16 }}>
           <NextActionBanner action={next_action} />
         </div>
       )}
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 280px', gap: 16 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 290px', gap: 16 }}>
+
+        {/* ── LEFT COLUMN ────────────────────────────────────────── */}
         <div>
-          {/* Stats */}
+          {/* Stats row */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10, marginBottom: 16 }}>
-            <StatCard label="Total Invoiced" value={fmt(summary.total_invoiced)} color="#4f46e5" icon={DollarSign} />
-            <StatCard label="Total Paid" value={fmt(summary.total_paid)} color="#15803d" icon={CheckCircle2} />
-            <StatCard label="Pending" value={fmt(summary.total_pending)} color="#d97706" icon={Clock} />
-            <StatCard label="Overdue" value={fmt(summary.total_overdue)} color="#dc2626" icon={AlertTriangle} />
+            <StatCard label="Total Invoiced" value={fmt(summary.total_invoiced)} color="#4f46e5"  icon={DollarSign} />
+            <StatCard label="Total Paid"     value={fmt(summary.total_paid)}     color="#15803d"  icon={CheckCircle2} />
+            <StatCard label="Pending"        value={fmt(summary.total_pending)}  color="#d97706"  icon={Clock} />
+            <StatCard label="Overdue"        value={fmt(summary.total_overdue)}  color="#dc2626"  icon={AlertTriangle} />
           </div>
 
           {/* Payment behavior */}
@@ -185,10 +204,10 @@ export default function Client360Page() {
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, flex: 1 }}>
                 {[
-                  { label: 'Invoices', value: summary.invoice_count },
-                  { label: 'Paid', value: summary.paid_count },
+                  { label: 'Invoices',  value: summary.invoice_count  },
+                  { label: 'Paid',      value: summary.paid_count     },
                   { label: 'Contracts', value: summary.contract_count },
-                  { label: 'Meetings', value: summary.meeting_count },
+                  { label: 'Meetings',  value: summary.meeting_count  },
                 ].map(({ label, value }) => (
                   <div key={label} style={{ textAlign: 'center', background: '#f9fafb', borderRadius: 7, padding: '6px' }}>
                     <div style={{ fontSize: 18, fontWeight: 700, color: '#1a1d23' }}>{value}</div>
@@ -202,38 +221,119 @@ export default function Client360Page() {
           {/* Timeline */}
           <div className="card">
             <h3 style={{ fontSize: 13, fontWeight: 700, marginBottom: 14 }}>Full Activity Timeline</h3>
-            {timeline.length === 0 ? (
+            {!timeline?.length ? (
               <p style={{ fontSize: 13, color: '#9ca3af' }}>No activity yet.</p>
             ) : (
-              <div>
-                {timeline.map((event, i) => <TimelineItem key={i} event={event} />)}
-              </div>
+              timeline.map((event, i) => <TimelineItem key={i} event={event} />)
             )}
           </div>
         </div>
 
-        {/* Right sidebar */}
+        {/* ── RIGHT SIDEBAR ───────────────────────────────────────── */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-          {/* Health score */}
+
+          {/* Health score meter */}
           <HealthMeter
             score={health_score.score}
             label={health_score.label}
             color={health_score.color}
           />
-          <div className="card" style={{ fontSize: 12.5, color: '#374151', lineHeight: 1.5 }}>
+
+          {/* Health recommendation */}
+          <div className="card" style={{ fontSize: 12.5, color: '#374151', lineHeight: 1.6 }}>
             {health_score.recommendation}
           </div>
+
+          {/* ── LTV WIDGET (new) ─────────────────────────────────── */}
+          {ltv && (
+            <div className="card">
+              <h4 style={{ fontSize: 12, fontWeight: 700, marginBottom: 8, color: '#6b7280', textTransform: 'uppercase' }}>
+                LTV Prediction
+              </h4>
+
+              <p style={{ fontSize: 11, color: '#9ca3af', marginBottom: 2 }}>Predicted 12-month value</p>
+              <p style={{ fontSize: 22, fontWeight: 800, color: '#4f46e5' }}>
+                {fmt(ltv.predicted_12m_value)}
+              </p>
+
+              {/* Segment + confidence badges */}
+              <div style={{ display: 'flex', gap: 6, marginTop: 6, flexWrap: 'wrap' }}>
+                <span style={{
+                  fontSize: 11, fontWeight: 600, padding: '2px 8px', borderRadius: 999,
+                  background: (SEGMENT_STYLES[ltv.segment] || SEGMENT_STYLES.New).bg,
+                  color:      (SEGMENT_STYLES[ltv.segment] || SEGMENT_STYLES.New).text,
+                }}>
+                  {ltv.segment}
+                </span>
+                <span style={{ fontSize: 11, color: CONFIDENCE_COLORS[ltv.confidence] || '#6b7280' }}>
+                  {ltv.confidence} confidence
+                </span>
+              </div>
+
+              {/* Score bar */}
+              <div style={{ marginTop: 10, marginBottom: 4 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 3 }}>
+                  <span style={{ fontSize: 11, color: '#9ca3af' }}>LTV Score</span>
+                  <span style={{ fontSize: 11, fontWeight: 700, color: '#1a1d23' }}>{Math.round(ltv.ltv_score || 0)}/100</span>
+                </div>
+                <div style={{ height: 5, background: '#f3f4f6', borderRadius: 99 }}>
+                  <div style={{ height: 5, borderRadius: 99, width: `${Math.min(100, ltv.ltv_score || 0)}%`, background: '#4f46e5', transition: 'width 0.8s' }} />
+                </div>
+              </div>
+
+              {/* Growth trajectory */}
+              {ltv.growth_trajectory && (
+                <p style={{ fontSize: 11, color: '#9ca3af', marginTop: 6 }}>
+                  Trend:{' '}
+                  <span style={{ fontWeight: 600, color: ltv.growth_trajectory === 'growing' ? '#15803d' : ltv.growth_trajectory === 'declining' ? '#dc2626' : '#6b7280' }}>
+                    {ltv.growth_trajectory} ({ltv.growth_factor}×)
+                  </span>
+                </p>
+              )}
+
+              {/* Retainer recommendation */}
+              {ltv.retainer_tip?.should_pitch && (
+                <div style={{ marginTop: 8, padding: '8px 10px', background: '#dcfce7', borderRadius: 8, border: '1px solid #86efac' }}>
+                  <p style={{ fontSize: 12, fontWeight: 700, color: '#15803d', marginBottom: 2 }}>
+                    🔥 Retainer Candidate — {ltv.retainer_tip.urgency}
+                  </p>
+                  <p style={{ fontSize: 11.5, color: '#374151', lineHeight: 1.5 }}>
+                    {ltv.retainer_tip.message}
+                  </p>
+                  {ltv.retainer_tip.suggested_retainer_amount && (
+                    <p style={{ fontSize: 12, fontWeight: 700, color: '#15803d', marginTop: 4 }}>
+                      Suggested: {fmt(ltv.retainer_tip.suggested_retainer_amount)}/month
+                    </p>
+                  )}
+                </div>
+              )}
+
+              {/* Link to full LTV page */}
+              <button
+                onClick={() => navigate('/ltv')}
+                style={{ marginTop: 10, width: '100%', fontSize: 12, padding: '7px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5, background: '#eef2ff', border: '1px solid #c7d2fe', borderRadius: 7, cursor: 'pointer', color: '#4f46e5', fontWeight: 600 }}
+              >
+                <TrendingUp size={13} /> Full LTV Analysis
+              </button>
+            </div>
+          )}
 
           {/* Recent invoices */}
           {invoices?.length > 0 && (
             <div className="card">
-              <h4 style={{ fontSize: 12, fontWeight: 700, marginBottom: 8, color: '#6b7280', textTransform: 'uppercase' }}>Recent Invoices</h4>
+              <h4 style={{ fontSize: 12, fontWeight: 700, marginBottom: 8, color: '#6b7280', textTransform: 'uppercase' }}>
+                Recent Invoices
+              </h4>
               {invoices.map((inv, i) => (
-                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
-                  <span style={{ fontSize: 12.5 }}>{inv.invoice_number}</span>
+                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 7 }}>
+                  <span style={{ fontSize: 12.5, color: '#374151' }}>{inv.invoice_number}</span>
                   <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
-                    <span style={{ fontSize: 12, fontWeight: 600 }}>₹{inv.total?.toLocaleString('en-IN')}</span>
-                    <span style={{ fontSize: 10, padding: '1px 6px', borderRadius: 999, background: inv.status === 'paid' ? '#dcfce7' : inv.status === 'overdue' ? '#fee2e2' : '#f3f4f6', color: inv.status === 'paid' ? '#15803d' : inv.status === 'overdue' ? '#b91c1c' : '#4b5563' }}>
+                    <span style={{ fontSize: 12, fontWeight: 600 }}>{fmt(inv.total)}</span>
+                    <span style={{
+                      fontSize: 10, padding: '1px 6px', borderRadius: 999,
+                      background: inv.status === 'paid' ? '#dcfce7' : inv.status === 'overdue' ? '#fee2e2' : '#f3f4f6',
+                      color:      inv.status === 'paid' ? '#15803d' : inv.status === 'overdue' ? '#b91c1c' : '#4b5563',
+                    }}>
                       {inv.status}
                     </span>
                   </div>
@@ -242,14 +342,16 @@ export default function Client360Page() {
             </div>
           )}
 
-          {/* Quick links */}
+          {/* Quick actions */}
           <div className="card">
-            <h4 style={{ fontSize: 12, fontWeight: 700, marginBottom: 8, color: '#6b7280', textTransform: 'uppercase' }}>Quick Actions</h4>
+            <h4 style={{ fontSize: 12, fontWeight: 700, marginBottom: 8, color: '#6b7280', textTransform: 'uppercase' }}>
+              Quick Actions
+            </h4>
             {[
-              { label: 'Profile this client', icon: Brain, link: '/profiler' },
-              { label: 'Send reminder', icon: MessageSquare, link: '/reminders' },
-              { label: 'Generate contract', icon: ScrollText, link: '/contracts' },
-              { label: 'Practice negotiation', icon: TrendingUp, link: '/negotiate' },
+              { label: 'Profile this client',    icon: Brain,        link: '/profiler'  },
+              { label: 'Send reminder',          icon: MessageSquare, link: '/reminders' },
+              { label: 'Generate contract',      icon: ScrollText,    link: '/contracts' },
+              { label: 'Practice negotiation',   icon: TrendingUp,    link: '/negotiate' },
             ].map(({ label, icon: Icon, link }) => (
               <button key={label} onClick={() => navigate(link)}
                 style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 8, padding: '8px 0', background: 'none', border: 'none', cursor: 'pointer', borderBottom: '1px solid #f3f4f6', fontSize: 13, color: '#374151' }}>
@@ -258,6 +360,7 @@ export default function Client360Page() {
               </button>
             ))}
           </div>
+
         </div>
       </div>
     </AppLayout>
