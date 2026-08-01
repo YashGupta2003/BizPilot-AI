@@ -16,7 +16,7 @@ import BurnoutPage from './pages/BurnoutPage'
 import ContractPage from './pages/ContractPage'
 import MeetingPage from './pages/MeetingPage'
 import PortfolioPage from './pages/PortfolioPage'
-import DisputesPage from './pages/DisputesPage'
+import DisputePage from './pages/DisputePage'
 
 export default function App() {
   return (
@@ -38,7 +38,7 @@ export default function App() {
           <Route path="/contracts" element={<ProtectedRoute><ContractPage /></ProtectedRoute>} />
           <Route path="/meetings" element={<ProtectedRoute><MeetingPage /></ProtectedRoute>} />
           <Route path="/portfolio" element={<ProtectedRoute><PortfolioPage /></ProtectedRoute>} />
-          <Route path="/disputes" element={<ProtectedRoute><DisputesPage /></ProtectedRoute>} />
+          <Route path="/disputes" element={<ProtectedRoute><DisputePage /></ProtectedRoute>} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
