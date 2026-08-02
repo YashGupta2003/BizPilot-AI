@@ -4,13 +4,16 @@ import AppLayout from '../components/layout/AppLayout'
 import CashFlowForecast from '../components/dashboard/CashFlowForecast'
 import BurnoutWidget from '../components/dashboard/BurnoutWidget'
 import SmartAlerts from '../components/dashboard/SmartAlerts'
+import { getTaxChecklist } from '../services/taxService'
 
 export default function DashboardPage() {
   const [summary, setSummary] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [taxAlerts, setTaxAlerts] = useState(null)
 
   useEffect(() => {
     getDashboardSummary().then(setSummary).finally(() => setLoading(false))
+    getTaxChecklist().then(setTaxAlerts).catch(() => {})
   }, [])
 
   function formatCurrency(amount) {
@@ -55,6 +58,20 @@ export default function DashboardPage() {
           </div>
         </>
       )}
+      {taxAlerts?.urgent_count > 0 && (
+  <div
+    onClick={() => navigate('/tax')}
+    style={{ padding: '10px 14px', background: '#fef3c7', border: '1px solid #fde68a', borderRadius: 10, marginBottom: 14, cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+  >
+    <div style={{ display: 'flex', gap: 8 }}>
+      <span style={{ fontSize: 16 }}>🧾</span>
+      <p style={{ fontSize: 13.5, color: '#92400e', fontWeight: 600 }}>
+        {taxAlerts.urgent_count} tax filing action{taxAlerts.urgent_count !== 1 ? 's' : ''} pending this quarter
+      </p>
+    </div>
+    <ChevronRight size={15} color="#92400e" />
+  </div>
+)}
     </AppLayout>
   )
 }

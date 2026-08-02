@@ -20,6 +20,7 @@ import DisputePage from './pages/DisputePage'
 import LTVPage from './pages/LTVPage'
 import WinRatePage from './pages/WinRatePage'
 import EscalationPage from './pages/EscalationPage'
+import TaxPage from './pages/TaxPage'
 
 
 export default function App() {
@@ -46,6 +47,7 @@ export default function App() {
           <Route path="/ltv" element={<ProtectedRoute><LTVPage /></ProtectedRoute>} />
           <Route path="/winrate" element={<ProtectedRoute><WinRatePage /></ProtectedRoute>} />
           <Route path="/escalation" element={<ProtectedRoute><EscalationPage /></ProtectedRoute>} />
+          <Route path="/tax" element={<ProtectedRoute><TaxPage /></ProtectedRoute>} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
