@@ -59,6 +59,8 @@ async def connect_to_mongo():
     await mongodb.db.proposals.create_index("owner_id")
     await mongodb.db.proposals.create_index("outcome")
     await mongodb.db.proposals.create_index("service_type")
+    await mongodb.db.escalation_logs.create_index("owner_id")
+    await mongodb.db.escalation_logs.create_index("invoice_id")
 
 
 async def close_mongo_connection():

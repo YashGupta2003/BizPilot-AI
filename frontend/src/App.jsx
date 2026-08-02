@@ -19,6 +19,8 @@ import PortfolioPage from './pages/PortfolioPage'
 import DisputePage from './pages/DisputePage'
 import LTVPage from './pages/LTVPage'
 import WinRatePage from './pages/WinRatePage'
+import EscalationPage from './pages/EscalationPage'
+
 
 export default function App() {
   return (
@@ -43,6 +45,7 @@ export default function App() {
           <Route path="/disputes" element={<ProtectedRoute><DisputePage /></ProtectedRoute>} />
           <Route path="/ltv" element={<ProtectedRoute><LTVPage /></ProtectedRoute>} />
           <Route path="/winrate" element={<ProtectedRoute><WinRatePage /></ProtectedRoute>} />
+          <Route path="/escalation" element={<ProtectedRoute><EscalationPage /></ProtectedRoute>} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
