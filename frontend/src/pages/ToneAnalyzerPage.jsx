@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react'
 import AppLayout from '../components/layout/AppLayout'
 import { Loader2, MessageSquare, AlertTriangle, TrendingDown, TrendingUp, Heart, Trash2, Send, Users } from 'lucide-react'
 import toneService from '../services/toneService'
-import clientService from '../services/clientService'
+import * as clientService from '../services/clientService'
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer } from 'recharts'
 
 export default function ToneAnalyzerPage() {
