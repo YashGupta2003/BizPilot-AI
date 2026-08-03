@@ -2,7 +2,8 @@ import { NavLink } from 'react-router-dom'
 import {
   LayoutDashboard, Users, FileText, MessageSquare,
   Bell, Globe, Swords, Brain, Activity, ScrollText,
-  Mic2, PieChart, Receipt,  Gavel , Shield, DollarSign,LogOut, Scale,  TrendingUp, Target
+  Mic2, PieChart, Receipt, Gavel, Shield, DollarSign, LogOut, Scale, TrendingUp, Target,
+  Handshake, Crosshair, MessageCircleWarning
 } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
 import ActivityFeed from './ActivityFeed'
@@ -28,7 +29,9 @@ const navItems = [
   { to: '/profiler', label: 'Client Profiler', icon: Brain },
   { to: '/assistant', label: 'AI Assistant', icon: MessageSquare },
   { to: '/scope', label: 'Scope Detector', icon: Shield },
-
+  { to: '/networking', label: 'Networking', icon: Handshake },
+  { to: '/goals', label: 'Income Goals', icon: Crosshair },
+  { to: '/tone', label: 'Tone Analyzer', icon: MessageCircleWarning },
 ]
 
 export default function Sidebar() {

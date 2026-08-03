@@ -109,7 +109,26 @@ async def get_client_360(
         invoices, contracts, meetings, reminders, overdue_invoices, health_score
     )
 
-    # 12. Timeline — all events across all features, sorted by date
+    # 12. Tone analysis history for this client
+    tone_cursor = db.tone_analyses.find({
+        "owner_id": owner_id,
+        "client_id": str(client_obj_id),
+    }).sort("created_at", -1)
+    tone_analyses = await tone_cursor.to_list(length=10)
+
+    # Extract latest tone sentiment for quick view
+    latest_tone = None
+    if tone_analyses:
+        latest = tone_analyses[0]
+        analysis = latest.get("analysis", {})
+        latest_tone = {
+            "sentiment": analysis.get("overall_sentiment", "unknown"),
+            "relationship_health": analysis.get("relationship_health", "unknown"),
+            "communication_style": analysis.get("communication_style", "unknown"),
+            "analyzed_at": latest.get("created_at", datetime.utcnow()).isoformat() if isinstance(latest.get("created_at"), datetime) else str(latest.get("created_at", "")),
+        }
+
+    # 13. Timeline — all events across all features, sorted by date
     timeline = _build_timeline(invoices, contracts, meetings, reminders, risk_reports)
 
     return {
@@ -135,6 +154,8 @@ async def get_client_360(
         "risk_reports": [serialize_doc(r) for r in risk_reports[:2]],
         "profiles": [serialize_doc(p) for p in profiles[:1]],
         "reminders": [serialize_doc(r) for r in reminders[:5]],
+        "tone_analyses": [serialize_doc(t) for t in tone_analyses[:5]],
+        "latest_tone": latest_tone,
         "timeline": timeline[:20],
     }
 

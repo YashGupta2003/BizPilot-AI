@@ -133,6 +133,54 @@ async def get_activity_feed(
             "client_name": "",
         })
 
+    # Recent networking analyses
+    net_cursor = db.networking_analyses.find({"owner_id": owner_id}).sort("created_at", -1)
+    recent_nets = await net_cursor.to_list(length=3)
+    for na in recent_nets:
+        gap_count = len(na.get("service_gaps", []))
+        events.append({
+            "type": "networking",
+            "title": f"🤝 Networking analysis completed",
+            "subtitle": f"{gap_count} service gap(s) identified — partnership opportunities found",
+            "date": na.get("created_at", datetime.utcnow()),
+            "link": "/networking",
+            "color": "#6366f1",
+            "client_name": na.get("client_name", ""),
+        })
+
+    # Recent income goals
+    goal_cursor = db.income_goals.find({"owner_id": owner_id}).sort("created_at", -1)
+    recent_goals = await goal_cursor.to_list(length=3)
+    for g in recent_goals:
+        target = g.get("monthly_target", 0)
+        month = g.get("month", "")
+        events.append({
+            "type": "goal",
+            "title": f"🎯 Income goal set — ₹{target:,.0f}",
+            "subtitle": f"Target month: {month}",
+            "date": g.get("created_at", datetime.utcnow()),
+            "link": "/goals",
+            "color": "#059669",
+            "client_name": "",
+        })
+
+    # Recent tone analyses
+    tone_cursor = db.tone_analyses.find({"owner_id": owner_id}).sort("created_at", -1)
+    recent_tones = await tone_cursor.to_list(length=5)
+    for t in recent_tones:
+        analysis = t.get("analysis", {})
+        sentiment = analysis.get("overall_sentiment", "neutral")
+        sentiment_emoji = {"positive": "😊", "neutral": "😐", "negative": "😟", "mixed": "🤔"}.get(sentiment, "🎭")
+        events.append({
+            "type": "tone",
+            "title": f"{sentiment_emoji} Tone analyzed — {sentiment.title()}",
+            "subtitle": f"{t.get('client_name', 'Unknown')} — {t.get('communication_type', 'email')}",
+            "date": t.get("created_at", datetime.utcnow()),
+            "link": "/tone",
+            "color": "#8b5cf6",
+            "client_name": t.get("client_name", ""),
+        })
+
     # Sort all events by date, newest first
     events.sort(key=lambda e: e["date"] if isinstance(e["date"], datetime) else datetime.min, reverse=True)
 
@@ -245,4 +293,56 @@ async def get_smart_alerts(
                         "feature": "profiler",
                     })
 
-    return alerts[:10]
+
+    # Alert 5: Income goal at risk (< 50% progress past mid-month)
+    current_month = today.strftime("%Y-%m")
+    active_goal = await db.income_goals.find_one({
+        "owner_id": owner_id,
+        "month": current_month,
+    })
+    if active_goal:
+        day_of_month = today.day
+        if day_of_month >= 15:
+            # Check progress
+            month_start = today.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+            month_invoices = await db.invoices.find({
+                "owner_id": owner_id,
+                "status": "paid",
+                "created_at": {"$gte": month_start},
+            }).to_list(length=200)
+            earned = sum(inv.get("total", 0) for inv in month_invoices)
+            target = active_goal.get("monthly_target", 0)
+            if target > 0:
+                progress = (earned / target) * 100
+                if progress < 50:
+                    gap = target - earned
+                    alerts.append({
+                        "level": "HIGH",
+                        "icon": "🎯",
+                        "message": f"Income goal alert: Only {progress:.0f}% of ₹{target:,.0f} target reached with {30 - day_of_month} days left. Gap: ₹{gap:,.0f}",
+                        "action": "View Goal Tracker",
+                        "link": "/goals",
+                        "feature": "goals",
+                    })
+
+    # Alert 6: Client tone cooling (negative/critical tone detected recently)
+    recent_negative_tones = await db.tone_analyses.find({
+        "owner_id": owner_id,
+        "analysis.overall_sentiment": {"$in": ["negative", "mixed"]},
+        "created_at": {"$gte": today - timedelta(days=7)},
+    }).to_list(length=5)
+    for tone in recent_negative_tones:
+        client_name = tone.get("client_name", "A client")
+        analysis = tone.get("analysis", {})
+        relationship = analysis.get("relationship_health", "unknown")
+        if relationship in ("cooling", "strained", "critical"):
+            alerts.append({
+                "level": "MEDIUM" if relationship == "cooling" else "HIGH",
+                "icon": "🎭",
+                "message": f"{client_name}'s communication tone is {relationship}. Relationship may need personal attention.",
+                "action": "View Tone Analysis",
+                "link": "/tone",
+                "feature": "tone",
+            })
+
+    return alerts[:12]

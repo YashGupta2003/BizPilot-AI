@@ -24,6 +24,9 @@ import TaxPage from './pages/TaxPage'
 import ScopePage from './pages/ScopePage'
 import PricingPage from './pages/PricingPage'
 import HealthDashboardPage from './pages/HealthDashboardPage'
+import NetworkingPage from './pages/NetworkingPage'
+import GoalTrackerPage from './pages/GoalTrackerPage'
+import ToneAnalyzerPage from './pages/ToneAnalyzerPage'
 
 export default function App() {
   return (
@@ -53,6 +56,9 @@ export default function App() {
           <Route path="/escalation" element={<ProtectedRoute><EscalationPage /></ProtectedRoute>} />
           <Route path="/tax" element={<ProtectedRoute><TaxPage /></ProtectedRoute>} />
           <Route path="/scope" element={<ProtectedRoute><ScopePage /></ProtectedRoute>} />
+          <Route path="/networking" element={<ProtectedRoute><NetworkingPage /></ProtectedRoute>} />
+          <Route path="/goals" element={<ProtectedRoute><GoalTrackerPage /></ProtectedRoute>} />
+          <Route path="/tone" element={<ProtectedRoute><ToneAnalyzerPage /></ProtectedRoute>} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
