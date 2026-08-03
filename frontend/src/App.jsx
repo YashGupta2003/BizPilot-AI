@@ -22,6 +22,8 @@ import WinRatePage from './pages/WinRatePage'
 import EscalationPage from './pages/EscalationPage'
 import TaxPage from './pages/TaxPage'
 import ScopePage from './pages/ScopePage'
+import PricingPage from './pages/PricingPage'
+import HealthDashboardPage from './pages/HealthDashboardPage'
 
 export default function App() {
   return (
@@ -34,6 +36,8 @@ export default function App() {
           <Route path="/clients" element={<ProtectedRoute><ClientsPage /></ProtectedRoute>} />
           <Route path="/clients/:clientId" element={<ProtectedRoute><Client360Page /></ProtectedRoute>} />
           <Route path="/invoices" element={<ProtectedRoute><InvoicesPage /></ProtectedRoute>} />
+          <Route path="/pricing" element={<ProtectedRoute><PricingPage /></ProtectedRoute>} />
+          <Route path="/health" element={<ProtectedRoute><HealthDashboardPage /></ProtectedRoute>} />
           <Route path="/assistant" element={<ProtectedRoute><AssistantPage /></ProtectedRoute>} />
           <Route path="/reminders" element={<ProtectedRoute><RemindersPage /></ProtectedRoute>} />
           <Route path="/currency" element={<ProtectedRoute><CurrencyGSTPage /></ProtectedRoute>} />
