@@ -1270,7 +1270,57 @@ If you're studying this codebase to learn full-stack development, AI integration
 - [ ] **Observability** — Structured logging (Loguru), error tracking (Sentry), and performance monitoring
 
 ---
-
+                                                                                                                                         
+   Feature                │ Backend Files                                                      │ Frontend Files
+  ────────────────────────┼────────────────────────────────────────────────────────────────────┼──────────────────────────────────────────
+   🤝 Networking Finder   │ networking_schema.py, networking_service.py, networking_agent.py,  │ networkingService.js, NetworkingPage.jsx
+                          │ networking_routes.py                                               │
+   🎯 Income Goal Tracker │ goal_schema.py, goal_service.py, goal_routes.py                    │ goalService.js, GoalTrackerPage.jsx
+   🎭 Tone Analyzer       │ tone_schema.py, tone_agent.py, tone_routes.py                      │ toneService.js, ToneAnalyzerPage.jsx
+                                                                                                                                          
+  ### 🔧 Files Modified (5 integration files)                                                                                             
+                                                                                                                                          
+   File                                   │ What Changed
+  ────────────────────────────────────────┼───────────────────────────────────────────────────────────────────────────────────────────────
+   main.py                                │ Registered 3 new routers
+   App.jsx                                │ Added 3 protected routes (/networking, /goals, /tone)
+   Sidebar.jsx                            │ Added 3 nav items with icons (Handshake, Crosshair, MessageCircleWarning)
+   activity_routes.py                     │ Added networking/goal/tone events to feed + 2 new smart alerts (goal progress + tone cooling)
+   client_360_routes.py                   │ Tone analysis integrated into Client 360° view
+                                                                                                                                          
+  ### 🔄 Data Pipeline Connections                                                                                                        
+                                                                                                                                          
+    NEW FEATURES ←→ EXISTING FEATURES (Data Flow)                                                                                         
+                                                                                                                                          
+    🤝 NETWORKING FINDER                                                                                                                  
+      ├── Reads: invoices, clients, meetings, proposals (lost proposals = service gaps)                                                   
+      ├── Uses: portfolio_service.py SERVICE_KEYWORDS for classification                                                                  
+      ├── Writes: networking_analyses collection                                                                                          
+      └── Feeds → Activity Feed, Dashboard Smart Alerts                                                                                   
+                                                                                                                                          
+    🎯 INCOME GOAL TRACKER                                                                                                                
+      ├── Reads: invoices (current month revenue), proposals (pipeline)                                                                   
+      ├── Reads: pricing history (avg project values by service)
+      ├── Reads: winrate (win probability for pipeline items)
+      ├── Writes: income_goals collection
+      └── Feeds → Activity Feed, Smart Alert (goal at risk past mid-month)
+  
+    🎭 TONE ANALYZER
+      ├── Reads: clients, invoices, disputes (context for analysis)
+      ├── AI Agent: Groq LLM with fallback keyword analysis
+      ├── Writes: tone_analyses collection
+      ├── Feeds → Client 360° View (latest tone + history)
+      ├── Feeds → Activity Feed (sentiment events)
+      └── Feeds → Smart Alert (cooling/strained tone warning)
+  
+  ### 3 New MongoDB Collections
+  
+  • networking_analyses — service gap analyses and partner suggestions
+  • income_goals — monthly income targets with reverse planning data
+  • tone_analyses — communication tone analysis results
+  
+  You can now run uvicorn app.main:app --reload --port 8000 and npm run dev to see all 3 features live! 🚀
+  
 <div align="center">
 
 **Built with ❤️ for the freelancer community**
