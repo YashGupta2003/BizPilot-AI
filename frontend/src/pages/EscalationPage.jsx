@@ -42,20 +42,20 @@ function StagePipeline({ currentStage }) {
           <div key={s.stage} style={{ display: 'flex', alignItems: 'center' }}>
             <div style={{
               textAlign: 'center', minWidth: 100, padding: '8px 6px', borderRadius: 10,
-              background: isActive ? style.bg : isPast ? '#f0fdf4' : '#f9fafb',
-              border: `2px solid ${isActive ? style.border : isPast ? '#86efac' : '#e5e7eb'}`,
+              background: isActive ? style.bg : isPast ? '#f0fdf4' : 'var(--bg-elevated)',
+              border: `2px solid ${isActive ? style.border : isPast ? '#86efac' : 'var(--border)'}`,
               opacity: !isActive && !isPast ? 0.5 : 1,
             }}>
-              <div style={{ fontSize: 11, fontWeight: 700, color: isActive ? style.text : isPast ? '#15803d' : '#9ca3af' }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: isActive ? style.text : isPast ? '#15803d' : 'var(--text-muted)' }}>
                 Stage {s.stage}
               </div>
-              <div style={{ fontSize: 10, color: '#6b7280', marginTop: 1 }}>{s.days}</div>
-              <div style={{ fontSize: 11, fontWeight: 600, color: isActive ? style.text : '#374151', marginTop: 2 }}>
+              <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 1 }}>{s.days}</div>
+              <div style={{ fontSize: 11, fontWeight: 600, color: isActive ? style.text : 'var(--text-secondary)', marginTop: 2 }}>
                 {s.label}
               </div>
             </div>
             {i < STAGE_TIMELINE.length - 1 && (
-              <div style={{ width: 24, height: 2, background: isPast ? '#86efac' : '#e5e7eb', flexShrink: 0 }} />
+              <div style={{ width: 24, height: 2, background: isPast ? '#86efac' : 'var(--border)', flexShrink: 0 }} />
             )}
           </div>
         )
@@ -109,13 +109,13 @@ function EscalationCard({ item }) {
       <div style={{ padding: '14px 16px', background: style.bg, cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
         onClick={() => setExpanded(!expanded)}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'var(--bg-card)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
             <StageIcon size={18} color={style.text} />
           </div>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 2 }}>
-              <p style={{ fontSize: 15, fontWeight: 700, color: '#1a1d23' }}>{item.client_name}</p>
-              <span style={{ fontSize: 11, fontWeight: 700, padding: '2px 8px', borderRadius: 999, background: 'white', color: style.text }}>
+              <p style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)' }}>{item.client_name}</p>
+              <span style={{ fontSize: 11, fontWeight: 700, padding: '2px 8px', borderRadius: 999, background: 'var(--bg-card)', color: style.text }}>
                 Stage {item.stage} — {item.stage_label}
               </span>
               {item.urgency === 'HIGH' && (
@@ -124,7 +124,7 @@ function EscalationCard({ item }) {
                 </span>
               )}
             </div>
-            <p style={{ fontSize: 12, color: '#6b7280' }}>
+            <p style={{ fontSize: 12, color: 'var(--text-muted)' }}>
               {item.invoice_number} · {item.days_overdue} days overdue ·
               {item.reminders_sent} reminder(s) sent · {item.has_contract ? '✅ Contract on file' : '⚠️ No contract'}
             </p>
@@ -133,10 +133,10 @@ function EscalationCard({ item }) {
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
           <div style={{ textAlign: 'right' }}>
-            <p style={{ fontSize: 11, color: '#9ca3af' }}>Total due</p>
+            <p style={{ fontSize: 11, color: 'var(--text-muted)' }}>Total due</p>
             <p style={{ fontSize: 18, fontWeight: 800, color: style.text }}>{formatCurrency(item.total_due)}</p>
             {item.late_fee > 0 && (
-              <p style={{ fontSize: 10, color: '#9ca3af' }}>incl. ₹{item.late_fee.toLocaleString('en-IN')} late fee</p>
+              <p style={{ fontSize: 10, color: 'var(--text-muted)' }}>incl. ₹{item.late_fee.toLocaleString('en-IN')} late fee</p>
             )}
           </div>
           {expanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
@@ -145,20 +145,20 @@ function EscalationCard({ item }) {
 
       {/* Expanded content */}
       {expanded && (
-        <div style={{ padding: '16px', background: 'white' }}>
+        <div style={{ padding: '16px', background: 'var(--bg-card)' }}>
           <StagePipeline currentStage={item.stage} />
 
           <div style={{ marginBottom: 14 }}>
-            <p style={{ fontSize: 12, color: '#6b7280', marginBottom: 8 }}>
+            <p style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 8 }}>
               💡 {item.stage_description}. Recommended action: <strong>{item.stage_action}</strong>
             </p>
 
             {/* Stage override */}
             <div style={{ display: 'flex', gap: 6, marginBottom: 12, flexWrap: 'wrap' }}>
-              <p style={{ fontSize: 12, color: '#9ca3af', alignSelf: 'center' }}>Generate:</p>
+              <p style={{ fontSize: 12, color: 'var(--text-muted)', alignSelf: 'center' }}>Generate:</p>
               {Object.entries(STAGE_STYLES).filter(([k]) => parseInt(k) >= 2).map(([k, s]) => (
                 <button key={k} onClick={() => setStageOverride(parseInt(k))}
-                  style={{ fontSize: 11, padding: '4px 10px', borderRadius: 999, cursor: 'pointer', border: `1px solid ${stageOverride === parseInt(k) ? s.border : '#e5e7eb'}`, background: stageOverride === parseInt(k) ? s.bg : 'white', color: stageOverride === parseInt(k) ? s.text : '#6b7280' }}>
+                  style={{ fontSize: 11, padding: '4px 10px', borderRadius: 999, cursor: 'pointer', border: `1px solid ${stageOverride === parseInt(k) ? s.border : 'var(--border)'}`, background: stageOverride === parseInt(k) ? s.bg : 'var(--bg-card)', color: stageOverride === parseInt(k) ? s.text : 'var(--text-muted)' }}>
                   {s.label}
                 </button>
               ))}
@@ -175,10 +175,10 @@ function EscalationCard({ item }) {
           {document && (
             <div>
               {/* Document preview */}
-              <div style={{ background: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: 10, padding: '14px 16px', marginBottom: 12 }}>
+              <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)', borderRadius: 10, padding: '14px 16px', marginBottom: 12 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
                   <div>
-                    <p style={{ fontSize: 11, color: '#9ca3af', marginBottom: 2 }}>SUBJECT</p>
+                    <p style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 2 }}>SUBJECT</p>
                     <p style={{ fontSize: 13, fontWeight: 600 }}>{document.subject}</p>
                   </div>
                   <button onClick={copyDoc} className="btn-secondary"
@@ -187,12 +187,12 @@ function EscalationCard({ item }) {
                   </button>
                 </div>
 
-                <div style={{ fontSize: 13, color: '#374151', lineHeight: 1.8, whiteSpace: 'pre-wrap', maxHeight: 300, overflowY: 'auto', padding: '10px', background: 'white', borderRadius: 8, border: '1px solid #f3f4f6' }}>
+                <div style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.8, whiteSpace: 'pre-wrap', maxHeight: 300, overflowY: 'auto', padding: '10px', background: 'var(--bg-card)', borderRadius: 8, border: '1px solid var(--border)' }}>
                   {document.body}
                 </div>
 
                 <div style={{ display: 'flex', gap: 6, marginTop: 10, alignItems: 'center', flexWrap: 'wrap' }}>
-                  <p style={{ fontSize: 12, color: '#9ca3af' }}>Send via:</p>
+                  <p style={{ fontSize: 12, color: 'var(--text-muted)' }}>Send via:</p>
                   {item.client_email && (
                     <button onClick={() => handleLogSent('email')} className="btn-secondary"
                       style={{ fontSize: 12, padding: '5px 12px', display: 'flex', alignItems: 'center', gap: 4, color: '#1d4ed8', borderColor: '#bfdbfe' }}>
@@ -224,9 +224,9 @@ function EscalationCard({ item }) {
                   { label: 'Late Fee (2%/mo)', value: formatCurrency(document.late_fee) },
                   { label: 'Total Due', value: formatCurrency(document.total_due), bold: true },
                 ].map(({ label, value, bold }) => (
-                  <div key={label} style={{ background: '#f9fafb', borderRadius: 7, padding: '8px 10px', textAlign: 'center' }}>
-                    <p style={{ fontSize: 11, color: '#9ca3af', marginBottom: 2 }}>{label}</p>
-                    <p style={{ fontSize: 14, fontWeight: bold ? 800 : 600, color: bold ? '#b91c1c' : '#1a1d23' }}>{value}</p>
+                  <div key={label} style={{ background: 'var(--bg-elevated)', borderRadius: 7, padding: '8px 10px', textAlign: 'center' }}>
+                    <p style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 2 }}>{label}</p>
+                    <p style={{ fontSize: 14, fontWeight: bold ? 800 : 600, color: bold ? '#b91c1c' : 'var(--text-primary)' }}>{value}</p>
                   </div>
                 ))}
               </div>
@@ -263,7 +263,7 @@ function HistoryTab() {
   }, [])
 
   if (loading) return <div style={{ textAlign: 'center', padding: 24 }}><Loader2 size={24} className="spin" color="#4f46e5" /></div>
-  if (!history.length) return <p style={{ textAlign: 'center', color: '#9ca3af', fontSize: 13.5, padding: 24 }}>No escalation documents sent yet.</p>
+  if (!history.length) return <p style={{ textAlign: 'center', color: 'var(--text-muted)', fontSize: 13.5, padding: 24 }}>No escalation documents sent yet.</p>
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -276,9 +276,9 @@ function HistoryTab() {
                 <span style={{ fontSize: 12, fontWeight: 700, padding: '2px 8px', borderRadius: 999, background: style.bg, color: style.text }}>
                   Stage {h.stage} — {style.label}
                 </span>
-                <span style={{ fontSize: 11, color: '#9ca3af' }}>via {h.method}</span>
+                <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>via {h.method}</span>
               </div>
-              <p style={{ fontSize: 12, color: '#9ca3af' }}>{h.sent_date} · {h.notes}</p>
+              <p style={{ fontSize: 12, color: 'var(--text-muted)' }}>{h.sent_date} · {h.notes}</p>
             </div>
             <CheckCircle2 size={16} color="#15803d" />
           </div>
@@ -323,13 +323,13 @@ export default function EscalationPage() {
         </button>
       </div>
 
-      <div style={{ display: 'flex', gap: 6, marginBottom: 24, background: '#f3f4f6', padding: 6, borderRadius: 10, width: 'fit-content' }}>
+      <div style={{ display: 'flex', gap: 6, marginBottom: 24, background: 'var(--bg-elevated)', padding: 6, borderRadius: 10, width: 'fit-content' }}>
         {[
           { key: 'active', label: 'Active Escalations', icon: AlertTriangle },
           { key: 'history', label: 'Sent History', icon: History },
         ].map(({ key, label, icon: Icon }) => (
           <button key={key} onClick={() => setTab(key)}
-            style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '9px 18px', borderRadius: 8, fontSize: 14, border: 'none', cursor: 'pointer', fontWeight: tab === key ? 600 : 400, background: tab === key ? '#4f46e5' : 'transparent', color: tab === key ? '#fff' : '#6b7280' }}>
+            style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '9px 18px', borderRadius: 8, fontSize: 14, border: 'none', cursor: 'pointer', fontWeight: tab === key ? 600 : 400, background: tab === key ? '#4f46e5' : 'transparent', color: tab === key ? '#fff' : 'var(--text-muted)' }}>
             <Icon size={15} /> {label}
           </button>
         ))}
@@ -339,7 +339,7 @@ export default function EscalationPage() {
         loading ? (
           <div style={{ textAlign: 'center', padding: 60 }}>
             <Loader2 size={32} className="spin" color="#4f46e5" />
-            <p style={{ fontSize: 14, color: '#6b7280', marginTop: 12 }}>
+            <p style={{ fontSize: 14, color: 'var(--text-muted)', marginTop: 12 }}>
               Scanning all invoices and determining escalation stages...
             </p>
           </div>
@@ -349,7 +349,7 @@ export default function EscalationPage() {
           <div className="card" style={{ textAlign: 'center', padding: 40 }}>
             <CheckCircle2 size={36} color="#15803d" />
             <p style={{ fontSize: 15, fontWeight: 600, marginTop: 12 }}>No overdue invoices!</p>
-            <p style={{ fontSize: 13, color: '#6b7280', marginTop: 4 }}>All your sent invoices are within their due dates.</p>
+            <p style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 4 }}>All your sent invoices are within their due dates.</p>
           </div>
         ) : (
           <div>
@@ -359,12 +359,12 @@ export default function EscalationPage() {
                 { label: 'Total Overdue', value: formatCurrency(data.total_overdue_amount), color: '#dc2626', icon: DollarSign },
                 { label: 'With Late Fees', value: formatCurrency(data.total_with_late_fees), color: '#b91c1c', icon: AlertTriangle },
                 { label: 'Invoices Overdue', value: data.total_count, color: '#d97706', icon: FileText },
-                { label: 'Stages Active', value: Object.keys(data.stage_breakdown || {}).length, color: '#4f46e5', icon: Zap },
+                { label: 'Stages Active', value: Object.keys(data.stage_breakdown || {}).length, color: 'var(--brand)', icon: Zap },
               ].map(({ label, value, color, icon: Icon }) => (
                 <div key={label} className="card">
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
                     <Icon size={14} color={color} />
-                    <p style={{ fontSize: 11, color: '#9ca3af' }}>{label}</p>
+                    <p style={{ fontSize: 11, color: 'var(--text-muted)' }}>{label}</p>
                   </div>
                   <p style={{ fontSize: 20, fontWeight: 700, color }}>{value}</p>
                 </div>

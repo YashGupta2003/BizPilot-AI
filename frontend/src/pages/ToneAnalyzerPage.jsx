@@ -126,8 +126,8 @@ export default function ToneAnalyzerPage() {
         <div style={{ display: 'flex', alignItems: 'center', marginBottom: 24 }}>
           <MessageSquare size={32} color="#4f46e5" style={{ marginRight: 12 }} />
           <div>
-            <h1 style={{ fontSize: 26, fontWeight: 700, margin: 0, color: '#111827' }}>Communication Tone Analyzer</h1>
-            <p style={{ color: '#6b7280', margin: '4px 0 0 0' }}>Analyze client messages to uncover hidden sentiments and risks.</p>
+            <h1 style={{ fontSize: 26, fontWeight: 700, margin: 0, color: 'var(--text-primary)' }}>Communication Tone Analyzer</h1>
+            <p style={{ color: 'var(--text-muted)', margin: '4px 0 0 0' }}>Analyze client messages to uncover hidden sentiments and risks.</p>
           </div>
         </div>
 
@@ -137,14 +137,14 @@ export default function ToneAnalyzerPage() {
           </div>
         )}
 
-        <div style={{ background: '#fff', borderRadius: 12, padding: 24, boxShadow: '0 1px 3px rgba(0,0,0,0.08)', marginBottom: 32 }}>
+        <div style={{ background: 'var(--bg-card)', borderRadius: 12, padding: 24, boxShadow: '0 1px 3px rgba(0,0,0,0.08)', marginBottom: 32 }}>
           <div style={{ display: 'flex', gap: 16, marginBottom: 16 }}>
             <div style={{ flex: 1 }}>
-              <label style={{ display: 'block', marginBottom: 8, fontWeight: 500, color: '#374151' }}>Client (Optional)</label>
+              <label style={{ display: 'block', marginBottom: 8, fontWeight: 500, color: 'var(--text-secondary)' }}>Client (Optional)</label>
               <select 
                 value={clientId} 
                 onChange={e => setClientId(e.target.value)}
-                style={{ width: '100%', padding: '10px 12px', borderRadius: 6, border: '1px solid #d1d5db' }}
+                style={{ width: '100%', padding: '10px 12px', borderRadius: 6, border: '1px solid var(--border-light)' }}
               >
                 <option value="">Select a client...</option>
                 {clients.map(c => (
@@ -153,11 +153,11 @@ export default function ToneAnalyzerPage() {
               </select>
             </div>
             <div style={{ flex: 1 }}>
-              <label style={{ display: 'block', marginBottom: 8, fontWeight: 500, color: '#374151' }}>Communication Type</label>
+              <label style={{ display: 'block', marginBottom: 8, fontWeight: 500, color: 'var(--text-secondary)' }}>Communication Type</label>
               <select 
                 value={commType} 
                 onChange={e => setCommType(e.target.value)}
-                style={{ width: '100%', padding: '10px 12px', borderRadius: 6, border: '1px solid #d1d5db' }}
+                style={{ width: '100%', padding: '10px 12px', borderRadius: 6, border: '1px solid var(--border-light)' }}
               >
                 <option value="email">Email Thread</option>
                 <option value="whatsapp">WhatsApp / SMS</option>
@@ -168,13 +168,13 @@ export default function ToneAnalyzerPage() {
           </div>
           
           <div style={{ marginBottom: 16 }}>
-            <label style={{ display: 'block', marginBottom: 8, fontWeight: 500, color: '#374151' }}>Message Text</label>
+            <label style={{ display: 'block', marginBottom: 8, fontWeight: 500, color: 'var(--text-secondary)' }}>Message Text</label>
             <textarea 
               rows={8}
               value={text}
               onChange={e => setText(e.target.value)}
               placeholder="Paste the email thread, message history, or notes here..."
-              style={{ width: '100%', padding: '12px', borderRadius: 6, border: '1px solid #d1d5db', resize: 'vertical' }}
+              style={{ width: '100%', padding: '12px', borderRadius: 6, border: '1px solid var(--border-light)', resize: 'vertical' }}
             />
           </div>
           
@@ -182,7 +182,7 @@ export default function ToneAnalyzerPage() {
             onClick={handleAnalyze}
             disabled={loading}
             style={{ 
-              background: '#4f46e5', color: '#fff', padding: '10px 24px', borderRadius: 6, 
+              background: 'var(--brand)', color: 'var(--bg-card)', padding: '10px 24px', borderRadius: 6, 
               border: 'none', fontWeight: 600, display: 'flex', alignItems: 'center', cursor: loading ? 'not-allowed' : 'pointer'
             }}
           >
@@ -193,11 +193,11 @@ export default function ToneAnalyzerPage() {
 
         {result && result.analysis && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 24, marginBottom: 40 }}>
-            <h2 style={{ fontSize: 20, fontWeight: 600, margin: 0, paddingBottom: 8, borderBottom: '1px solid #e5e7eb' }}>Analysis Results</h2>
+            <h2 style={{ fontSize: 20, fontWeight: 600, margin: 0, paddingBottom: 8, borderBottom: '1px solid var(--border)' }}>Analysis Results</h2>
             
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 24 }}>
-              <div style={{ background: '#fff', borderRadius: 12, padding: 24, boxShadow: '0 1px 3px rgba(0,0,0,0.08)', textAlign: 'center' }}>
-                <h3 style={{ fontSize: 16, color: '#6b7280', margin: '0 0 16px 0' }}>Overall Sentiment</h3>
+              <div style={{ background: 'var(--bg-card)', borderRadius: 12, padding: 24, boxShadow: '0 1px 3px rgba(0,0,0,0.08)', textAlign: 'center' }}>
+                <h3 style={{ fontSize: 16, color: 'var(--text-muted)', margin: '0 0 16px 0' }}>Overall Sentiment</h3>
                 <div style={{ 
                   display: 'inline-block', padding: '8px 24px', borderRadius: 999, 
                   background: getSentimentColor(result.analysis.overall_sentiment) + '20',
@@ -206,19 +206,19 @@ export default function ToneAnalyzerPage() {
                 }}>
                   {result.analysis.overall_sentiment} ({result.analysis.overall_score}/100)
                 </div>
-                <p style={{ marginTop: 16, color: '#374151', fontSize: 14 }}>{result.analysis.summary}</p>
+                <p style={{ marginTop: 16, color: 'var(--text-secondary)', fontSize: 14 }}>{result.analysis.summary}</p>
               </div>
 
-              <div style={{ background: '#fff', borderRadius: 12, padding: 24, boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}>
-                <h3 style={{ fontSize: 16, color: '#6b7280', margin: '0 0 16px 0' }}>Relationship Health</h3>
+              <div style={{ background: 'var(--bg-card)', borderRadius: 12, padding: 24, boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}>
+                <h3 style={{ fontSize: 16, color: 'var(--text-muted)', margin: '0 0 16px 0' }}>Relationship Health</h3>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
                   <Heart size={32} color={result.analysis.relationship_health === 'critical' ? '#ef4444' : '#10b981'} />
                   <span style={{ fontSize: 20, fontWeight: 600, textTransform: 'capitalize' }}>{result.analysis.relationship_health}</span>
                 </div>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                  <span style={{ background: '#f3f4f6', padding: '4px 12px', borderRadius: 16, fontSize: 14 }}>Style: {result.analysis.communication_style}</span>
-                  <span style={{ background: '#f3f4f6', padding: '4px 12px', borderRadius: 16, fontSize: 14 }}>Speed: {result.analysis.response_pattern?.response_speed}</span>
-                  <span style={{ background: '#f3f4f6', padding: '4px 12px', borderRadius: 16, fontSize: 14 }}>Initiative: {result.analysis.response_pattern?.initiative}</span>
+                  <span style={{ background: 'var(--bg-elevated)', padding: '4px 12px', borderRadius: 16, fontSize: 14 }}>Style: {result.analysis.communication_style}</span>
+                  <span style={{ background: 'var(--bg-elevated)', padding: '4px 12px', borderRadius: 16, fontSize: 14 }}>Speed: {result.analysis.response_pattern?.response_speed}</span>
+                  <span style={{ background: 'var(--bg-elevated)', padding: '4px 12px', borderRadius: 16, fontSize: 14 }}>Initiative: {result.analysis.response_pattern?.initiative}</span>
                 </div>
               </div>
             </div>
@@ -234,13 +234,13 @@ export default function ToneAnalyzerPage() {
             )}
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: 24 }}>
-              <div style={{ background: '#fff', borderRadius: 12, padding: 24, boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}>
-                <h3 style={{ fontSize: 16, color: '#6b7280', margin: '0 0 16px 0' }}>Tone Dimensions</h3>
+              <div style={{ background: 'var(--bg-card)', borderRadius: 12, padding: 24, boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}>
+                <h3 style={{ fontSize: 16, color: 'var(--text-muted)', margin: '0 0 16px 0' }}>Tone Dimensions</h3>
                 {renderRadarChart(result.analysis.tone_dimensions)}
               </div>
               
-              <div style={{ background: '#fff', borderRadius: 12, padding: 24, boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}>
-                <h3 style={{ fontSize: 16, color: '#6b7280', margin: '0 0 16px 0' }}>Dimension Breakdown</h3>
+              <div style={{ background: 'var(--bg-card)', borderRadius: 12, padding: 24, boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}>
+                <h3 style={{ fontSize: 16, color: 'var(--text-muted)', margin: '0 0 16px 0' }}>Dimension Breakdown</h3>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                   {result.analysis.tone_dimensions?.map((dim, i) => (
                     <div key={i}>
@@ -248,10 +248,10 @@ export default function ToneAnalyzerPage() {
                         <span style={{ fontWeight: 500 }}>{dim.dimension}</span>
                         <span>{dim.score}/100</span>
                       </div>
-                      <div style={{ height: 8, background: '#f3f4f6', borderRadius: 4, overflow: 'hidden' }}>
-                        <div style={{ height: '100%', width: `${dim.score}%`, background: '#4f46e5' }} />
+                      <div style={{ height: 8, background: 'var(--bg-elevated)', borderRadius: 4, overflow: 'hidden' }}>
+                        <div style={{ height: '100%', width: `${dim.score}%`, background: 'var(--brand)' }} />
                       </div>
-                      {dim.evidence && <p style={{ fontSize: 12, color: '#6b7280', margin: '4px 0 0 0', fontStyle: 'italic' }}>"{dim.evidence}"</p>}
+                      {dim.evidence && <p style={{ fontSize: 12, color: 'var(--text-muted)', margin: '4px 0 0 0', fontStyle: 'italic' }}>"{dim.evidence}"</p>}
                     </div>
                   ))}
                 </div>
@@ -261,14 +261,14 @@ export default function ToneAnalyzerPage() {
             {(result.analysis.alerts?.length > 0 || result.analysis.recommended_actions?.length > 0) && (
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 24 }}>
                 {result.analysis.alerts?.length > 0 && (
-                  <div style={{ background: '#fff', borderRadius: 12, padding: 24, boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}>
-                    <h3 style={{ fontSize: 16, color: '#6b7280', margin: '0 0 16px 0' }}>Alerts</h3>
+                  <div style={{ background: 'var(--bg-card)', borderRadius: 12, padding: 24, boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}>
+                    <h3 style={{ fontSize: 16, color: 'var(--text-muted)', margin: '0 0 16px 0' }}>Alerts</h3>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                       {result.analysis.alerts.map((alert, i) => (
                         <div key={i} style={{ padding: 12, borderRadius: 8, background: getAlertColor(alert.level) + '15', borderLeft: `3px solid ${getAlertColor(alert.level)}` }}>
                           <div style={{ fontWeight: 600, color: getAlertColor(alert.level), marginBottom: 4 }}>{alert.level.toUpperCase()}</div>
                           <p style={{ margin: '0 0 4px 0', fontSize: 14 }}>{alert.message}</p>
-                          <p style={{ margin: 0, fontSize: 13, color: '#4b5563' }}><strong>Action:</strong> {alert.recommendation}</p>
+                          <p style={{ margin: 0, fontSize: 13, color: 'var(--text-secondary)' }}><strong>Action:</strong> {alert.recommendation}</p>
                         </div>
                       ))}
                     </div>
@@ -276,11 +276,11 @@ export default function ToneAnalyzerPage() {
                 )}
                 
                 {result.analysis.recommended_actions?.length > 0 && (
-                  <div style={{ background: '#fff', borderRadius: 12, padding: 24, boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}>
-                    <h3 style={{ fontSize: 16, color: '#6b7280', margin: '0 0 16px 0' }}>Recommended Actions</h3>
+                  <div style={{ background: 'var(--bg-card)', borderRadius: 12, padding: 24, boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}>
+                    <h3 style={{ fontSize: 16, color: 'var(--text-muted)', margin: '0 0 16px 0' }}>Recommended Actions</h3>
                     <ol style={{ margin: 0, paddingLeft: 20, display: 'flex', flexDirection: 'column', gap: 8 }}>
                       {result.analysis.recommended_actions.map((action, i) => (
-                        <li key={i} style={{ fontSize: 14, color: '#374151' }}>{action}</li>
+                        <li key={i} style={{ fontSize: 14, color: 'var(--text-secondary)' }}>{action}</li>
                       ))}
                     </ol>
                   </div>
@@ -295,16 +295,16 @@ export default function ToneAnalyzerPage() {
           {historyLoading ? (
             <div style={{ padding: 40, textAlign: 'center' }}><Loader2 size={24} className="spin" color="#4f46e5" style={{ margin: '0 auto' }}/></div>
           ) : history.length === 0 ? (
-            <div style={{ background: '#fff', padding: 32, borderRadius: 12, textAlign: 'center', color: '#6b7280' }}>No past analyses found.</div>
+            <div style={{ background: 'var(--bg-card)', padding: 32, borderRadius: 12, textAlign: 'center', color: 'var(--text-muted)' }}>No past analyses found.</div>
           ) : (
             <div style={{ display: 'grid', gap: 16 }}>
               {history.map(item => (
-                <div key={item._id} style={{ background: '#fff', borderRadius: 12, padding: 16, boxShadow: '0 1px 3px rgba(0,0,0,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div key={item._id} style={{ background: 'var(--bg-card)', borderRadius: 12, padding: 16, boxShadow: '0 1px 3px rgba(0,0,0,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <div>
-                    <div style={{ fontWeight: 600, color: '#111827', marginBottom: 4 }}>
-                      {item.client_name || 'Unknown Client'} <span style={{ color: '#6b7280', fontWeight: 400, fontSize: 14 }}>via {item.communication_type}</span>
+                    <div style={{ fontWeight: 600, color: 'var(--text-primary)', marginBottom: 4 }}>
+                      {item.client_name || 'Unknown Client'} <span style={{ color: 'var(--text-muted)', fontWeight: 400, fontSize: 14 }}>via {item.communication_type}</span>
                     </div>
-                    <div style={{ fontSize: 14, color: '#6b7280' }}>
+                    <div style={{ fontSize: 14, color: 'var(--text-muted)' }}>
                       {new Date(item.created_at).toLocaleString()} • 
                       <span style={{ color: getSentimentColor(item.analysis?.overall_sentiment), marginLeft: 8, fontWeight: 500 }}>
                         {item.analysis?.overall_sentiment} ({item.analysis?.overall_score})
@@ -314,7 +314,7 @@ export default function ToneAnalyzerPage() {
                   <div style={{ display: 'flex', gap: 12 }}>
                     <button 
                       onClick={() => setResult(item)}
-                      style={{ background: '#f3f4f6', color: '#374151', border: 'none', padding: '6px 12px', borderRadius: 6, cursor: 'pointer', fontSize: 14 }}
+                      style={{ background: 'var(--bg-elevated)', color: 'var(--text-secondary)', border: 'none', padding: '6px 12px', borderRadius: 6, cursor: 'pointer', fontSize: 14 }}
                     >
                       View
                     </button>

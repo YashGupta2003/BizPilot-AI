@@ -80,12 +80,12 @@ export default function GoalTrackerPage() {
             <Target size={28} color="#4f46e5" />
             Income Goal Tracker
           </h1>
-          <p style={{ color: '#6b7280' }}>Set targets, track progress, and use reverse planning to close the gap.</p>
+          <p style={{ color: 'var(--text-muted)' }}>Set targets, track progress, and use reverse planning to close the gap.</p>
         </div>
 
         {loading ? (
           <div style={{ textAlign: 'center', padding: 60 }}>
-            <Loader2 size={32} className="spin" style={{ color: '#4f46e5', margin: '0 auto' }} />
+            <Loader2 size={32} className="spin" style={{ color: 'var(--brand)', margin: '0 auto' }} />
           </div>
         ) : error ? (
           <div style={{ padding: 16, backgroundColor: '#fee2e2', color: '#dc2626', borderRadius: 12, marginBottom: 24 }}>
@@ -94,7 +94,7 @@ export default function GoalTrackerPage() {
         ) : (
           <>
             {!currentGoal ? (
-              <div style={{ backgroundColor: 'white', borderRadius: 12, padding: 32, boxShadow: '0 1px 3px rgba(0,0,0,0.08)', marginBottom: 32 }}>
+              <div style={{ backgroundColor: 'var(--bg-card)', borderRadius: 12, padding: 32, boxShadow: '0 1px 3px rgba(0,0,0,0.08)', marginBottom: 32 }}>
                 <h2 style={{ fontSize: 20, fontWeight: 600, marginBottom: 24 }}>Set Your Goal for {new Date().toLocaleString('default', { month: 'long', year: 'numeric' })}</h2>
                 <form onSubmit={handleCreateGoal} style={{ display: 'flex', flexDirection: 'column', gap: 16, maxWidth: 400 }}>
                   <div>
@@ -104,7 +104,7 @@ export default function GoalTrackerPage() {
                       required 
                       value={formData.monthly_target}
                       onChange={(e) => setFormData({...formData, monthly_target: e.target.value})}
-                      style={{ width: '100%', padding: '10px 12px', borderRadius: 6, border: '1px solid #d1d5db' }}
+                      style={{ width: '100%', padding: '10px 12px', borderRadius: 6, border: '1px solid var(--border-light)' }}
                       placeholder="e.g., 100000"
                     />
                   </div>
@@ -115,7 +115,7 @@ export default function GoalTrackerPage() {
                       required 
                       value={formData.month}
                       onChange={(e) => setFormData({...formData, month: e.target.value})}
-                      style={{ width: '100%', padding: '10px 12px', borderRadius: 6, border: '1px solid #d1d5db' }}
+                      style={{ width: '100%', padding: '10px 12px', borderRadius: 6, border: '1px solid var(--border-light)' }}
                     />
                   </div>
                   <div>
@@ -123,13 +123,13 @@ export default function GoalTrackerPage() {
                     <textarea 
                       value={formData.notes}
                       onChange={(e) => setFormData({...formData, notes: e.target.value})}
-                      style={{ width: '100%', padding: '10px 12px', borderRadius: 6, border: '1px solid #d1d5db', minHeight: 80 }}
+                      style={{ width: '100%', padding: '10px 12px', borderRadius: 6, border: '1px solid var(--border-light)', minHeight: 80 }}
                     />
                   </div>
                   <button 
                     type="submit" 
                     disabled={isSubmitting}
-                    style={{ backgroundColor: '#4f46e5', color: 'white', padding: '10px 16px', borderRadius: 6, border: 'none', fontWeight: 600, cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 8 }}
+                    style={{ backgroundColor: 'var(--brand)', color: 'var(--bg-card)', padding: '10px 16px', borderRadius: 6, border: 'none', fontWeight: 600, cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 8 }}
                   >
                     {isSubmitting ? <Loader2 size={18} className="spin" /> : <Plus size={18} />}
                     Set Goal
@@ -139,7 +139,7 @@ export default function GoalTrackerPage() {
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 24, marginBottom: 40 }}>
                 {/* Progress Dashboard */}
-                <div style={{ backgroundColor: 'white', borderRadius: 12, padding: 24, boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}>
+                <div style={{ backgroundColor: 'var(--bg-card)', borderRadius: 12, padding: 24, boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
                     <h2 style={{ fontSize: 20, fontWeight: 600 }}>Current Progress ({currentGoal.month})</h2>
                     <button onClick={() => handleDelete(currentGoal.goal_id)} style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer' }}>
@@ -150,9 +150,9 @@ export default function GoalTrackerPage() {
                   <div style={{ marginBottom: 24 }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
                       <span style={{ fontWeight: 500 }}>{currentGoal.completion_percentage.toFixed(1)}% Completed</span>
-                      <span style={{ color: '#6b7280' }}>{formatCurrency(currentGoal.earned)} / {formatCurrency(currentGoal.monthly_target)}</span>
+                      <span style={{ color: 'var(--text-muted)' }}>{formatCurrency(currentGoal.earned)} / {formatCurrency(currentGoal.monthly_target)}</span>
                     </div>
-                    <div style={{ height: 16, backgroundColor: '#f3f4f6', borderRadius: 8, overflow: 'hidden' }}>
+                    <div style={{ height: 16, backgroundColor: 'var(--bg-elevated)', borderRadius: 8, overflow: 'hidden' }}>
                       <div style={{ 
                         height: '100%', 
                         width: `${Math.min(currentGoal.completion_percentage, 100)}%`, 
@@ -163,20 +163,20 @@ export default function GoalTrackerPage() {
                   </div>
 
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16 }}>
-                    <div style={{ padding: 16, backgroundColor: '#f9fafb', borderRadius: 8, borderLeft: '4px solid #4f46e5' }}>
-                      <p style={{ color: '#6b7280', fontSize: 14, marginBottom: 4 }}>Target</p>
+                    <div style={{ padding: 16, backgroundColor: 'var(--bg-elevated)', borderRadius: 8, borderLeft: '4px solid #4f46e5' }}>
+                      <p style={{ color: 'var(--text-muted)', fontSize: 14, marginBottom: 4 }}>Target</p>
                       <p style={{ fontSize: 20, fontWeight: 700 }}>{formatCurrency(currentGoal.monthly_target)}</p>
                     </div>
-                    <div style={{ padding: 16, backgroundColor: '#f9fafb', borderRadius: 8, borderLeft: '4px solid #10b981' }}>
-                      <p style={{ color: '#6b7280', fontSize: 14, marginBottom: 4 }}>Earned (Paid)</p>
+                    <div style={{ padding: 16, backgroundColor: 'var(--bg-elevated)', borderRadius: 8, borderLeft: '4px solid #10b981' }}>
+                      <p style={{ color: 'var(--text-muted)', fontSize: 14, marginBottom: 4 }}>Earned (Paid)</p>
                       <p style={{ fontSize: 20, fontWeight: 700 }}>{formatCurrency(currentGoal.earned)}</p>
                     </div>
-                    <div style={{ padding: 16, backgroundColor: '#f9fafb', borderRadius: 8, borderLeft: '4px solid #f59e0b' }}>
-                      <p style={{ color: '#6b7280', fontSize: 14, marginBottom: 4 }}>Pending</p>
+                    <div style={{ padding: 16, backgroundColor: 'var(--bg-elevated)', borderRadius: 8, borderLeft: '4px solid #f59e0b' }}>
+                      <p style={{ color: 'var(--text-muted)', fontSize: 14, marginBottom: 4 }}>Pending</p>
                       <p style={{ fontSize: 20, fontWeight: 700 }}>{formatCurrency(currentGoal.pending)}</p>
                     </div>
-                    <div style={{ padding: 16, backgroundColor: '#f9fafb', borderRadius: 8, borderLeft: '4px solid #ef4444' }}>
-                      <p style={{ color: '#6b7280', fontSize: 14, marginBottom: 4 }}>Gap to Close</p>
+                    <div style={{ padding: 16, backgroundColor: 'var(--bg-elevated)', borderRadius: 8, borderLeft: '4px solid #ef4444' }}>
+                      <p style={{ color: 'var(--text-muted)', fontSize: 14, marginBottom: 4 }}>Gap to Close</p>
                       <p style={{ fontSize: 20, fontWeight: 700 }}>{formatCurrency(currentGoal.gap)}</p>
                     </div>
                   </div>
@@ -194,26 +194,26 @@ export default function GoalTrackerPage() {
                 </div>
 
                 {/* Reverse Plan Section */}
-                <div style={{ backgroundColor: 'white', borderRadius: 12, padding: 24, boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}>
+                <div style={{ backgroundColor: 'var(--bg-card)', borderRadius: 12, padding: 24, boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}>
                   <h2 style={{ fontSize: 20, fontWeight: 600, marginBottom: 16 }}>Reverse Plan to Close the Gap</h2>
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 16 }}>
                     {currentGoal.reverse_plan_options.map((opt, idx) => (
-                      <div key={idx} style={{ padding: 20, border: '1px solid #e5e7eb', borderRadius: 8, backgroundColor: '#f8fafc' }}>
-                        <h3 style={{ fontSize: 16, fontWeight: 600, color: '#111827', marginBottom: 8 }}>{opt.title}</h3>
-                        <p style={{ color: '#4b5563' }}>{opt.description}</p>
+                      <div key={idx} style={{ padding: 20, border: '1px solid var(--border)', borderRadius: 8, backgroundColor: '#f8fafc' }}>
+                        <h3 style={{ fontSize: 16, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 8 }}>{opt.title}</h3>
+                        <p style={{ color: 'var(--text-secondary)' }}>{opt.description}</p>
                       </div>
                     ))}
                   </div>
                 </div>
 
                 {/* Action Items */}
-                <div style={{ backgroundColor: 'white', borderRadius: 12, padding: 24, boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}>
+                <div style={{ backgroundColor: 'var(--bg-card)', borderRadius: 12, padding: 24, boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}>
                   <h2 style={{ fontSize: 20, fontWeight: 600, marginBottom: 16 }}>Recommended Actions</h2>
                   <ul style={{ listStyleType: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 12 }}>
                     {currentGoal.action_items.map((item, idx) => (
                       <li key={idx} style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
                         <CheckCircle size={20} color="#10b981" style={{ flexShrink: 0, marginTop: 2 }} />
-                        <span style={{ color: '#374151', fontSize: 15 }}>{item.description}</span>
+                        <span style={{ color: 'var(--text-secondary)', fontSize: 15 }}>{item.description}</span>
                       </li>
                     ))}
                   </ul>
@@ -221,12 +221,12 @@ export default function GoalTrackerPage() {
                 
                 {/* Pipeline Section */}
                 {currentGoal.pipeline_items && currentGoal.pipeline_items.length > 0 && (
-                  <div style={{ backgroundColor: 'white', borderRadius: 12, padding: 24, boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}>
+                  <div style={{ backgroundColor: 'var(--bg-card)', borderRadius: 12, padding: 24, boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}>
                     <h2 style={{ fontSize: 20, fontWeight: 600, marginBottom: 16 }}>Active Pipeline</h2>
                     <div style={{ overflowX: 'auto' }}>
                       <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
                         <thead>
-                          <tr style={{ borderBottom: '1px solid #e5e7eb', color: '#6b7280' }}>
+                          <tr style={{ borderBottom: '1px solid var(--border)', color: 'var(--text-muted)' }}>
                             <th style={{ padding: '12px 8px' }}>Proposal</th>
                             <th style={{ padding: '12px 8px' }}>Value</th>
                             <th style={{ padding: '12px 8px' }}>Win Probability</th>
@@ -235,11 +235,11 @@ export default function GoalTrackerPage() {
                         </thead>
                         <tbody>
                           {currentGoal.pipeline_items.map((item, idx) => (
-                            <tr key={idx} style={{ borderBottom: '1px solid #f3f4f6' }}>
+                            <tr key={idx} style={{ borderBottom: '1px solid var(--border)' }}>
                               <td style={{ padding: '12px 8px', fontWeight: 500 }}>{item.title}</td>
                               <td style={{ padding: '12px 8px' }}>{formatCurrency(item.amount)}</td>
                               <td style={{ padding: '12px 8px' }}>{Math.round(item.win_probability * 100)}%</td>
-                              <td style={{ padding: '12px 8px', color: '#4f46e5' }}>{formatCurrency(item.expected_value)}</td>
+                              <td style={{ padding: '12px 8px', color: 'var(--brand)' }}>{formatCurrency(item.expected_value)}</td>
                             </tr>
                           ))}
                         </tbody>
@@ -252,7 +252,7 @@ export default function GoalTrackerPage() {
 
             {/* History Section */}
             {history.length > 0 && (
-              <div style={{ backgroundColor: 'white', borderRadius: 12, padding: 24, boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}>
+              <div style={{ backgroundColor: 'var(--bg-card)', borderRadius: 12, padding: 24, boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}>
                 <h2 style={{ fontSize: 20, fontWeight: 600, marginBottom: 24 }}>Goal History</h2>
                 <div style={{ height: 300, width: '100%' }}>
                   <ResponsiveContainer width="100%" height="100%">

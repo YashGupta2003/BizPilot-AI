@@ -63,7 +63,7 @@ function EvidenceTag({ text }) {
   return (
     <div style={{ display: 'flex', gap: 6, marginBottom: 5, alignItems: 'flex-start' }}>
       <CheckCircle2 size={13} color="#4f46e5" style={{ flexShrink: 0, marginTop: 1 }} />
-      <p style={{ fontSize: 13, color: '#374151', lineHeight: 1.5 }}>{text}</p>
+      <p style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.5 }}>{text}</p>
     </div>
   )
 }
@@ -91,20 +91,20 @@ function AnalysisResult({ result }) {
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <ResponseIcon size={20} color={responseStyle.color} />
             <div>
-              <h3 style={{ fontSize: 16, fontWeight: 700, color: '#1a1d23' }}>{responseStyle.label}</h3>
-              <p style={{ fontSize: 12.5, color: '#6b7280' }}>{responseStyle.desc}</p>
+              <h3 style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}>{responseStyle.label}</h3>
+              <p style={{ fontSize: 12.5, color: 'var(--text-muted)' }}>{responseStyle.desc}</p>
             </div>
           </div>
           <div style={{ textAlign: 'right' }}>
-            <span style={{ fontSize: 12, fontWeight: 700, color: responseStyle.color, background: 'white', padding: '3px 10px', borderRadius: 999 }}>
+            <span style={{ fontSize: 12, fontWeight: 700, color: responseStyle.color, background: 'var(--bg-card)', padding: '3px 10px', borderRadius: 999 }}>
               {DISPUTE_TYPES[analysis.dispute_type] || analysis.dispute_type}
             </span>
-            <p style={{ fontSize: 11, color: '#9ca3af', marginTop: 4 }}>
+            <p style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 4 }}>
               Client has valid point: {analysis.client_has_valid_point ? '✅ Yes' : '❌ No'}
             </p>
           </div>
         </div>
-        <p style={{ fontSize: 13, color: '#374151', marginTop: 8, lineHeight: 1.5 }}>
+        <p style={{ fontSize: 13, color: 'var(--text-secondary)', marginTop: 8, lineHeight: 1.5 }}>
           {analysis.validity_reason}
         </p>
       </div>
@@ -113,7 +113,7 @@ function AnalysisResult({ result }) {
         {/* Evidence found */}
         {analysis.evidence_found?.length > 0 && (
           <div className="card">
-            <h4 style={{ fontSize: 13, fontWeight: 700, marginBottom: 8, color: '#4f46e5' }}>
+            <h4 style={{ fontSize: 13, fontWeight: 700, marginBottom: 8, color: 'var(--brand)' }}>
               📂 Evidence Found ({result.invoices_referenced} invoices, {result.contracts_referenced} contracts, {result.meetings_referenced} meetings)
             </h4>
             {analysis.evidence_found.map((ev, i) => <EvidenceTag key={i} text={ev} />)}
@@ -126,10 +126,10 @@ function AnalysisResult({ result }) {
             <h4 style={{ fontSize: 13, fontWeight: 700, marginBottom: 8 }}>Next Steps</h4>
             {analysis.next_steps.map((step, i) => (
               <div key={i} style={{ display: 'flex', gap: 8, marginBottom: 6 }}>
-                <span style={{ fontSize: 12, fontWeight: 700, color: '#4f46e5', background: '#eef2ff', width: 22, height: 22, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--brand)', background: '#eef2ff', width: 22, height: 22, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                   {i + 1}
                 </span>
-                <p style={{ fontSize: 13, color: '#374151' }}>{step}</p>
+                <p style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{step}</p>
               </div>
             ))}
 
@@ -154,12 +154,12 @@ function AnalysisResult({ result }) {
           </button>
         </div>
 
-        <div style={{ background: '#f9fafb', borderRadius: 8, padding: '10px 12px', marginBottom: 10 }}>
-          <p style={{ fontSize: 11, color: '#9ca3af', marginBottom: 3 }}>SUBJECT</p>
+        <div style={{ background: 'var(--bg-elevated)', borderRadius: 8, padding: '10px 12px', marginBottom: 10 }}>
+          <p style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 3 }}>SUBJECT</p>
           <p style={{ fontSize: 13, fontWeight: 600 }}>{analysis.response_subject}</p>
         </div>
 
-        <div style={{ fontSize: 13.5, color: '#374151', lineHeight: 1.8, whiteSpace: 'pre-wrap', maxHeight: 350, overflowY: 'auto' }}>
+        <div style={{ fontSize: 13.5, color: 'var(--text-secondary)', lineHeight: 1.8, whiteSpace: 'pre-wrap', maxHeight: 350, overflowY: 'auto' }}>
           {analysis.response_body}
         </div>
       </div>
@@ -183,7 +183,7 @@ function AnalysisResult({ result }) {
                   <Copy size={12} /> {copiedEsc ? 'Copied!' : 'Copy Letter'}
                 </button>
               </div>
-              <div style={{ fontSize: 13, color: '#374151', lineHeight: 1.8, whiteSpace: 'pre-wrap', padding: '10px 12px', background: '#fff5f5', borderRadius: 8, border: '1px solid #fecaca' }}>
+              <div style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.8, whiteSpace: 'pre-wrap', padding: '10px 12px', background: '#fff5f5', borderRadius: 8, border: '1px solid #fecaca' }}>
                 {analysis.escalation_letter}
               </div>
             </div>
@@ -196,7 +196,7 @@ function AnalysisResult({ result }) {
         <div style={{ marginTop: 12, padding: '10px 14px', background: '#fef3c7', borderRadius: 8, border: '1px solid #fde68a' }}>
           <p style={{ fontSize: 12, fontWeight: 700, color: '#92400e', marginBottom: 4 }}>⚠️ Red Flags Detected</p>
           {analysis.red_flags.map((flag, i) => (
-            <p key={i} style={{ fontSize: 12.5, color: '#374151', marginBottom: 2 }}>• {flag}</p>
+            <p key={i} style={{ fontSize: 12.5, color: 'var(--text-secondary)', marginBottom: 2 }}>• {flag}</p>
           ))}
         </div>
       )}
@@ -222,12 +222,12 @@ function HistoryTab() {
   }
 
   if (loading) return <div style={{ textAlign: 'center', padding: 24 }}><Loader2 size={24} className="spin" color="#4f46e5" /></div>
-  if (!history.length) return <p style={{ textAlign: 'center', color: '#9ca3af', fontSize: 13.5, padding: 24 }}>No dispute records yet.</p>
+  if (!history.length) return <p style={{ textAlign: 'center', color: 'var(--text-muted)', fontSize: 13.5, padding: 24 }}>No dispute records yet.</p>
 
   if (selected) {
     return (
       <div>
-        <button onClick={() => setSelected(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#4f46e5', fontSize: 13, marginBottom: 16 }}>
+        <button onClick={() => setSelected(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--brand)', fontSize: 13, marginBottom: 16 }}>
           ← Back to history
         </button>
         <AnalysisResult result={selected} />
@@ -250,10 +250,10 @@ function HistoryTab() {
                   {style.label}
                 </span>
               </div>
-              <p style={{ fontSize: 12, color: '#9ca3af' }}>
+              <p style={{ fontSize: 12, color: 'var(--text-muted)' }}>
                 "{(item.dispute_message || '').slice(0, 60)}..."
               </p>
-              <p style={{ fontSize: 11, color: '#9ca3af', marginTop: 2 }}>
+              <p style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2 }}>
                 {item.invoices_referenced} invoices · {item.contracts_referenced} contracts · {item.meetings_referenced} meetings referenced
               </p>
             </div>
@@ -309,13 +309,13 @@ export default function DisputePage() {
         Paste a client's dispute message — AI cross-references your invoices, contracts and meeting notes to draft a professional response
       </p>
 
-      <div style={{ display: 'flex', gap: 6, marginBottom: 24, background: '#f3f4f6', padding: 6, borderRadius: 10, width: 'fit-content' }}>
+      <div style={{ display: 'flex', gap: 6, marginBottom: 24, background: 'var(--bg-elevated)', padding: 6, borderRadius: 10, width: 'fit-content' }}>
         {[
           { key: 'resolve', label: 'Resolve Dispute', icon: Scale },
           { key: 'history', label: 'Past Disputes', icon: FileText },
         ].map(({ key, label, icon: Icon }) => (
           <button key={key} onClick={() => { setTab(key); setResult(null) }}
-            style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '9px 18px', borderRadius: 8, fontSize: 14, border: 'none', cursor: 'pointer', fontWeight: tab === key ? 600 : 400, background: tab === key ? '#4f46e5' : 'transparent', color: tab === key ? '#fff' : '#6b7280' }}>
+            style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '9px 18px', borderRadius: 8, fontSize: 14, border: 'none', cursor: 'pointer', fontWeight: tab === key ? 600 : 400, background: tab === key ? '#4f46e5' : 'transparent', color: tab === key ? '#fff' : 'var(--text-muted)' }}>
             <Icon size={15} /> {label}
           </button>
         ))}
@@ -325,7 +325,7 @@ export default function DisputePage() {
         result ? (
           <div>
             <button onClick={() => { setResult(null); setDisputeText('') }}
-              style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#4f46e5', fontSize: 13, marginBottom: 16 }}>
+              style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--brand)', fontSize: 13, marginBottom: 16 }}>
               ← Analyze another dispute
             </button>
             <AnalysisResult result={result} />
@@ -334,11 +334,11 @@ export default function DisputePage() {
           <div className="card">
             {/* Sample disputes */}
             <div style={{ marginBottom: 14 }}>
-              <p style={{ fontSize: 12, color: '#9ca3af', marginBottom: 6 }}>Try a sample dispute:</p>
+              <p style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 6 }}>Try a sample dispute:</p>
               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                 {SAMPLE_DISPUTES.map((s, i) => (
                   <button key={i} onClick={() => setDisputeText(s.text)}
-                    style={{ fontSize: 12, padding: '5px 12px', borderRadius: 999, border: '1px solid #e5e7eb', background: 'white', cursor: 'pointer', color: '#374151' }}>
+                    style={{ fontSize: 12, padding: '5px 12px', borderRadius: 999, border: '1px solid var(--border)', background: 'var(--bg-card)', cursor: 'pointer', color: 'var(--text-secondary)' }}>
                     {s.label}
                   </button>
                 ))}
@@ -347,7 +347,7 @@ export default function DisputePage() {
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 14 }}>
               <div>
-                <label style={{ fontSize: 12, color: '#6b7280', display: 'block', marginBottom: 4 }}>
+                <label style={{ fontSize: 12, color: 'var(--text-muted)', display: 'block', marginBottom: 4 }}>
                   Select client (pulls their invoices + contracts + meetings)
                 </label>
                 <select className="input-field" value={clientId} onChange={(e) => handleClientChange(e.target.value)}>
@@ -356,7 +356,7 @@ export default function DisputePage() {
                 </select>
               </div>
               <div>
-                <label style={{ fontSize: 12, color: '#6b7280', display: 'block', marginBottom: 4 }}>
+                <label style={{ fontSize: 12, color: 'var(--text-muted)', display: 'block', marginBottom: 4 }}>
                   Or type client name manually
                 </label>
                 <input className="input-field" value={clientName}
@@ -371,7 +371,7 @@ export default function DisputePage() {
               </div>
             )}
 
-            <label style={{ fontSize: 12, color: '#6b7280', display: 'block', marginBottom: 4 }}>
+            <label style={{ fontSize: 12, color: 'var(--text-muted)', display: 'block', marginBottom: 4 }}>
               Paste the client's dispute message
             </label>
             <textarea className="input-field" rows={8}

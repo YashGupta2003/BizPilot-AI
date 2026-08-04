@@ -25,17 +25,17 @@ They also want SEO basic setup but said can be added separately`
 
 function DeliverableCard({ item, index }) {
   return (
-    <div style={{ display: 'flex', gap: 10, padding: '10px 12px', background: '#f9fafb', borderRadius: 8, marginBottom: 8 }}>
-      <span style={{ fontSize: 12, fontWeight: 700, color: '#4f46e5', background: '#eef2ff', width: 24, height: 24, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+    <div style={{ display: 'flex', gap: 10, padding: '10px 12px', background: 'var(--bg-elevated)', borderRadius: 8, marginBottom: 8 }}>
+      <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--brand)', background: '#eef2ff', width: 24, height: 24, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
         {index + 1}
       </span>
       <div>
-        <p style={{ fontSize: 13.5, fontWeight: 600, color: '#1a1d23', marginBottom: 2 }}>{item.item}</p>
-        {item.description && <p style={{ fontSize: 12.5, color: '#6b7280' }}>{item.description}</p>}
+        <p style={{ fontSize: 13.5, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 2 }}>{item.item}</p>
+        {item.description && <p style={{ fontSize: 12.5, color: 'var(--text-muted)' }}>{item.description}</p>}
         <div style={{ display: 'flex', gap: 12, marginTop: 4 }}>
-          {item.quantity > 1 && <span style={{ fontSize: 11, color: '#9ca3af' }}>Qty: {item.quantity}</span>}
-          {item.estimated_hours && <span style={{ fontSize: 11, color: '#9ca3af' }}>~{item.estimated_hours}h</span>}
-          {item.deadline && <span style={{ fontSize: 11, color: '#4f46e5' }}>Due: {item.deadline}</span>}
+          {item.quantity > 1 && <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>Qty: {item.quantity}</span>}
+          {item.estimated_hours && <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>~{item.estimated_hours}h</span>}
+          {item.deadline && <span style={{ fontSize: 11, color: 'var(--brand)' }}>Due: {item.deadline}</span>}
         </div>
       </div>
     </div>
@@ -59,7 +59,7 @@ function ResultPanel({ result, onReset }) {
         <p style={{ fontSize: 13.5, color: '#15803d', fontWeight: 600 }}>
           Extracted! {invoice_number ? `Draft invoice ${invoice_number} created.` : ''}
         </p>
-        <button onClick={onReset} style={{ marginLeft: 'auto', background: 'none', border: 'none', cursor: 'pointer', color: '#6b7280', fontSize: 12, display: 'flex', alignItems: 'center', gap: 4 }}>
+        <button onClick={onReset} style={{ marginLeft: 'auto', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', fontSize: 12, display: 'flex', alignItems: 'center', gap: 4 }}>
           <RefreshCw size={13} /> New
         </button>
       </div>
@@ -83,9 +83,9 @@ function ResultPanel({ result, onReset }) {
                 { label: 'Revisions', value: `${extracted.revision_count} rounds`, icon: RefreshCw },
                 { label: 'Advance', value: `${extracted.advance_percent}%`, icon: CheckCircle2 },
               ].map(({ label, value, icon: Icon }) => (
-                <div key={label} style={{ background: '#f9fafb', borderRadius: 7, padding: '8px 10px' }}>
-                  <p style={{ fontSize: 11, color: '#9ca3af', marginBottom: 2 }}>{label}</p>
-                  <p style={{ fontSize: 13, fontWeight: 600, color: '#1a1d23' }}>{value}</p>
+                <div key={label} style={{ background: 'var(--bg-elevated)', borderRadius: 7, padding: '8px 10px' }}>
+                  <p style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 2 }}>{label}</p>
+                  <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>{value}</p>
                 </div>
               ))}
             </div>
@@ -97,7 +97,7 @@ function ResultPanel({ result, onReset }) {
               {extracted.next_steps.map((step, i) => (
                 <div key={i} style={{ display: 'flex', gap: 6, marginBottom: 5 }}>
                   <Zap size={13} color="#4f46e5" style={{ flexShrink: 0, marginTop: 1 }} />
-                  <p style={{ fontSize: 13, color: '#374151' }}>{step}</p>
+                  <p style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{step}</p>
                 </div>
               ))}
             </div>
@@ -109,7 +109,7 @@ function ResultPanel({ result, onReset }) {
               {extracted.things_not_included.map((item, i) => (
                 <div key={i} style={{ display: 'flex', gap: 6, marginBottom: 4 }}>
                   <AlertTriangle size={12} color="#dc2626" style={{ flexShrink: 0, marginTop: 1 }} />
-                  <p style={{ fontSize: 12.5, color: '#374151' }}>{item}</p>
+                  <p style={{ fontSize: 12.5, color: 'var(--text-secondary)' }}>{item}</p>
                 </div>
               ))}
             </div>
@@ -128,12 +128,12 @@ function ResultPanel({ result, onReset }) {
               </button>
             </div>
 
-            <div style={{ background: '#f9fafb', borderRadius: 8, padding: '10px 12px', marginBottom: 10 }}>
-              <p style={{ fontSize: 11, color: '#9ca3af', marginBottom: 3 }}>SUBJECT</p>
-              <p style={{ fontSize: 13, fontWeight: 600, color: '#1a1d23' }}>{scope_email.subject}</p>
+            <div style={{ background: 'var(--bg-elevated)', borderRadius: 8, padding: '10px 12px', marginBottom: 10 }}>
+              <p style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 3 }}>SUBJECT</p>
+              <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>{scope_email.subject}</p>
             </div>
 
-            <div style={{ fontSize: 13, color: '#374151', lineHeight: 1.7, whiteSpace: 'pre-wrap', maxHeight: 400, overflowY: 'auto', padding: '2px 0' }}>
+            <div style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.7, whiteSpace: 'pre-wrap', maxHeight: 400, overflowY: 'auto', padding: '2px 0' }}>
               {scope_email.body}
             </div>
           </div>
@@ -168,12 +168,12 @@ function HistoryTab() {
   }
 
   if (loading) return <div style={{ textAlign: 'center', padding: 24 }}><Loader2 size={24} className="spin" color="#4f46e5" /></div>
-  if (!meetings.length) return <p style={{ textAlign: 'center', color: '#9ca3af', fontSize: 13.5, padding: 24 }}>No meetings extracted yet.</p>
+  if (!meetings.length) return <p style={{ textAlign: 'center', color: 'var(--text-muted)', fontSize: 13.5, padding: 24 }}>No meetings extracted yet.</p>
 
   if (selected) {
     return (
       <div>
-        <button onClick={() => setSelected(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#4f46e5', fontSize: 13, marginBottom: 16 }}>
+        <button onClick={() => setSelected(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--brand)', fontSize: 13, marginBottom: 16 }}>
           ← Back to meetings
         </button>
         <ResultPanel result={selected} onReset={() => setSelected(null)} />
@@ -188,7 +188,7 @@ function HistoryTab() {
           style={{ cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
             <p style={{ fontSize: 14, fontWeight: 600 }}>{m.client_name || 'Unknown Client'}</p>
-            <p style={{ fontSize: 12, color: '#9ca3af' }}>
+            <p style={{ fontSize: 12, color: 'var(--text-muted)' }}>
               {m.extracted?.project_name || 'Meeting'} · {m.extracted?.deliverables?.length || 0} deliverables
               {m.invoice_number && ` · Invoice ${m.invoice_number}`}
             </p>
@@ -236,10 +236,10 @@ export default function MeetingPage() {
         Paste messy notes → AI extracts deliverables, drafts scope email, creates invoice draft
       </p>
 
-      <div style={{ display: 'flex', gap: 6, marginBottom: 24, background: '#f3f4f6', padding: 6, borderRadius: 10, width: 'fit-content' }}>
+      <div style={{ display: 'flex', gap: 6, marginBottom: 24, background: 'var(--bg-elevated)', padding: 6, borderRadius: 10, width: 'fit-content' }}>
         {[{ key: 'extract', label: 'Extract Notes', icon: Zap }, { key: 'history', label: 'Past Meetings', icon: FileText }].map(({ key, label, icon: Icon }) => (
           <button key={key} onClick={() => { setTab(key); setResult(null) }}
-            style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '9px 18px', borderRadius: 8, fontSize: 14, border: 'none', cursor: 'pointer', fontWeight: tab === key ? 600 : 400, background: tab === key ? '#4f46e5' : 'transparent', color: tab === key ? '#fff' : '#6b7280' }}>
+            style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '9px 18px', borderRadius: 8, fontSize: 14, border: 'none', cursor: 'pointer', fontWeight: tab === key ? 600 : 400, background: tab === key ? '#4f46e5' : 'transparent', color: tab === key ? '#fff' : 'var(--text-muted)' }}>
             <Icon size={15} /> {label}
           </button>
         ))}
@@ -252,7 +252,7 @@ export default function MeetingPage() {
           <div className="card">
             <div style={{ display: 'flex', gap: 12, marginBottom: 12 }}>
               <div style={{ flex: 1 }}>
-                <label style={{ fontSize: 12, color: '#6b7280', display: 'block', marginBottom: 4 }}>Link to client (optional)</label>
+                <label style={{ fontSize: 12, color: 'var(--text-muted)', display: 'block', marginBottom: 4 }}>Link to client (optional)</label>
                 <select className="input-field" value={clientId} onChange={(e) => setClientId(e.target.value)}>
                   <option value="">Select client (auto-updates their notes)</option>
                   {clients.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
@@ -265,7 +265,7 @@ export default function MeetingPage() {
               </div>
             </div>
 
-            <label style={{ fontSize: 12, color: '#6b7280', display: 'block', marginBottom: 4 }}>
+            <label style={{ fontSize: 12, color: 'var(--text-muted)', display: 'block', marginBottom: 4 }}>
               Paste your meeting notes, call transcript, or WhatsApp conversation
             </label>
             <textarea

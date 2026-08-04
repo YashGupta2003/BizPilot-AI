@@ -87,7 +87,7 @@ export default function InvoicesPage() {
         {loading ? (
           <p>Loading...</p>
         ) : invoices.length === 0 ? (
-          <p style={{ color: '#6b7280', fontSize: 14 }}>
+          <p style={{ color: 'var(--text-muted)', fontSize: 14 }}>
             No invoices yet. Click "Generate with AI" or try "Voice invoice" to create your first one.
           </p>
         ) : (

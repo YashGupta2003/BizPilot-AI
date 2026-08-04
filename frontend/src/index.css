@@ -892,3 +892,108 @@ code {
   font-family: 'SF Mono', 'Fira Code', monospace;
   color: var(--cyan);
 }
+
+/* ═══════════════════════════════════════════════════
+   GLOBAL DARK-MODE SAFETY NET
+   Fixes any remaining light-mode inline colors
+═══════════════════════════════════════════════════ */
+
+/* Recharts dark tooltips */
+.recharts-tooltip-wrapper .recharts-default-tooltip {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-light) !important;
+  border-radius: 10px !important;
+  color: var(--text-primary) !important;
+}
+.recharts-default-tooltip .recharts-tooltip-label { color: var(--text-secondary) !important; }
+.recharts-default-tooltip .recharts-tooltip-item  { color: var(--text-primary) !important; }
+.recharts-cartesian-axis-tick-value { fill: var(--text-muted) !important; }
+.recharts-legend-item-text { color: var(--text-secondary) !important; }
+
+/* Pre/code blocks used in contracts, scope, etc. */
+pre {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  overflow-x: auto;
+}
+
+/* Select dark theme */
+select { color-scheme: dark; }
+
+/* Common utility color classes */
+.text-green   { color: var(--green)  !important; }
+.text-red     { color: var(--red)    !important; }
+.text-amber   { color: var(--amber)  !important; }
+.text-blue    { color: var(--blue)   !important; }
+.text-purple  { color: var(--purple) !important; }
+
+/* Info/content boxes used in AI result pages */
+.info-box {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  font-size: 13.5px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  white-space: pre-wrap;
+}
+
+/* Tab bar pattern used on many pages */
+.tab-bar {
+  display: flex;
+  gap: 4px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 4px;
+  width: fit-content;
+  margin-bottom: 24px;
+}
+.tab-btn {
+  padding: 7px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s;
+  border: none;
+  background: none;
+}
+.tab-btn:hover { color: var(--text-primary); background: var(--bg-hover); }
+.tab-btn.active { background: var(--bg-card); color: var(--text-primary); box-shadow: var(--shadow-sm); }
+
+/* Message bubbles for AI chat */
+.message-user {
+  background: var(--brand-grad);
+  color: #fff;
+  border-radius: 16px 16px 4px 16px;
+  padding: 10px 14px;
+  font-size: 14px;
+  max-width: 80%;
+  align-self: flex-end;
+}
+.message-ai {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  border-radius: 16px 16px 16px 4px;
+  padding: 10px 14px;
+  font-size: 14px;
+  max-width: 80%;
+}
+
+/* Progress track */
+.progress-track {
+  height: 6px;
+  background: var(--bg-elevated);
+  border-radius: 99px;
+  overflow: hidden;
+}

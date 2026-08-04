@@ -131,11 +131,11 @@ export default function MentalLoadPage() {
             </svg>
             <div style={{ position: 'absolute', textAlign: 'center' }}>
               <span style={{ fontSize: '3rem', fontWeight: 'bold', color: ringColor }}>{score}</span>
-              <div style={{ fontSize: '0.875rem', color: '#6b7280' }}>/ 100</div>
+              <div style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>/ 100</div>
             </div>
           </div>
           <h3 style={{ marginTop: '1.5rem', marginBottom: '0.5rem', color: ringColor }}>{zone}</h3>
-          <p style={{ textAlign: 'center', fontSize: '0.85rem', color: '#6b7280' }}>
+          <p style={{ textAlign: 'center', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
             {total_open_items} open items across your workspace
           </p>
         </div>
@@ -148,7 +148,7 @@ export default function MentalLoadPage() {
             {Object.entries(breakdown).map(([key, count]) => (
               <div key={key}
                 onClick={() => navigate(CATEGORY_LINKS[key] || '/')}
-                style={{ background: '#f9fafb', padding: '12px 14px', borderRadius: 8, display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer', border: '1px solid #e5e7eb', transition: 'background 0.15s' }}
+                style={{ background: 'var(--bg-elevated)', padding: '12px 14px', borderRadius: 8, display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer', border: '1px solid var(--border)', transition: 'background 0.15s' }}
                 onMouseEnter={e => e.currentTarget.style.background = '#f3f4f6'}
                 onMouseLeave={e => e.currentTarget.style.background = '#f9fafb'}
               >
@@ -156,7 +156,7 @@ export default function MentalLoadPage() {
                   <span style={{ fontSize: 16 }}>{CATEGORY_ICONS[key]}</span>
                   {CATEGORY_LABELS[key]}
                 </div>
-                <strong style={{ fontSize: 18, color: count > 0 ? (key === 'unresolved_disputes' || key === 'overdue_invoices' ? '#dc2626' : '#1a1d23') : '#9ca3af' }}>{count}</strong>
+                <strong style={{ fontSize: 18, color: count > 0 ? (key === 'unresolved_disputes' || key === 'overdue_invoices' ? '#dc2626' : 'var(--text-primary)') : 'var(--text-muted)' }}>{count}</strong>
               </div>
             ))}
           </div>
@@ -185,7 +185,7 @@ export default function MentalLoadPage() {
               </ResponsiveContainer>
             </div>
           ) : (
-            <div style={{ padding: '2rem', textAlign: 'center', color: '#6b7280', fontSize: 14 }}>
+            <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)', fontSize: 14 }}>
               Not enough historical data yet. Check back after a few visits.
             </div>
           )}
@@ -200,27 +200,27 @@ export default function MentalLoadPage() {
                   onClick={() => navigate(rec.link || '/')}
                   style={{
                     display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                    background: '#f9fafb', padding: '12px 14px', borderRadius: 8, cursor: 'pointer',
+                    background: 'var(--bg-elevated)', padding: '12px 14px', borderRadius: 8, cursor: 'pointer',
                     borderLeft: `4px solid ${rec.priority === 'CRITICAL' ? '#dc2626' : rec.priority === 'HIGH' ? '#f97316' : rec.priority === 'MEDIUM' ? '#f59e0b' : '#10b981'}`,
-                    border: '1px solid #e5e7eb',
+                    border: '1px solid var(--border)',
                   }}
                 >
                   <div style={{ flex: 1 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
                       <span style={{ fontSize: 14 }}>{rec.icon}</span>
                       <span style={{ fontSize: 11, textTransform: 'uppercase', fontWeight: 600,
-                        color: rec.priority === 'CRITICAL' ? '#dc2626' : rec.priority === 'HIGH' ? '#f97316' : '#6b7280'
+                        color: rec.priority === 'CRITICAL' ? '#dc2626' : rec.priority === 'HIGH' ? '#f97316' : 'var(--text-muted)'
                       }}>{rec.priority}</span>
                     </div>
                     <div style={{ fontWeight: 500, fontSize: 14, marginBottom: 2 }}>{rec.action}</div>
-                    <div style={{ fontSize: 12, color: '#6b7280' }}>{rec.detail}</div>
+                    <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>{rec.detail}</div>
                   </div>
-                  <div style={{ fontSize: 11, color: '#9ca3af', textAlign: 'right', minWidth: 100 }}>{rec.impact}</div>
+                  <div style={{ fontSize: 11, color: 'var(--text-muted)', textAlign: 'right', minWidth: 100 }}>{rec.impact}</div>
                 </div>
               ))}
             </div>
           ) : (
-            <div style={{ padding: '2rem', textAlign: 'center', color: '#6b7280', fontSize: 14 }}>
+            <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)', fontSize: 14 }}>
               ✅ No immediate items requiring your attention. You're all caught up!
             </div>
           )}

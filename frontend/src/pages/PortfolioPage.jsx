@@ -14,7 +14,7 @@ const CHART_COLORS = ['#4f46e5', '#7c3aed', '#0891b2', '#059669', '#d97706', '#d
 
 const ALERT_STYLES = {
   opportunity: { bg: '#dcfce7', border: '#86efac', text: '#15803d', Icon: TrendingUp },
-  insight: { bg: '#eef2ff', border: '#c7d2fe', text: '#4f46e5', Icon: Zap },
+  insight: { bg: '#eef2ff', border: '#c7d2fe', text: 'var(--brand)', Icon: Zap },
   warning: { bg: '#fef3c7', border: '#fde68a', text: '#92400e', Icon: AlertTriangle },
 }
 
@@ -39,7 +39,7 @@ export default function PortfolioPage() {
       <h1 className="page-title">Portfolio ROI</h1>
       <div style={{ textAlign: 'center', padding: 60 }}>
         <Loader2 size={32} className="spin" color="#4f46e5" />
-        <p style={{ fontSize: 14, color: '#6b7280', marginTop: 12 }}>Analyzing your service revenue...</p>
+        <p style={{ fontSize: 14, color: 'var(--text-muted)', marginTop: 12 }}>Analyzing your service revenue...</p>
       </div>
     </AppLayout>
   )
@@ -49,8 +49,8 @@ export default function PortfolioPage() {
       <h1 className="page-title">Portfolio ROI</h1>
       <div className="card" style={{ textAlign: 'center', padding: 40 }}>
         <BarChart3 size={32} color="#9ca3af" />
-        <p style={{ fontSize: 14, color: '#6b7280', marginTop: 12 }}>{error || data?.message}</p>
-        <p style={{ fontSize: 13, color: '#9ca3af', marginTop: 6 }}>Mark invoices as 'paid' to see revenue insights by service type.</p>
+        <p style={{ fontSize: 14, color: 'var(--text-muted)', marginTop: 12 }}>{error || data?.message}</p>
+        <p style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 6 }}>Mark invoices as 'paid' to see revenue insights by service type.</p>
       </div>
     </AppLayout>
   )
@@ -68,14 +68,14 @@ export default function PortfolioPage() {
       <div className="grid-4" style={{ marginBottom: 20 }}>
         {[
           { label: 'Total Revenue', value: formatCurrency(data.total_revenue), color: '#15803d', icon: DollarSign },
-          { label: 'Total Projects', value: data.total_projects, color: '#4f46e5', icon: BarChart3 },
+          { label: 'Total Projects', value: data.total_projects, color: 'var(--brand)', icon: BarChart3 },
           { label: 'Avg Project Value', value: formatCurrency(data.avg_project_value), color: '#1d4ed8', icon: TrendingUp },
           { label: 'Services Offered', value: data.unique_services, color: '#7c3aed', icon: Star },
         ].map(({ label, value, color, icon: Icon }) => (
           <div key={label} className="card">
             <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
               <Icon size={14} color={color} />
-              <p style={{ fontSize: 12, color: '#6b7280' }}>{label}</p>
+              <p style={{ fontSize: 12, color: 'var(--text-muted)' }}>{label}</p>
             </div>
             <p style={{ fontSize: 20, fontWeight: 700, color }}>{value}</p>
           </div>
@@ -91,7 +91,7 @@ export default function PortfolioPage() {
             return (
               <div key={i} style={{ padding: '12px 16px', borderRadius: 10, background: style.bg, border: `1px solid ${style.border}`, marginBottom: 8, display: 'flex', gap: 10 }}>
                 <Icon size={16} color={style.text} style={{ flexShrink: 0, marginTop: 1 }} />
-                <p style={{ fontSize: 13.5, color: '#374151', lineHeight: 1.5 }}>{alert.message}</p>
+                <p style={{ fontSize: 13.5, color: 'var(--text-secondary)', lineHeight: 1.5 }}>{alert.message}</p>
               </div>
             )
           })}
@@ -175,12 +175,12 @@ export default function PortfolioPage() {
           </h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             {data.client_insights.map((c, i) => (
-              <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 12px', background: '#f9fafb', borderRadius: 8 }}>
+              <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 12px', background: 'var(--bg-elevated)', borderRadius: 8 }}>
                 <div>
                   <p style={{ fontSize: 13.5, fontWeight: 600 }}>{c.client_name}</p>
-                  <p style={{ fontSize: 12, color: '#9ca3af' }}>{c.project_count} projects · avg {formatCurrency(c.avg_project_value)}</p>
+                  <p style={{ fontSize: 12, color: 'var(--text-muted)' }}>{c.project_count} projects · avg {formatCurrency(c.avg_project_value)}</p>
                 </div>
-                <p style={{ fontSize: 16, fontWeight: 700, color: '#4f46e5' }}>{formatCurrency(c.total_paid)}</p>
+                <p style={{ fontSize: 16, fontWeight: 700, color: 'var(--brand)' }}>{formatCurrency(c.total_paid)}</p>
               </div>
             ))}
           </div>

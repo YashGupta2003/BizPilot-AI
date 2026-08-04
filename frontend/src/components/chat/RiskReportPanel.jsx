@@ -34,7 +34,7 @@ export default function RiskReportPanel({ report, onClose }) {
           )}
           <div>
             <h3 style={{ fontSize: 15, fontWeight: 600 }}>Contract Risk Report</h3>
-            <p style={{ fontSize: 12, color: '#6b7280' }}>{report.filename}</p>
+            <p style={{ fontSize: 12, color: 'var(--text-muted)' }}>{report.filename}</p>
           </div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -47,7 +47,7 @@ export default function RiskReportPanel({ report, onClose }) {
         </div>
       </div>
 
-      <p style={{ fontSize: 13.5, color: '#374151', marginBottom: 14, lineHeight: 1.5 }}>
+      <p style={{ fontSize: 13.5, color: 'var(--text-secondary)', marginBottom: 14, lineHeight: 1.5 }}>
         {report.summary}
       </p>
 
@@ -69,8 +69,8 @@ export default function RiskReportPanel({ report, onClose }) {
                     <span style={{ fontSize: 13, fontWeight: 600, color: flagColors.text }}>{flag.category}</span>
                     <span style={{ fontSize: 11, color: flagColors.text, textTransform: 'uppercase' }}>{flag.severity}</span>
                   </div>
-                  <p style={{ fontSize: 13, color: '#374151', marginBottom: 4 }}>{flag.finding}</p>
-                  <p style={{ fontSize: 12.5, color: '#4b5563' }}>
+                  <p style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 4 }}>{flag.finding}</p>
+                  <p style={{ fontSize: 12.5, color: 'var(--text-secondary)' }}>
                     <strong>Suggestion:</strong> {flag.recommendation}
                   </p>
                 </div>

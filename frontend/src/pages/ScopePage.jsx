@@ -109,40 +109,40 @@ function CreateProjectModal({ clients, meetings, contracts, onCreated, onClose }
       <div className="card" style={{ width: 560, maxHeight: '88vh', overflowY: 'auto' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
           <h3 style={{ fontSize: 16, fontWeight: 700 }}>Lock Project Scope</h3>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 20, color: '#6b7280' }}>×</button>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 20, color: 'var(--text-muted)' }}>×</button>
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 14 }}>
           <div>
-            <label style={{ fontSize: 12, color: '#6b7280', display: 'block', marginBottom: 4 }}>Project Name *</label>
+            <label style={{ fontSize: 12, color: 'var(--text-muted)', display: 'block', marginBottom: 4 }}>Project Name *</label>
             <input className="input-field" value={form.project_name} onChange={e => update('project_name', e.target.value)} placeholder="E-commerce Website" />
           </div>
           <div>
-            <label style={{ fontSize: 12, color: '#6b7280', display: 'block', marginBottom: 4 }}>Hourly Rate (₹)</label>
+            <label style={{ fontSize: 12, color: 'var(--text-muted)', display: 'block', marginBottom: 4 }}>Hourly Rate (₹)</label>
             <input className="input-field" type="number" value={form.hourly_rate} onChange={e => update('hourly_rate', parseFloat(e.target.value))} />
           </div>
           <div>
-            <label style={{ fontSize: 12, color: '#6b7280', display: 'block', marginBottom: 4 }}>Client</label>
+            <label style={{ fontSize: 12, color: 'var(--text-muted)', display: 'block', marginBottom: 4 }}>Client</label>
             <select className="input-field" value={form.client_id} onChange={e => handleClientChange(e.target.value)}>
               <option value="">Select client</option>
               {clients.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
             </select>
           </div>
           <div>
-            <label style={{ fontSize: 12, color: '#6b7280', display: 'block', marginBottom: 4 }}>Or type client name</label>
+            <label style={{ fontSize: 12, color: 'var(--text-muted)', display: 'block', marginBottom: 4 }}>Or type client name</label>
             <input className="input-field" value={form.client_name} onChange={e => update('client_name', e.target.value)} placeholder="Client name" disabled={!!form.client_id} />
           </div>
         </div>
 
         {/* Scope source tabs */}
-        <div style={{ display: 'flex', gap: 4, marginBottom: 12, background: '#f3f4f6', padding: 4, borderRadius: 8 }}>
+        <div style={{ display: 'flex', gap: 4, marginBottom: 12, background: 'var(--bg-elevated)', padding: 4, borderRadius: 8 }}>
           {[
             { key: 'manual', label: 'Type Scope' },
             { key: 'meeting', label: 'From Meeting Notes' },
             { key: 'contract', label: 'From Contract' },
           ].map(({ key, label }) => (
             <button key={key} onClick={() => setSourceTab(key)}
-              style={{ flex: 1, padding: '6px', borderRadius: 6, fontSize: 12, border: 'none', cursor: 'pointer', fontWeight: sourceTab === key ? 600 : 400, background: sourceTab === key ? 'white' : 'transparent', color: sourceTab === key ? '#4f46e5' : '#6b7280' }}>
+              style={{ flex: 1, padding: '6px', borderRadius: 6, fontSize: 12, border: 'none', cursor: 'pointer', fontWeight: sourceTab === key ? 600 : 400, background: sourceTab === key ? 'white' : 'transparent', color: sourceTab === key ? '#4f46e5' : 'var(--text-muted)' }}>
               {label}
             </button>
           ))}
@@ -151,9 +151,9 @@ function CreateProjectModal({ clients, meetings, contracts, onCreated, onClose }
         {sourceTab === 'manual' && (
           <div style={{ marginBottom: 14 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-              <label style={{ fontSize: 12, color: '#6b7280' }}>Scope Text *</label>
+              <label style={{ fontSize: 12, color: 'var(--text-muted)' }}>Scope Text *</label>
               <button onClick={() => update('scope_text', SAMPLE_SCOPE)}
-                style={{ fontSize: 11, color: '#4f46e5', background: 'none', border: 'none', cursor: 'pointer' }}>
+                style={{ fontSize: 11, color: 'var(--brand)', background: 'none', border: 'none', cursor: 'pointer' }}>
                 Load sample
               </button>
             </div>
@@ -166,7 +166,7 @@ function CreateProjectModal({ clients, meetings, contracts, onCreated, onClose }
 
         {sourceTab === 'meeting' && (
           <div style={{ marginBottom: 14 }}>
-            <label style={{ fontSize: 12, color: '#6b7280', display: 'block', marginBottom: 4 }}>
+            <label style={{ fontSize: 12, color: 'var(--text-muted)', display: 'block', marginBottom: 4 }}>
               Select Meeting (scope auto-extracted)
             </label>
             <select className="input-field" value={form.meeting_id} onChange={e => update('meeting_id', e.target.value)}>
@@ -187,7 +187,7 @@ function CreateProjectModal({ clients, meetings, contracts, onCreated, onClose }
 
         {sourceTab === 'contract' && (
           <div style={{ marginBottom: 14 }}>
-            <label style={{ fontSize: 12, color: '#6b7280', display: 'block', marginBottom: 4 }}>
+            <label style={{ fontSize: 12, color: 'var(--text-muted)', display: 'block', marginBottom: 4 }}>
               Select Contract (scope auto-extracted)
             </label>
             <select className="input-field" value={form.contract_id} onChange={e => update('contract_id', e.target.value)}>
@@ -238,19 +238,19 @@ function DriftResultPanel({ result, project }) {
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
                 <AlertTriangle size={18} color="#b91c1c" />
-                <h3 style={{ fontSize: 16, fontWeight: 700, color: '#1a1d23' }}>
+                <h3 style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}>
                   Scope Drift Detected!
                 </h3>
                 <span style={{ fontSize: 11, fontWeight: 700, padding: '2px 8px', borderRadius: 999, background: URGENCY_STYLES[drift_result.urgency]?.bg, color: URGENCY_STYLES[drift_result.urgency]?.text }}>
                   {drift_result.urgency}
                 </span>
               </div>
-              <p style={{ fontSize: 13, color: '#374151' }}>{drift_result.recommendation}</p>
+              <p style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{drift_result.recommendation}</p>
             </div>
             <div style={{ textAlign: 'right' }}>
-              <p style={{ fontSize: 11, color: '#9ca3af' }}>Extra value</p>
+              <p style={{ fontSize: 11, color: 'var(--text-muted)' }}>Extra value</p>
               <p style={{ fontSize: 22, fontWeight: 900, color: '#b91c1c' }}>{fmt(drift_result.total_extra_value)}</p>
-              <p style={{ fontSize: 11, color: '#9ca3af' }}>{drift_result.total_extra_hours}h extra</p>
+              <p style={{ fontSize: 11, color: 'var(--text-muted)' }}>{drift_result.total_extra_hours}h extra</p>
             </div>
           </div>
         </div>
@@ -259,7 +259,7 @@ function DriftResultPanel({ result, project }) {
           <CheckCircle2 size={18} color="#15803d" />
           <div>
             <p style={{ fontSize: 14, fontWeight: 700, color: '#15803d' }}>No scope drift detected!</p>
-            <p style={{ fontSize: 13, color: '#374151' }}>{drift_result.recommendation}</p>
+            <p style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{drift_result.recommendation}</p>
           </div>
         </div>
       )}
@@ -277,10 +277,10 @@ function DriftResultPanel({ result, project }) {
                     <span style={{ fontSize: 12, fontWeight: 700, color: style.text }}>{item.severity}</span>
                     <span style={{ fontSize: 13, fontWeight: 700, color: style.text }}>{fmt(item.estimated_value || 0)}</span>
                   </div>
-                  <p style={{ fontSize: 13.5, fontWeight: 600, color: '#1a1d23', marginBottom: 2 }}>{item.description}</p>
-                  <p style={{ fontSize: 12, color: '#6b7280', marginBottom: 2 }}>{item.reason}</p>
+                  <p style={{ fontSize: 13.5, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 2 }}>{item.description}</p>
+                  <p style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 2 }}>{item.reason}</p>
                   {item.source && (
-                    <p style={{ fontSize: 11.5, color: '#9ca3af', fontStyle: 'italic' }}>"{item.source}"</p>
+                    <p style={{ fontSize: 11.5, color: 'var(--text-muted)', fontStyle: 'italic' }}>"{item.source}"</p>
                   )}
                   <p style={{ fontSize: 11, color: style.text, marginTop: 4 }}>~{item.estimated_hours}h additional work</p>
                 </div>
@@ -297,7 +297,7 @@ function DriftResultPanel({ result, project }) {
           {drift_result.items_in_scope.map((item, i) => (
             <div key={i} style={{ display: 'flex', gap: 6, marginBottom: 4 }}>
               <CheckCircle2 size={13} color="#15803d" style={{ flexShrink: 0, marginTop: 1 }} />
-              <p style={{ fontSize: 12.5, color: '#374151' }}>{item}</p>
+              <p style={{ fontSize: 12.5, color: 'var(--text-secondary)' }}>{item}</p>
             </div>
           ))}
         </div>
@@ -307,17 +307,17 @@ function DriftResultPanel({ result, project }) {
       {change_order && (
         <div className="card" style={{ borderLeft: '4px solid #4f46e5' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-            <h4 style={{ fontSize: 13, fontWeight: 700, color: '#4f46e5' }}>📧 Change Order Email (ready to send)</h4>
+            <h4 style={{ fontSize: 13, fontWeight: 700, color: 'var(--brand)' }}>📧 Change Order Email (ready to send)</h4>
             <button onClick={copyEmail} className="btn-secondary"
               style={{ fontSize: 12, padding: '5px 10px', display: 'flex', alignItems: 'center', gap: 4 }}>
               <Copy size={12} /> {copied ? 'Copied!' : 'Copy'}
             </button>
           </div>
-          <div style={{ background: '#f9fafb', borderRadius: 7, padding: '8px 10px', marginBottom: 8 }}>
-            <p style={{ fontSize: 11, color: '#9ca3af', marginBottom: 2 }}>SUBJECT</p>
+          <div style={{ background: 'var(--bg-elevated)', borderRadius: 7, padding: '8px 10px', marginBottom: 8 }}>
+            <p style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 2 }}>SUBJECT</p>
             <p style={{ fontSize: 13, fontWeight: 600 }}>{change_order.subject}</p>
           </div>
-          <div style={{ fontSize: 13, color: '#374151', lineHeight: 1.7, whiteSpace: 'pre-wrap', maxHeight: 280, overflowY: 'auto' }}>
+          <div style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.7, whiteSpace: 'pre-wrap', maxHeight: 280, overflowY: 'auto' }}>
             {change_order.body}
           </div>
         </div>
@@ -372,14 +372,14 @@ function ProjectDetail({ project, onBack, onRefresh }) {
 
   return (
     <div>
-      <button onClick={onBack} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#4f46e5', fontSize: 13, marginBottom: 16 }}>
+      <button onClick={onBack} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--brand)', fontSize: 13, marginBottom: 16 }}>
         ← All Projects
       </button>
 
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
         <div>
           <h2 style={{ fontSize: 18, fontWeight: 700 }}>{project.project_name}</h2>
-          <p style={{ fontSize: 13, color: '#6b7280' }}>
+          <p style={{ fontSize: 13, color: 'var(--text-muted)' }}>
             {project.client_name} · ₹{project.hourly_rate}/hr ·
             {project.drift_checks?.length || 0} check(s) done
           </p>
@@ -408,10 +408,10 @@ function ProjectDetail({ project, onBack, onRefresh }) {
       )}
 
       {/* Tabs */}
-      <div style={{ display: 'flex', gap: 4, marginBottom: 16, background: '#f3f4f6', padding: 4, borderRadius: 8, width: 'fit-content' }}>
+      <div style={{ display: 'flex', gap: 4, marginBottom: 16, background: 'var(--bg-elevated)', padding: 4, borderRadius: 8, width: 'fit-content' }}>
         {[{ key: 'check', label: 'Run Drift Check' }, { key: 'scope', label: 'Locked Scope' }, { key: 'history', label: 'Check History' }].map(({ key, label }) => (
           <button key={key} onClick={() => setTab(key)}
-            style={{ padding: '7px 16px', borderRadius: 6, fontSize: 13, border: 'none', cursor: 'pointer', fontWeight: tab === key ? 600 : 400, background: tab === key ? '#4f46e5' : 'transparent', color: tab === key ? '#fff' : '#6b7280' }}>
+            style={{ padding: '7px 16px', borderRadius: 6, fontSize: 13, border: 'none', cursor: 'pointer', fontWeight: tab === key ? 600 : 400, background: tab === key ? '#4f46e5' : 'transparent', color: tab === key ? '#fff' : 'var(--text-muted)' }}>
             {label}
           </button>
         ))}
@@ -439,7 +439,7 @@ function ProjectDetail({ project, onBack, onRefresh }) {
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
               <label style={{ fontSize: 13, fontWeight: 600 }}>Paste current tasks / client messages</label>
               <button onClick={() => setCheckInput(SAMPLE_DRIFT)}
-                style={{ fontSize: 11, color: '#4f46e5', background: 'none', border: 'none', cursor: 'pointer' }}>
+                style={{ fontSize: 11, color: 'var(--brand)', background: 'none', border: 'none', cursor: 'pointer' }}>
                 Load sample
               </button>
             </div>
@@ -463,7 +463,7 @@ function ProjectDetail({ project, onBack, onRefresh }) {
           <h4 style={{ fontSize: 13, fontWeight: 700, marginBottom: 12, display: 'flex', alignItems: 'center', gap: 6 }}>
             <Lock size={14} color="#15803d" /> Locked Scope
           </h4>
-          <p style={{ fontSize: 13.5, color: '#374151', marginBottom: 12, fontStyle: 'italic' }}>{locked.summary}</p>
+          <p style={{ fontSize: 13.5, color: 'var(--text-secondary)', marginBottom: 12, fontStyle: 'italic' }}>{locked.summary}</p>
 
           {locked.deliverables?.length > 0 && (
             <div style={{ marginBottom: 12 }}>
@@ -472,8 +472,8 @@ function ProjectDetail({ project, onBack, onRefresh }) {
                 <div key={i} style={{ display: 'flex', gap: 6, marginBottom: 5 }}>
                   <CheckCircle2 size={13} color="#15803d" style={{ flexShrink: 0, marginTop: 1 }} />
                   <div>
-                    <p style={{ fontSize: 13.5, fontWeight: 600, color: '#1a1d23' }}>{d.item}</p>
-                    {d.description && <p style={{ fontSize: 12, color: '#6b7280' }}>{d.description}</p>}
+                    <p style={{ fontSize: 13.5, fontWeight: 600, color: 'var(--text-primary)' }}>{d.item}</p>
+                    {d.description && <p style={{ fontSize: 12, color: 'var(--text-muted)' }}>{d.description}</p>}
                   </div>
                 </div>
               ))}
@@ -486,14 +486,14 @@ function ProjectDetail({ project, onBack, onRefresh }) {
               {locked.explicitly_excluded.map((item, i) => (
                 <div key={i} style={{ display: 'flex', gap: 6, marginBottom: 4 }}>
                   <AlertTriangle size={13} color="#dc2626" style={{ flexShrink: 0, marginTop: 1 }} />
-                  <p style={{ fontSize: 13, color: '#374151' }}>{item}</p>
+                  <p style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{item}</p>
                 </div>
               ))}
             </div>
           )}
 
           {locked.revision_limit && (
-            <p style={{ fontSize: 12.5, color: '#6b7280', marginTop: 10 }}>
+            <p style={{ fontSize: 12.5, color: 'var(--text-muted)', marginTop: 10 }}>
               📝 Revision limit: <strong>{locked.revision_limit} rounds</strong>
             </p>
           )}
@@ -503,7 +503,7 @@ function ProjectDetail({ project, onBack, onRefresh }) {
       {tab === 'history' && (
         <div>
           {!project.drift_checks?.length ? (
-            <p style={{ textAlign: 'center', color: '#9ca3af', padding: 24 }}>No drift checks yet.</p>
+            <p style={{ textAlign: 'center', color: 'var(--text-muted)', padding: 24 }}>No drift checks yet.</p>
           ) : (
             [...project.drift_checks].reverse().map((check, i) => (
               <div key={i} className="card" style={{ marginBottom: 10, borderLeft: `4px solid ${check.drift_detected ? '#dc2626' : '#15803d'}` }}>
@@ -517,7 +517,7 @@ function ProjectDetail({ project, onBack, onRefresh }) {
                         {check.drift_detected ? `${check.drift_items_count} drift item(s) found` : 'No drift detected'}
                       </p>
                     </div>
-                    <p style={{ fontSize: 12, color: '#9ca3af' }}>{new Date(check.checked_at).toLocaleString('en-IN')}</p>
+                    <p style={{ fontSize: 12, color: 'var(--text-muted)' }}>{new Date(check.checked_at).toLocaleString('en-IN')}</p>
                   </div>
                   {check.drift_detected && (
                     <p style={{ fontSize: 16, fontWeight: 800, color: '#dc2626' }}>{fmt(check.total_extra_value)}</p>
@@ -615,7 +615,7 @@ export default function ScopePage() {
         <div className="card" style={{ textAlign: 'center', padding: 40 }}>
           <Shield size={36} color="#9ca3af" />
           <p style={{ fontSize: 15, fontWeight: 600, marginTop: 12 }}>No tracked projects yet</p>
-          <p style={{ fontSize: 13.5, color: '#6b7280', marginTop: 4, marginBottom: 16 }}>
+          <p style={{ fontSize: 13.5, color: 'var(--text-muted)', marginTop: 4, marginBottom: 16 }}>
             Lock a project scope to start detecting drift automatically
           </p>
           <button onClick={() => setShowCreate(true)} className="btn-primary"
@@ -631,7 +631,7 @@ export default function ScopePage() {
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 3 }}>
                   <p style={{ fontSize: 15, fontWeight: 700 }}>{p.project_name}</p>
-                  <span style={{ fontSize: 11, padding: '1px 8px', borderRadius: 999, background: '#eef2ff', color: '#4f46e5' }}>
+                  <span style={{ fontSize: 11, padding: '1px 8px', borderRadius: 999, background: '#eef2ff', color: 'var(--brand)' }}>
                     {p.drift_checks?.length || 0} checks
                   </span>
                   {p.total_drift_value > 0 && (
@@ -640,7 +640,7 @@ export default function ScopePage() {
                     </span>
                   )}
                 </div>
-                <p style={{ fontSize: 12, color: '#9ca3af' }}>
+                <p style={{ fontSize: 12, color: 'var(--text-muted)' }}>
                   {p.client_name} · ₹{p.hourly_rate}/hr ·
                   {p.locked_scope?.deliverables?.length || 0} deliverables locked
                 </p>

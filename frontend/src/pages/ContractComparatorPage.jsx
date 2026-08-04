@@ -287,22 +287,22 @@ export default function ContractComparatorPage() {
                       {analysisResult.safe_to_sign ? <CheckCircle size={28} /> : <XCircle size={28} />}
                       {analysisResult.safe_to_sign ? 'Safe to Sign' : 'Not Recommended to Sign'}
                     </h2>
-                    <p style={{ margin: '0.5rem 0 0 0', fontWeight: '500', color: '#4b5563' }}>
+                    <p style={{ margin: '0.5rem 0 0 0', fontWeight: '500', color: 'var(--text-secondary)' }}>
                       Overall Risk Level: <span style={{ color: getRiskColor(analysisResult.risk_level), textTransform: 'uppercase', fontWeight: 'bold' }}>{analysisResult.risk_level}</span>
                     </p>
                   </div>
                   <div style={{ display: 'flex', gap: '1.5rem', textAlign: 'center' }}>
                     <div>
                       <div style={{ fontSize: '2rem', fontWeight: 'bold' }}>{analysisResult.total_clauses_compared}</div>
-                      <div style={{ fontSize: '0.8rem', color: '#6b7280' }}>Clauses</div>
+                      <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Clauses</div>
                     </div>
                     <div>
                       <div style={{ fontSize: '2rem', fontWeight: 'bold' }}>{analysisResult.changes_found}</div>
-                      <div style={{ fontSize: '0.8rem', color: '#6b7280' }}>Changes</div>
+                      <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Changes</div>
                     </div>
                     <div>
                       <div style={{ fontSize: '2rem', fontWeight: 'bold', color: 'var(--danger-color)' }}>{analysisResult.red_flags?.length || 0}</div>
-                      <div style={{ fontSize: '0.8rem', color: '#6b7280' }}>Red Flags</div>
+                      <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Red Flags</div>
                     </div>
                   </div>
                 </div>
@@ -344,7 +344,7 @@ export default function ContractComparatorPage() {
                   {analysisResult.changes?.length > 0 ? (
                     analysisResult.changes.map((change, idx) => (
                       <div key={idx} className="card" style={{ padding: '0', overflow: 'hidden' }}>
-                        <div style={{ backgroundColor: '#f3f4f6', padding: '0.75rem 1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-color)' }}>
+                        <div style={{ backgroundColor: 'var(--bg-elevated)', padding: '0.75rem 1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-color)' }}>
                           <h4 style={{ margin: 0 }}>{change.clause_name}</h4>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                             {getChangeTypeIcon(change.change_type)}
@@ -372,7 +372,7 @@ export default function ContractComparatorPage() {
                       </div>
                     ))
                   ) : (
-                    <div className="card" style={{ textAlign: 'center', color: '#6b7280' }}>
+                    <div className="card" style={{ textAlign: 'center', color: 'var(--text-muted)' }}>
                       No significant changes found.
                     </div>
                   )}
@@ -421,7 +421,7 @@ export default function ContractComparatorPage() {
                           {item.analysis?.risk_level} Risk
                         </span>
                       </div>
-                      <div style={{ fontSize: '0.9rem', color: '#6b7280' }}>
+                      <div style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>
                         {item.analysis?.changes_found} changes • {item.analysis?.red_flags?.length || 0} red flags
                       </div>
                     </div>
@@ -443,7 +443,7 @@ export default function ContractComparatorPage() {
                 ))}
               </div>
             ) : (
-              <div style={{ textAlign: 'center', padding: '3rem', color: '#6b7280' }}>
+              <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-muted)' }}>
                 <FileDiff size={48} style={{ opacity: 0.5, margin: '0 auto 1rem' }} />
                 <p>No comparison history found.</p>
                 <button 

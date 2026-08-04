@@ -28,7 +28,7 @@ import {
 const PATTERN_COLORS = {
   slow: { bg: '#fee2e2', text: '#ef4444', border: '#f87171' },
   recovery: { bg: '#fef3c7', text: '#f59e0b', border: '#fbbf24' },
-  moderate: { bg: '#f3f4f6', text: '#6b7280', border: '#9ca3af' },
+  moderate: { bg: 'var(--bg-elevated)', text: 'var(--text-muted)', border: 'var(--text-muted)' },
   busy: { bg: '#dcfce7', text: '#22c55e', border: '#4ade80' },
   rush: { bg: '#ffedd5', text: '#f97316', border: '#fb923c' },
   peak: { bg: '#ecfdf5', text: '#10b981', border: '#34d399' }
@@ -137,26 +137,26 @@ export default function SeasonalPlannerPage() {
         {/* Insights Panel */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
           <div className="card" style={{ padding: '1.5rem', borderLeft: '4px solid #10b981' }}>
-            <p style={{ margin: 0, fontSize: '0.875rem', color: '#6b7280' }}>Best Quarter</p>
+            <p style={{ margin: 0, fontSize: '0.875rem', color: 'var(--text-muted)' }}>Best Quarter</p>
             <h3 style={{ margin: '0.5rem 0 0 0', fontSize: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               {insights.best_quarter} <TrendingUp size={20} color="#10b981" />
             </h3>
           </div>
           <div className="card" style={{ padding: '1.5rem', borderLeft: '4px solid #ef4444' }}>
-            <p style={{ margin: 0, fontSize: '0.875rem', color: '#6b7280' }}>Worst Quarter</p>
+            <p style={{ margin: 0, fontSize: '0.875rem', color: 'var(--text-muted)' }}>Worst Quarter</p>
             <h3 style={{ margin: '0.5rem 0 0 0', fontSize: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               {insights.worst_quarter} <TrendingDown size={20} color="#ef4444" />
             </h3>
           </div>
           <div className="card" style={{ padding: '1.5rem', borderLeft: '4px solid #3b82f6' }}>
-            <p style={{ margin: 0, fontSize: '0.875rem', color: '#6b7280' }}>Seasonality Index</p>
+            <p style={{ margin: 0, fontSize: '0.875rem', color: 'var(--text-muted)' }}>Seasonality Index</p>
             <h3 style={{ margin: '0.5rem 0 0 0', fontSize: '1.5rem' }}>
               {insights.seasonality_index}%
             </h3>
-            <p style={{ margin: '0.25rem 0 0 0', fontSize: '0.75rem', color: '#9ca3af' }}>Variance from average</p>
+            <p style={{ margin: '0.25rem 0 0 0', fontSize: '0.75rem', color: 'var(--text-muted)' }}>Variance from average</p>
           </div>
           <div className="card" style={{ padding: '1.5rem', borderLeft: '4px solid #f97316' }}>
-            <p style={{ margin: 0, fontSize: '0.875rem', color: '#6b7280' }}>Next Peak In</p>
+            <p style={{ margin: 0, fontSize: '0.875rem', color: 'var(--text-muted)' }}>Next Peak In</p>
             <h3 style={{ margin: '0.5rem 0 0 0', fontSize: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               {insights.months_until_next_peak} Months <Clock size={20} color="#f97316" />
             </h3>
@@ -195,7 +195,7 @@ export default function SeasonalPlannerPage() {
                   {m.pattern}
                 </div>
                 {isCurrent && (
-                  <div style={{ fontSize: '0.65rem', marginTop: '0.5rem', background: colors.text, color: '#fff', borderRadius: '4px', padding: '2px' }}>
+                  <div style={{ fontSize: '0.65rem', marginTop: '0.5rem', background: colors.text, color: 'var(--bg-card)', borderRadius: '4px', padding: '2px' }}>
                     CURRENT
                   </div>
                 )}
@@ -248,22 +248,22 @@ export default function SeasonalPlannerPage() {
                 </span>
               </div>
               <div style={{ textAlign: 'right' }}>
-                <p style={{ margin: 0, fontSize: '0.875rem', color: '#6b7280' }}>Prediction</p>
-                <h4 style={{ margin: '0', fontSize: '1.5rem', color: '#111827' }}>₹{activeMonthData.predicted_revenue.toLocaleString()}</h4>
-                <p style={{ margin: 0, fontSize: '0.75rem', color: '#6b7280' }}>
+                <p style={{ margin: 0, fontSize: '0.875rem', color: 'var(--text-muted)' }}>Prediction</p>
+                <h4 style={{ margin: '0', fontSize: '1.5rem', color: 'var(--text-primary)' }}>₹{activeMonthData.predicted_revenue.toLocaleString()}</h4>
+                <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--text-muted)' }}>
                   Confidence: <span style={{ fontWeight: 'bold' }}>{activeMonthData.confidence_level}</span>
                 </p>
               </div>
             </div>
 
-            <hr style={{ border: 'none', borderTop: '1px solid #e5e7eb', margin: '1.5rem 0' }} />
+            <hr style={{ border: 'none', borderTop: '1px solid var(--border)', margin: '1.5rem 0' }} />
 
             {activeMonthData.events.length > 0 && (
               <div style={{ marginBottom: '1.5rem' }}>
-                <h5 style={{ margin: '0 0 0.5rem 0', color: '#4b5563' }}>Key Events</h5>
+                <h5 style={{ margin: '0 0 0.5rem 0', color: 'var(--text-secondary)' }}>Key Events</h5>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
                   {activeMonthData.events.map((e, idx) => (
-                    <span key={idx} style={{ background: '#f3f4f6', padding: '0.25rem 0.5rem', borderRadius: '4px', fontSize: '0.875rem' }}>
+                    <span key={idx} style={{ background: 'var(--bg-elevated)', padding: '0.25rem 0.5rem', borderRadius: '4px', fontSize: '0.875rem' }}>
                       {e}
                     </span>
                   ))}
@@ -272,7 +272,7 @@ export default function SeasonalPlannerPage() {
             )}
 
             <div style={{ marginBottom: '1.5rem' }}>
-              <h5 style={{ margin: '0 0 0.75rem 0', color: '#4b5563' }}>Action Plan</h5>
+              <h5 style={{ margin: '0 0 0.75rem 0', color: 'var(--text-secondary)' }}>Action Plan</h5>
               <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
                 {activeMonthData.recommendations.map((rec, idx) => (
                   <li key={idx} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem', marginBottom: '0.5rem', fontSize: '0.875rem' }}>

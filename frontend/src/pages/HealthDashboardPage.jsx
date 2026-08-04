@@ -23,10 +23,10 @@ function ScoreBar({ label, value, max, color }) {
   return (
     <div style={{ marginBottom: 6 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 2 }}>
-        <span style={{ fontSize: 11, color: '#6b7280' }}>{label}</span>
+        <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{label}</span>
         <span style={{ fontSize: 11, fontWeight: 600 }}>{value}/{max}</span>
       </div>
-      <div style={{ height: 4, background: '#f3f4f6', borderRadius: 99 }}>
+      <div style={{ height: 4, background: 'var(--bg-elevated)', borderRadius: 99 }}>
         <div style={{ height: 4, borderRadius: 99, width: `${(value / max) * 100}%`, background: color }} />
       </div>
     </div>
@@ -43,20 +43,20 @@ function ClientHealthCard({ client, rank }) {
       <div style={{ padding: '14px 16px', background: style.bg, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 12 }}
         onClick={() => setExpanded(!expanded)}>
         {/* Rank */}
-        <div style={{ width: 30, height: 30, borderRadius: '50%', background: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+        <div style={{ width: 30, height: 30, borderRadius: '50%', background: 'var(--bg-card)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
           <span style={{ fontSize: 13, fontWeight: 800, color: style.text }}>#{rank}</span>
         </div>
 
         {/* Avatar */}
         <div style={{ width: 36, height: 36, borderRadius: '50%', background: style.text, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-          <span style={{ color: 'white', fontSize: 15, fontWeight: 700 }}>{client.client_name[0]}</span>
+          <span style={{ color: 'var(--bg-card)', fontSize: 15, fontWeight: 700 }}>{client.client_name[0]}</span>
         </div>
 
         {/* Name + label */}
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 2 }}>
             <p style={{ fontSize: 15, fontWeight: 700 }}>{client.client_name}</p>
-            <span style={{ fontSize: 11, fontWeight: 700, padding: '2px 8px', borderRadius: 999, background: 'white', color: style.text }}>
+            <span style={{ fontSize: 11, fontWeight: 700, padding: '2px 8px', borderRadius: 999, background: 'var(--bg-card)', color: style.text }}>
               {client.health_emoji} {client.health_label}
             </span>
             {!client.should_take_new_work && (
@@ -65,7 +65,7 @@ function ClientHealthCard({ client, rank }) {
               </span>
             )}
           </div>
-          <p style={{ fontSize: 12, color: '#6b7280' }}>
+          <p style={{ fontSize: 12, color: 'var(--text-muted)' }}>
             {client.paid_count} paid · {fmt(client.total_paid_amount)} total ·
             {client.overdue_count > 0 && <span style={{ color: '#dc2626' }}> {client.overdue_count} overdue ·</span>}
             {client.dispute_count > 0 && <span style={{ color: '#dc2626' }}> {client.dispute_count} dispute(s) ·</span>}
@@ -83,10 +83,10 @@ function ClientHealthCard({ client, rank }) {
       </div>
 
       {expanded && (
-        <div style={{ background: 'white', padding: '14px 16px', borderTop: `1px solid ${style.border}` }}>
+        <div style={{ background: 'var(--bg-card)', padding: '14px 16px', borderTop: `1px solid ${style.border}` }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
             <div>
-              <h5 style={{ fontSize: 12, fontWeight: 700, color: '#6b7280', marginBottom: 8, textTransform: 'uppercase' }}>Score Breakdown</h5>
+              <h5 style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-muted)', marginBottom: 8, textTransform: 'uppercase' }}>Score Breakdown</h5>
               <ScoreBar label="Payment" value={client.payment_score} max={30} color={style.bar} />
               <ScoreBar label="Loyalty" value={client.loyalty_score} max={20} color={style.bar} />
               <ScoreBar label="Professional" value={client.professional_score} max={20} color={style.bar} />
@@ -104,7 +104,7 @@ function ClientHealthCard({ client, rank }) {
                   {client.red_flags.map((f, i) => (
                     <div key={i} style={{ display: 'flex', gap: 5, marginBottom: 4 }}>
                       <AlertTriangle size={12} color="#dc2626" style={{ flexShrink: 0, marginTop: 1 }} />
-                      <p style={{ fontSize: 12, color: '#374151' }}>{f}</p>
+                      <p style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{f}</p>
                     </div>
                   ))}
                 </div>
@@ -116,7 +116,7 @@ function ClientHealthCard({ client, rank }) {
                   {client.green_flags.map((f, i) => (
                     <div key={i} style={{ display: 'flex', gap: 5, marginBottom: 4 }}>
                       <CheckCircle2 size={12} color="#15803d" style={{ flexShrink: 0, marginTop: 1 }} />
-                      <p style={{ fontSize: 12, color: '#374151' }}>{f}</p>
+                      <p style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{f}</p>
                     </div>
                   ))}
                 </div>
@@ -185,21 +185,21 @@ export default function HealthDashboardPage() {
       {loading ? (
         <div style={{ textAlign: 'center', padding: 60 }}>
           <Loader2 size={32} className="spin" color="#4f46e5" />
-          <p style={{ fontSize: 14, color: '#6b7280', marginTop: 12 }}>
+          <p style={{ fontSize: 14, color: 'var(--text-muted)', marginTop: 12 }}>
             Analyzing all client data — invoices, disputes, reminders, scope drift...
           </p>
         </div>
       ) : !data?.total_clients ? (
         <div className="card" style={{ textAlign: 'center', padding: 40 }}>
           <Users size={32} color="#9ca3af" />
-          <p style={{ fontSize: 14, color: '#6b7280', marginTop: 12 }}>Add clients to see their health scores.</p>
+          <p style={{ fontSize: 14, color: 'var(--text-muted)', marginTop: 12 }}>Add clients to see their health scores.</p>
         </div>
       ) : (
         <>
           {/* Summary stats */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10, marginBottom: 20 }}>
             {[
-              { label: 'Total Clients', value: data.total_clients, color: '#4f46e5', icon: Users },
+              { label: 'Total Clients', value: data.total_clients, color: 'var(--brand)', icon: Users },
               { label: 'Avg Health Score', value: `${data.avg_health}/100`, color: '#15803d', icon: Activity },
               { label: 'Champions', value: data.champions_count, color: '#15803d', icon: CheckCircle2 },
               { label: 'At Risk / Avoid', value: data.at_risk_count, color: '#dc2626', icon: AlertTriangle },
@@ -207,7 +207,7 @@ export default function HealthDashboardPage() {
               <div key={label} className="card">
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
                   <Icon size={14} color={color} />
-                  <p style={{ fontSize: 11, color: '#9ca3af' }}>{label}</p>
+                  <p style={{ fontSize: 11, color: 'var(--text-muted)' }}>{label}</p>
                 </div>
                 <p style={{ fontSize: 20, fontWeight: 700, color }}>{value}</p>
               </div>
@@ -223,7 +223,7 @@ export default function HealthDashboardPage() {
                 : data.scores.filter(c => c.health_label === seg).length
               return (
                 <button key={seg} onClick={() => setFilter(seg)}
-                  style={{ padding: '6px 14px', borderRadius: 999, fontSize: 12, fontWeight: 600, cursor: 'pointer', border: filter === seg ? `2px solid ${style?.text || '#4f46e5'}` : '1px solid #e5e7eb', background: filter === seg ? (style?.bg || '#eef2ff') : 'white', color: filter === seg ? (style?.text || '#4f46e5') : '#6b7280' }}>
+                  style={{ padding: '6px 14px', borderRadius: 999, fontSize: 12, fontWeight: 600, cursor: 'pointer', border: filter === seg ? `2px solid ${style?.text || '#4f46e5'}` : '1px solid #e5e7eb', background: filter === seg ? (style?.bg || '#eef2ff') : 'var(--bg-card)', color: filter === seg ? (style?.text || '#4f46e5') : 'var(--text-muted)' }}>
                   {seg === 'all' ? 'All' : seg} ({count})
                 </button>
               )

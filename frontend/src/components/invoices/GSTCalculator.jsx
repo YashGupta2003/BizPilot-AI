@@ -17,9 +17,9 @@ const CURRENCIES = {
 
 function BreakdownRow({ label, value, bold, color }) {
   return (
-    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '5px 0', borderBottom: '1px solid #f3f4f6' }}>
-      <span style={{ fontSize: 13, color: bold ? '#1a1d23' : '#6b7280', fontWeight: bold ? 600 : 400 }}>{label}</span>
-      <span style={{ fontSize: 13, fontWeight: bold ? 700 : 500, color: color || (bold ? '#1a1d23' : '#374151') }}>{value}</span>
+    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '5px 0', borderBottom: '1px solid var(--border)' }}>
+      <span style={{ fontSize: 13, color: bold ? '#1a1d23' : 'var(--text-muted)', fontWeight: bold ? 600 : 400 }}>{label}</span>
+      <span style={{ fontSize: 13, fontWeight: bold ? 700 : 500, color: color || (bold ? '#1a1d23' : 'var(--text-secondary)') }}>{value}</span>
     </div>
   )
 }
@@ -78,12 +78,12 @@ export default function GSTCalculator({ initialSubtotal = '', initialCurrency = 
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 12 }}>
         <div>
-          <label style={{ fontSize: 12, color: '#6b7280', display: 'block', marginBottom: 4 }}>Amount</label>
+          <label style={{ fontSize: 12, color: 'var(--text-muted)', display: 'block', marginBottom: 4 }}>Amount</label>
           <input className="input-field" type="number" placeholder="0.00"
             value={subtotal} onChange={(e) => setSubtotal(e.target.value)} />
         </div>
         <div>
-          <label style={{ fontSize: 12, color: '#6b7280', display: 'block', marginBottom: 4 }}>Currency</label>
+          <label style={{ fontSize: 12, color: 'var(--text-muted)', display: 'block', marginBottom: 4 }}>Currency</label>
           <select className="input-field" value={currency} onChange={(e) => setCurrency(e.target.value)}>
             {Object.entries(CURRENCIES).map(([code, info]) => (
               <option key={code} value={code}>{info.flag} {code} — {info.name}</option>
@@ -94,14 +94,14 @@ export default function GSTCalculator({ initialSubtotal = '', initialCurrency = 
 
       {!isExport && (
         <div style={{ marginBottom: 12 }}>
-          <label style={{ fontSize: 12, color: '#6b7280', display: 'block', marginBottom: 4 }}>GST Rate</label>
+          <label style={{ fontSize: 12, color: 'var(--text-muted)', display: 'block', marginBottom: 4 }}>GST Rate</label>
           <div style={{ display: 'flex', gap: 8 }}>
             {GST_SLABS.map((slab) => (
               <button key={slab} onClick={() => setGstRate(slab)} style={{
                 flex: 1, padding: '8px 4px', borderRadius: 8, fontSize: 13, cursor: 'pointer',
                 border: gstRate === slab ? '2px solid #4f46e5' : '1px solid #d1d5db',
-                background: gstRate === slab ? '#eef2ff' : 'white',
-                color: gstRate === slab ? '#4f46e5' : '#374151',
+                background: gstRate === slab ? '#eef2ff' : 'var(--bg-card)',
+                color: gstRate === slab ? '#4f46e5' : 'var(--text-secondary)',
                 fontWeight: gstRate === slab ? 700 : 400,
               }}>{slab}%</button>
             ))}
@@ -111,14 +111,14 @@ export default function GSTCalculator({ initialSubtotal = '', initialCurrency = 
 
       {!isExport && (
         <div style={{ marginBottom: 14 }}>
-          <label style={{ fontSize: 12, color: '#6b7280', display: 'block', marginBottom: 4 }}>Supply type</label>
+          <label style={{ fontSize: 12, color: 'var(--text-muted)', display: 'block', marginBottom: 4 }}>Supply type</label>
           <div style={{ display: 'flex', gap: 8 }}>
             {[true, false].map((val) => (
               <button key={String(val)} onClick={() => setIsInterState(val)} style={{
                 flex: 1, padding: '8px', borderRadius: 8, fontSize: 12, cursor: 'pointer',
                 border: isInterState === val ? '2px solid #4f46e5' : '1px solid #d1d5db',
-                background: isInterState === val ? '#eef2ff' : 'white',
-                color: isInterState === val ? '#4f46e5' : '#374151',
+                background: isInterState === val ? '#eef2ff' : 'var(--bg-card)',
+                color: isInterState === val ? '#4f46e5' : 'var(--text-secondary)',
                 fontWeight: isInterState === val ? 600 : 400,
               }}>
                 {val ? 'Inter-state (IGST)' : 'Intra-state (CGST+SGST)'}
@@ -136,21 +136,21 @@ export default function GSTCalculator({ initialSubtotal = '', initialCurrency = 
       )}
 
       {currency !== 'INR' && rates && (
-        <div style={{ fontSize: 12.5, color: '#6b7280', marginBottom: 12, background: '#f9fafb', padding: '6px 10px', borderRadius: 6 }}>
+        <div style={{ fontSize: 12.5, color: 'var(--text-muted)', marginBottom: 12, background: 'var(--bg-elevated)', padding: '6px 10px', borderRadius: 6 }}>
           Live rate: 1 {currency} = ₹{rates[currency]?.toFixed(2) || '—'}
-          <span style={{ color: '#9ca3af' }}> (updated hourly)</span>
+          <span style={{ color: 'var(--text-muted)' }}> (updated hourly)</span>
         </div>
       )}
 
       {loading && (
-        <div style={{ textAlign: 'center', padding: 16, color: '#6b7280', fontSize: 13 }}>
+        <div style={{ textAlign: 'center', padding: 16, color: 'var(--text-muted)', fontSize: 13 }}>
           <RefreshCw size={16} className="spin" /> Calculating...
         </div>
       )}
 
       {result && !loading && (
-        <div style={{ background: '#f9fafb', borderRadius: 8, padding: '12px 14px' }}>
-          <p style={{ fontSize: 11, color: '#9ca3af', marginBottom: 8, textTransform: 'uppercase' }}>Breakdown</p>
+        <div style={{ background: 'var(--bg-elevated)', borderRadius: 8, padding: '12px 14px' }}>
+          <p style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 8, textTransform: 'uppercase' }}>Breakdown</p>
           <BreakdownRow label="Subtotal" value={`${sym} ${fmt(result.subtotal)}`} />
           {result.igst_amount > 0 && <BreakdownRow label={`IGST @ ${result.igst_rate}%`} value={`${sym} ${fmt(result.igst_amount)}`} color="#dc2626" />}
           {result.cgst_amount > 0 && <BreakdownRow label={`CGST @ ${result.cgst_rate}%`} value={`${sym} ${fmt(result.cgst_amount)}`} color="#dc2626" />}

@@ -41,7 +41,7 @@ function PriceRangeVisual({ min, max, optimal, market }) {
 
   return (
     <div style={{ marginBottom: 20 }}>
-      <div style={{ position: 'relative', height: 60, background: '#f3f4f6', borderRadius: 8, overflow: 'hidden' }}>
+      <div style={{ position: 'relative', height: 60, background: 'var(--bg-elevated)', borderRadius: 8, overflow: 'hidden' }}>
         {/* Market range */}
         <div style={{
           position: 'absolute', top: 4, height: 24, borderRadius: 4,
@@ -49,7 +49,7 @@ function PriceRangeVisual({ min, max, optimal, market }) {
           left: `${toPercent(market.min)}%`,
           width: `${toPercent(market.max) - toPercent(market.min)}%`,
         }}>
-          <span style={{ fontSize: 9, color: '#4f46e5', padding: '0 4px', lineHeight: '22px', display: 'block', overflow: 'hidden' }}>Market range</span>
+          <span style={{ fontSize: 9, color: 'var(--brand)', padding: '0 4px', lineHeight: '22px', display: 'block', overflow: 'hidden' }}>Market range</span>
         </div>
         {/* Your range */}
         <div style={{
@@ -63,14 +63,14 @@ function PriceRangeVisual({ min, max, optimal, market }) {
         {/* Optimal marker */}
         <div style={{
           position: 'absolute', top: 0, bottom: 0, width: 3,
-          background: '#4f46e5', borderRadius: 2,
+          background: 'var(--brand)', borderRadius: 2,
           left: `${toPercent(optimal)}%`,
         }} />
       </div>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 4 }}>
-        <span style={{ fontSize: 11, color: '#9ca3af' }}>{fmt(globalMin)}</span>
-        <span style={{ fontSize: 11, color: '#4f46e5', fontWeight: 700 }}>Optimal: {fmt(optimal)}</span>
-        <span style={{ fontSize: 11, color: '#9ca3af' }}>{fmt(globalMax)}</span>
+        <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{fmt(globalMin)}</span>
+        <span style={{ fontSize: 11, color: 'var(--brand)', fontWeight: 700 }}>Optimal: {fmt(optimal)}</span>
+        <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{fmt(globalMax)}</span>
       </div>
     </div>
   )
@@ -80,7 +80,7 @@ function SuggestionResult({ data }) {
   return (
     <div>
       {/* Main price card */}
-      <div style={{ padding: '20px 24px', background: 'linear-gradient(135deg, #4f46e5, #7c3aed)', borderRadius: 14, marginBottom: 16, color: 'white' }}>
+      <div style={{ padding: '20px 24px', background: 'linear-gradient(135deg, #4f46e5, #7c3aed)', borderRadius: 14, marginBottom: 16, color: 'var(--bg-card)' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <div>
             <p style={{ fontSize: 12, opacity: 0.8, marginBottom: 4 }}>RECOMMENDED RANGE</p>
@@ -107,12 +107,12 @@ function SuggestionResult({ data }) {
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10, marginBottom: 16 }}>
         {[
-          { label: 'Market Typical', value: fmt(data.market_range.typical), color: '#6b7280' },
+          { label: 'Market Typical', value: fmt(data.market_range.typical), color: 'var(--text-muted)' },
           { label: 'Your Win Range', value: data.your_win_range ? `${fmt(data.your_win_range.min)}–${fmt(data.your_win_range.max)}` : 'No data yet', color: '#15803d' },
           { label: 'Your Historical', value: data.historical_range ? fmt(data.historical_range.avg) : 'No data yet', color: '#1d4ed8' },
         ].map(({ label, value, color }) => (
-          <div key={label} style={{ textAlign: 'center', background: '#f9fafb', borderRadius: 8, padding: '10px 8px' }}>
-            <p style={{ fontSize: 11, color: '#9ca3af', marginBottom: 3 }}>{label}</p>
+          <div key={label} style={{ textAlign: 'center', background: 'var(--bg-elevated)', borderRadius: 8, padding: '10px 8px' }}>
+            <p style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 3 }}>{label}</p>
             <p style={{ fontSize: 14, fontWeight: 700, color }}>{value}</p>
           </div>
         ))}
@@ -125,7 +125,7 @@ function SuggestionResult({ data }) {
           {data.reasoning.map((r, i) => (
             <div key={i} style={{ display: 'flex', gap: 8, marginBottom: 7, alignItems: 'flex-start' }}>
               <span style={{ fontSize: 16, flexShrink: 0 }}>{r.icon}</span>
-              <p style={{ fontSize: 13, color: '#374151', lineHeight: 1.5 }}>{r.text}</p>
+              <p style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.5 }}>{r.text}</p>
             </div>
           ))}
         </div>
@@ -162,8 +162,8 @@ function SuggestionResult({ data }) {
               { label: 'Disputes', value: data.client_signals.dispute_count },
               { label: 'LTV Score', value: `${data.client_signals.ltv_score}/100` },
             ].map(({ label, value }) => (
-              <div key={label} style={{ background: '#f9fafb', borderRadius: 6, padding: '7px 10px', display: 'flex', justifyContent: 'space-between' }}>
-                <span style={{ fontSize: 12, color: '#6b7280' }}>{label}</span>
+              <div key={label} style={{ background: 'var(--bg-elevated)', borderRadius: 6, padding: '7px 10px', display: 'flex', justifyContent: 'space-between' }}>
+                <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>{label}</span>
                 <span style={{ fontSize: 12, fontWeight: 700 }}>{value}</span>
               </div>
             ))}
@@ -176,18 +176,18 @@ function SuggestionResult({ data }) {
 
 function PricingHistoryPanel({ history }) {
   if (!history?.has_data) {
-    return <p style={{ textAlign: 'center', color: '#9ca3af', padding: 24 }}>No paid invoice data yet.</p>
+    return <p style={{ textAlign: 'center', color: 'var(--text-muted)', padding: 24 }}>No paid invoice data yet.</p>
   }
 
   return (
     <div>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 16 }}>
         <div className="card">
-          <p style={{ fontSize: 11, color: '#9ca3af', marginBottom: 4 }}>Total Paid Projects</p>
-          <p style={{ fontSize: 22, fontWeight: 700, color: '#4f46e5' }}>{history.total_paid_projects}</p>
+          <p style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 4 }}>Total Paid Projects</p>
+          <p style={{ fontSize: 22, fontWeight: 700, color: 'var(--brand)' }}>{history.total_paid_projects}</p>
         </div>
         <div className="card">
-          <p style={{ fontSize: 11, color: '#9ca3af', marginBottom: 4 }}>Avg Project Value</p>
+          <p style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 4 }}>Avg Project Value</p>
           <p style={{ fontSize: 22, fontWeight: 700, color: '#15803d' }}>{fmt(history.avg_project_value)}</p>
         </div>
       </div>
@@ -209,13 +209,13 @@ function PricingHistoryPanel({ history }) {
               <tr key={i}>
                 <td style={{ fontSize: 13 }}>{s.service_type}</td>
                 <td style={{ fontWeight: 600 }}>{fmt(s.your_avg)}</td>
-                <td style={{ color: '#6b7280' }}>{fmt(s.market_typical)}</td>
+                <td style={{ color: 'var(--text-muted)' }}>{fmt(s.market_typical)}</td>
                 <td>
                   <span style={{ fontSize: 12, fontWeight: 700, color: s.vs_market >= 0 ? '#15803d' : '#dc2626' }}>
                     {s.vs_market >= 0 ? '+' : ''}{s.vs_market}%
                   </span>
                 </td>
-                <td style={{ color: '#6b7280' }}>{s.project_count}</td>
+                <td style={{ color: 'var(--text-muted)' }}>{s.project_count}</td>
               </tr>
             ))}
           </tbody>
@@ -270,13 +270,13 @@ export default function PricingPage() {
       <h1 className="page-title">Smart Pricing Engine</h1>
       <p className="page-subtitle">AI-powered pricing based on your win rate, client type, and project complexity</p>
 
-      <div style={{ display: 'flex', gap: 6, marginBottom: 24, background: '#f3f4f6', padding: 6, borderRadius: 10, width: 'fit-content' }}>
+      <div style={{ display: 'flex', gap: 6, marginBottom: 24, background: 'var(--bg-elevated)', padding: 6, borderRadius: 10, width: 'fit-content' }}>
         {[
           { key: 'suggest', label: 'Get Price Suggestion', icon: Zap },
           { key: 'history', label: 'Pricing History', icon: BarChart3 },
         ].map(({ key, label, icon: Icon }) => (
           <button key={key} onClick={() => setTab(key)}
-            style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '9px 18px', borderRadius: 8, fontSize: 14, border: 'none', cursor: 'pointer', fontWeight: tab === key ? 600 : 400, background: tab === key ? '#4f46e5' : 'transparent', color: tab === key ? '#fff' : '#6b7280' }}>
+            style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '9px 18px', borderRadius: 8, fontSize: 14, border: 'none', cursor: 'pointer', fontWeight: tab === key ? 600 : 400, background: tab === key ? '#4f46e5' : 'transparent', color: tab === key ? '#fff' : 'var(--text-muted)' }}>
             <Icon size={15} /> {label}
           </button>
         ))}
@@ -287,38 +287,38 @@ export default function PricingPage() {
           <div className="card">
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 12 }}>
               <div>
-                <label style={{ fontSize: 12, color: '#6b7280', display: 'block', marginBottom: 4 }}>Service Type</label>
+                <label style={{ fontSize: 12, color: 'var(--text-muted)', display: 'block', marginBottom: 4 }}>Service Type</label>
                 <select className="input-field" value={form.service_type} onChange={e => update('service_type', e.target.value)}>
                   {SERVICE_TYPES.map(s => <option key={s} value={s}>{s}</option>)}
                 </select>
               </div>
               <div>
-                <label style={{ fontSize: 12, color: '#6b7280', display: 'block', marginBottom: 4 }}>Client</label>
+                <label style={{ fontSize: 12, color: 'var(--text-muted)', display: 'block', marginBottom: 4 }}>Client</label>
                 <select className="input-field" value={form.client_id} onChange={e => handleClientChange(e.target.value)}>
                   <option value="">Select client (optional)</option>
                   {clients.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                 </select>
               </div>
               <div>
-                <label style={{ fontSize: 12, color: '#6b7280', display: 'block', marginBottom: 4 }}>Client Type</label>
+                <label style={{ fontSize: 12, color: 'var(--text-muted)', display: 'block', marginBottom: 4 }}>Client Type</label>
                 <select className="input-field" value={form.client_type} onChange={e => update('client_type', e.target.value)}>
                   {CLIENT_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
                 </select>
               </div>
               <div>
-                <label style={{ fontSize: 12, color: '#6b7280', display: 'block', marginBottom: 4 }}>Deliverables</label>
+                <label style={{ fontSize: 12, color: 'var(--text-muted)', display: 'block', marginBottom: 4 }}>Deliverables</label>
                 <input className="input-field" type="number" min={1} max={20} value={form.deliverable_count} onChange={e => update('deliverable_count', parseInt(e.target.value))} />
               </div>
             </div>
 
             <div style={{ marginBottom: 14 }}>
-              <label style={{ fontSize: 12, color: '#6b7280', display: 'block', marginBottom: 6 }}>Project Complexity</label>
+              <label style={{ fontSize: 12, color: 'var(--text-muted)', display: 'block', marginBottom: 6 }}>Project Complexity</label>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
                 {COMPLEXITIES.map(c => (
                   <button key={c.value} onClick={() => update('complexity', c.value)}
-                    style={{ padding: '8px 10px', borderRadius: 8, cursor: 'pointer', textAlign: 'left', border: form.complexity === c.value ? '2px solid #4f46e5' : '1px solid #e5e7eb', background: form.complexity === c.value ? '#eef2ff' : 'white' }}>
-                    <p style={{ fontSize: 13, fontWeight: 600, color: form.complexity === c.value ? '#4f46e5' : '#374151' }}>{c.label}</p>
-                    <p style={{ fontSize: 11, color: '#9ca3af' }}>{c.desc}</p>
+                    style={{ padding: '8px 10px', borderRadius: 8, cursor: 'pointer', textAlign: 'left', border: form.complexity === c.value ? '2px solid #4f46e5' : '1px solid #e5e7eb', background: form.complexity === c.value ? '#eef2ff' : 'var(--bg-card)' }}>
+                    <p style={{ fontSize: 13, fontWeight: 600, color: form.complexity === c.value ? '#4f46e5' : 'var(--text-secondary)' }}>{c.label}</p>
+                    <p style={{ fontSize: 11, color: 'var(--text-muted)' }}>{c.desc}</p>
                   </button>
                 ))}
               </div>

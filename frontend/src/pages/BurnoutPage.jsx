@@ -56,7 +56,7 @@ export default function BurnoutPage() {
       <h1 className="page-title">Income Stability</h1>
       <div style={{ textAlign: 'center', padding: 60 }}>
         <Loader2 size={32} className="spin" color="#4f46e5" />
-        <p style={{ fontSize: 14, color: '#6b7280', marginTop: 12 }}>Analyzing your income patterns...</p>
+        <p style={{ fontSize: 14, color: 'var(--text-muted)', marginTop: 12 }}>Analyzing your income patterns...</p>
       </div>
     </AppLayout>
   )
@@ -66,7 +66,7 @@ export default function BurnoutPage() {
       <h1 className="page-title">Income Stability</h1>
       <div className="card" style={{ textAlign: 'center', padding: 40 }}>
         <Activity size={32} color="#9ca3af" />
-        <p style={{ fontSize: 14, color: '#6b7280', marginTop: 12 }}>{error}</p>
+        <p style={{ fontSize: 14, color: 'var(--text-muted)', marginTop: 12 }}>{error}</p>
       </div>
     </AppLayout>
   )
@@ -94,9 +94,9 @@ export default function BurnoutPage() {
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
               <Activity size={18} color={colors.text} />
-              <h2 style={{ fontSize: 17, fontWeight: 700, color: '#1a1d23' }}>Burnout Risk: {data.burnout_label}</h2>
+              <h2 style={{ fontSize: 17, fontWeight: 700, color: 'var(--text-primary)' }}>Burnout Risk: {data.burnout_label}</h2>
             </div>
-            <p style={{ fontSize: 13, color: '#4b5563' }}>Based on {data.months_analyzed} months of invoice history</p>
+            <p style={{ fontSize: 13, color: 'var(--text-secondary)' }}>Based on {data.months_analyzed} months of invoice history</p>
           </div>
           <div style={{ textAlign: 'right' }}>
             <div style={{ fontSize: 44, fontWeight: 900, color: colors.text, lineHeight: 1 }}>{data.burnout_score}</div>
@@ -113,13 +113,13 @@ export default function BurnoutPage() {
         {[
           { label: 'Avg Monthly Revenue', value: formatCurrency(data.avg_monthly_revenue), icon: DollarSign, color: '#15803d' },
           { label: 'Gap Risk Next Month', value: `${data.gap_probability_next_month}%`, icon: AlertTriangle, color: data.gap_probability_next_month >= 70 ? '#dc2626' : '#d97706' },
-          { label: 'Income Volatility', value: data.volatility_label, icon: Activity, color: '#4f46e5' },
-          { label: 'Income Trend', value: data.income_trend?.replace('_', ' '), icon: ({ size, color }) => <TrendIcon trend={data.income_trend} />, color: '#1a1d23' },
+          { label: 'Income Volatility', value: data.volatility_label, icon: Activity, color: 'var(--brand)' },
+          { label: 'Income Trend', value: data.income_trend?.replace('_', ' '), icon: ({ size, color }) => <TrendIcon trend={data.income_trend} />, color: 'var(--text-primary)' },
         ].map(({ label, value, icon: Icon, color }) => (
           <div key={label} className="card">
             <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
               <Icon size={14} color={color} />
-              <p style={{ fontSize: 12, color: '#6b7280' }}>{label}</p>
+              <p style={{ fontSize: 12, color: 'var(--text-muted)' }}>{label}</p>
             </div>
             <p style={{ fontSize: 18, fontWeight: 700, color, textTransform: 'capitalize' }}>{value}</p>
           </div>
@@ -166,10 +166,10 @@ export default function BurnoutPage() {
                     <ActionIcon size={16} color={pc.text} style={{ flexShrink: 0, marginTop: 1 }} />
                     <div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 3 }}>
-                        <p style={{ fontSize: 13.5, fontWeight: 600, color: '#1a1d23' }}>{rec.action}</p>
-                        <span style={{ fontSize: 10, fontWeight: 700, color: pc.text, background: 'white', padding: '1px 7px', borderRadius: 999 }}>{rec.priority}</span>
+                        <p style={{ fontSize: 13.5, fontWeight: 600, color: 'var(--text-primary)' }}>{rec.action}</p>
+                        <span style={{ fontSize: 10, fontWeight: 700, color: pc.text, background: 'var(--bg-card)', padding: '1px 7px', borderRadius: 999 }}>{rec.priority}</span>
                       </div>
-                      <p style={{ fontSize: 12.5, color: '#4b5563', lineHeight: 1.5 }}>{rec.reason}</p>
+                      <p style={{ fontSize: 12.5, color: 'var(--text-secondary)', lineHeight: 1.5 }}>{rec.reason}</p>
                     </div>
                   </div>
                 </div>

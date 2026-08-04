@@ -56,7 +56,7 @@ function ReminderCard({ item, onSendSuccess }) {
           <CheckCircle2 size={18} />
           <span style={{ fontWeight: 600 }}>Reminder sent to {item.client_name}</span>
         </div>
-        <p style={{ fontSize: 12.5, color: '#6b7280', marginTop: 4 }}>
+        <p style={{ fontSize: 12.5, color: 'var(--text-muted)', marginTop: 4 }}>
           {item.invoice_number} — {formatCurrency(item.total)} — Sent to {phone}
         </p>
       </div>
@@ -73,21 +73,21 @@ function ReminderCard({ item, onSendSuccess }) {
               {colors.label}
             </span>
           </div>
-          <p style={{ fontSize: 12.5, color: '#6b7280' }}>
+          <p style={{ fontSize: 12.5, color: 'var(--text-muted)' }}>
             {item.invoice_number} · {formatCurrency(item.total)} ·
             <strong style={{ color: colors.text }}> {item.days_overdue} days overdue</strong>
             · {item.reminder_count > 0 ? `${item.reminder_count} reminder(s) sent` : 'No reminders yet'}
           </p>
         </div>
         {item.already_sent_today && (
-          <span style={{ fontSize: 11, color: '#9ca3af', background: '#f3f4f6', padding: '4px 10px', borderRadius: 999 }}>
+          <span style={{ fontSize: 11, color: 'var(--text-muted)', background: 'var(--bg-elevated)', padding: '4px 10px', borderRadius: 999 }}>
             Already sent today
           </span>
         )}
       </div>
 
       <div style={{ marginBottom: 10 }}>
-        <label style={{ fontSize: 12, color: '#6b7280', display: 'flex', alignItems: 'center', gap: 5, marginBottom: 4 }}>
+        <label style={{ fontSize: 12, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: 5, marginBottom: 4 }}>
           <Phone size={12} /> WhatsApp number (with country code, e.g. +919876543210)
         </label>
         <input
@@ -95,23 +95,23 @@ function ReminderCard({ item, onSendSuccess }) {
           placeholder="+919876543210"
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
-          style={{ background: 'white' }}
+          style={{ background: 'var(--bg-card)' }}
         />
       </div>
 
       <div style={{ marginBottom: 10 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
-          <label style={{ fontSize: 12, color: '#6b7280', display: 'flex', alignItems: 'center', gap: 5 }}>
+          <label style={{ fontSize: 12, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: 5 }}>
             <MessageSquare size={12} /> AI-drafted message (edit before sending)
           </label>
-          <button onClick={() => setEditing(!editing)} style={{ fontSize: 12, color: '#4f46e5', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4 }}>
+          <button onClick={() => setEditing(!editing)} style={{ fontSize: 12, color: 'var(--brand)', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4 }}>
             <Edit3 size={12} /> {editing ? 'Done' : 'Edit'}
           </button>
         </div>
         {editing ? (
-          <textarea className="input-field" rows={6} value={message} onChange={(e) => setMessage(e.target.value)} style={{ background: 'white', resize: 'vertical' }} />
+          <textarea className="input-field" rows={6} value={message} onChange={(e) => setMessage(e.target.value)} style={{ background: 'var(--bg-card)', resize: 'vertical' }} />
         ) : (
-          <div style={{ fontSize: 13.5, lineHeight: 1.6, color: '#374151', whiteSpace: 'pre-wrap', background: 'white', padding: '10px 12px', borderRadius: 8, border: '1px solid #e5e7eb' }}>
+          <div style={{ fontSize: 13.5, lineHeight: 1.6, color: 'var(--text-secondary)', whiteSpace: 'pre-wrap', background: 'var(--bg-card)', padding: '10px 12px', borderRadius: 8, border: '1px solid var(--border)' }}>
             {message}
           </div>
         )}
@@ -170,8 +170,8 @@ export default function RemindersPage() {
       </div>
 
       <div className="card" style={{ marginBottom: 20, borderLeft: '4px solid #4f46e5', background: '#eef2ff' }}>
-        <h3 style={{ fontSize: 14, fontWeight: 600, marginBottom: 8, color: '#4f46e5' }}>Twilio WhatsApp Setup (one-time, free)</h3>
-        <ol style={{ fontSize: 13, color: '#4b5563', lineHeight: 2, paddingLeft: 18 }}>
+        <h3 style={{ fontSize: 14, fontWeight: 600, marginBottom: 8, color: 'var(--brand)' }}>Twilio WhatsApp Setup (one-time, free)</h3>
+        <ol style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 2, paddingLeft: 18 }}>
           <li>Sign up free at <strong>console.twilio.com</strong></li>
           <li>Go to <strong>Messaging → Try it Out → Send a WhatsApp message</strong></li>
           <li>From your phone WhatsApp, send <code style={{ background: '#e0e7ff', padding: '1px 6px', borderRadius: 4 }}>join [your-sandbox-word]</code> to <strong>+14155238886</strong></li>
@@ -184,7 +184,7 @@ export default function RemindersPage() {
       {loading ? (
         <div className="card" style={{ textAlign: 'center', padding: 40 }}>
           <Loader2 size={28} className="spin" color="#4f46e5" />
-          <p style={{ fontSize: 14, color: '#6b7280', marginTop: 12 }}>Scanning invoices and drafting reminders...</p>
+          <p style={{ fontSize: 14, color: 'var(--text-muted)', marginTop: 12 }}>Scanning invoices and drafting reminders...</p>
         </div>
       ) : error ? (
         <div className="card"><p style={{ color: '#dc2626', fontSize: 14 }}>{error}</p></div>
@@ -192,11 +192,11 @@ export default function RemindersPage() {
         <div className="card" style={{ textAlign: 'center', padding: 40 }}>
           <CheckCircle2 size={36} color="#15803d" />
           <p style={{ fontSize: 15, fontWeight: 600, marginTop: 12 }}>No overdue invoices!</p>
-          <p style={{ fontSize: 13.5, color: '#6b7280', marginTop: 4 }}>All your sent invoices are within their due dates.</p>
+          <p style={{ fontSize: 13.5, color: 'var(--text-muted)', marginTop: 4 }}>All your sent invoices are within their due dates.</p>
         </div>
       ) : (
         <>
-          <div style={{ marginBottom: 16, fontSize: 14, color: '#6b7280', display: 'flex', alignItems: 'center', gap: 6 }}>
+          <div style={{ marginBottom: 16, fontSize: 14, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: 6 }}>
             <Clock size={14} />
             {previews.length} overdue invoice{previews.length !== 1 ? 's' : ''} found.
             {sentCount > 0 && <span style={{ color: '#15803d', fontWeight: 600 }}> {sentCount} reminder(s) sent this session.</span>}

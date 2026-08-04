@@ -45,7 +45,7 @@ function RedFlagCard({ flag }) {
           {flag.risk} RISK
         </span>
       </div>
-      <p style={{ fontSize: 12.5, color: '#4b5563', lineHeight: 1.5 }}>{flag.reason}</p>
+      <p style={{ fontSize: 12.5, color: 'var(--text-secondary)', lineHeight: 1.5 }}>{flag.reason}</p>
     </div>
   )
 }
@@ -56,12 +56,12 @@ function RiskMeter({ score }) {
   const color = score >= 7 ? '#dc2626' : score >= 4 ? '#d97706' : '#15803d'
   return (
     <div style={{ marginBottom: 6 }}>
-      <div style={{ height: 10, background: '#f3f4f6', borderRadius: 99, overflow: 'hidden' }}>
+      <div style={{ height: 10, background: 'var(--bg-elevated)', borderRadius: 99, overflow: 'hidden' }}>
         <div style={{ height: 10, width: `${pct}%`, background: color, borderRadius: 99, transition: 'width 0.8s ease' }} />
       </div>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 3 }}>
-        <span style={{ fontSize: 11, color: '#9ca3af' }}>Safe</span>
-        <span style={{ fontSize: 11, color: '#9ca3af' }}>Risky</span>
+        <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>Safe</span>
+        <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>Risky</span>
       </div>
     </div>
   )
@@ -78,7 +78,7 @@ function ProfileResult({ profile }) {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <div>
             <p style={{ fontSize: 11, color: riskStyle.text, fontWeight: 700, marginBottom: 2, textTransform: 'uppercase' }}>Client Type</p>
-            <h3 style={{ fontSize: 17, fontWeight: 700, color: '#1a1d23' }}>{profile.client_type}</h3>
+            <h3 style={{ fontSize: 17, fontWeight: 700, color: 'var(--text-primary)' }}>{profile.client_type}</h3>
           </div>
           <div style={{ textAlign: 'center' }}>
             <div style={{ fontSize: 36, fontWeight: 900, color: riskStyle.text, lineHeight: 1 }}>{profile.overall_risk_score}</div>
@@ -88,14 +88,14 @@ function ProfileResult({ profile }) {
         <div style={{ marginTop: 10 }}>
           <RiskMeter score={profile.overall_risk_score} />
         </div>
-        <span style={{ fontSize: 12, fontWeight: 700, color: riskStyle.text, background: 'white', padding: '3px 10px', borderRadius: 999, border: `1px solid ${riskStyle.border}` }}>
+        <span style={{ fontSize: 12, fontWeight: 700, color: riskStyle.text, background: 'var(--bg-card)', padding: '3px 10px', borderRadius: 999, border: `1px solid ${riskStyle.border}` }}>
           {profile.overall_risk_label}
         </span>
       </div>
 
       {/* Summary */}
       <div className="card" style={{ marginBottom: 12 }}>
-        <p style={{ fontSize: 14, color: '#374151', lineHeight: 1.7 }}>{profile.summary}</p>
+        <p style={{ fontSize: 14, color: 'var(--text-secondary)', lineHeight: 1.7 }}>{profile.summary}</p>
       </div>
 
       {/* Behavioral Predictions */}
@@ -110,12 +110,12 @@ function ProfileResult({ profile }) {
             { icon: ChevronRight, label: 'Scope Respect', value: profile.scope_respect },
             { icon: User, label: 'Professionalism', value: profile.professionalism_level },
           ].map(({ icon: Icon, label, value }) => (
-            <div key={label} style={{ background: '#f9fafb', borderRadius: 8, padding: '10px 12px' }}>
+            <div key={label} style={{ background: 'var(--bg-elevated)', borderRadius: 8, padding: '10px 12px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 4 }}>
                 <Icon size={13} color="#6b7280" />
-                <p style={{ fontSize: 11, color: '#9ca3af', fontWeight: 600, textTransform: 'uppercase' }}>{label}</p>
+                <p style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>{label}</p>
               </div>
-              <p style={{ fontSize: 13, color: '#374151', fontWeight: 500 }}>{value}</p>
+              <p style={{ fontSize: 13, color: 'var(--text-secondary)', fontWeight: 500 }}>{value}</p>
             </div>
           ))}
         </div>
@@ -140,7 +140,7 @@ function ProfileResult({ profile }) {
           {profile.green_flags.map((flag, i) => (
             <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 6, marginBottom: 5 }}>
               <CheckCircle2 size={14} color="#15803d" style={{ marginTop: 1, flexShrink: 0 }} />
-              <p style={{ fontSize: 13, color: '#374151' }}>{flag}</p>
+              <p style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{flag}</p>
             </div>
           ))}
         </div>
@@ -148,10 +148,10 @@ function ProfileResult({ profile }) {
 
       {/* Negotiation Approach */}
       <div className="card" style={{ marginBottom: 12, borderLeft: '4px solid #4f46e5' }}>
-        <h4 style={{ fontSize: 13, fontWeight: 700, marginBottom: 6, display: 'flex', alignItems: 'center', gap: 6, color: '#4f46e5' }}>
+        <h4 style={{ fontSize: 13, fontWeight: 700, marginBottom: 6, display: 'flex', alignItems: 'center', gap: 6, color: 'var(--brand)' }}>
           <Lightbulb size={15} /> Negotiation Approach
         </h4>
-        <p style={{ fontSize: 13.5, color: '#374151', lineHeight: 1.6 }}>{profile.negotiation_approach}</p>
+        <p style={{ fontSize: 13.5, color: 'var(--text-secondary)', lineHeight: 1.6 }}>{profile.negotiation_approach}</p>
       </div>
 
       {/* Recommended Actions */}
@@ -160,8 +160,8 @@ function ProfileResult({ profile }) {
           <h4 style={{ fontSize: 13, fontWeight: 700, marginBottom: 8 }}>Recommended Actions</h4>
           {profile.recommended_actions.map((action, i) => (
             <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 8, marginBottom: 7 }}>
-              <span style={{ fontSize: 12, fontWeight: 700, color: '#4f46e5', background: '#eef2ff', width: 22, height: 22, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>{i + 1}</span>
-              <p style={{ fontSize: 13, color: '#374151', lineHeight: 1.5 }}>{action}</p>
+              <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--brand)', background: '#eef2ff', width: 22, height: 22, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>{i + 1}</span>
+              <p style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.5 }}>{action}</p>
             </div>
           ))}
         </div>
@@ -174,7 +174,7 @@ function ProfileResult({ profile }) {
             <MessageSquare size={14} /> Questions to Ask This Client
           </h4>
           {profile.questions_to_ask.map((q, i) => (
-            <div key={i} style={{ padding: '8px 12px', background: '#f9fafb', borderRadius: 7, marginBottom: 6, fontSize: 13, color: '#374151' }}>
+            <div key={i} style={{ padding: '8px 12px', background: 'var(--bg-elevated)', borderRadius: 7, marginBottom: 6, fontSize: 13, color: 'var(--text-secondary)' }}>
               "{q}"
             </div>
           ))}
@@ -203,12 +203,12 @@ function HistoryTab() {
   }
 
   if (loading) return <div style={{ textAlign: 'center', padding: 24 }}><Loader2 size={24} className="spin" color="#4f46e5" /></div>
-  if (!history.length) return <p style={{ textAlign: 'center', color: '#9ca3af', fontSize: 13.5, padding: 24 }}>No profiles yet. Analyze a client to see results here.</p>
+  if (!history.length) return <p style={{ textAlign: 'center', color: 'var(--text-muted)', fontSize: 13.5, padding: 24 }}>No profiles yet. Analyze a client to see results here.</p>
 
   if (selected) {
     return (
       <div>
-        <button onClick={() => setSelected(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#4f46e5', fontSize: 13, display: 'flex', alignItems: 'center', gap: 4, marginBottom: 16 }}>
+        <button onClick={() => setSelected(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--brand)', fontSize: 13, display: 'flex', alignItems: 'center', gap: 4, marginBottom: 16 }}>
           ← Back to history
         </button>
         <ProfileResult profile={selected.profile || selected} />
@@ -233,12 +233,12 @@ function HistoryTab() {
                   {risk}
                 </span>
               </div>
-              <p style={{ fontSize: 12, color: '#9ca3af', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{preview}</p>
+              <p style={{ fontSize: 12, color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{preview}</p>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginLeft: 12 }}>
               <div style={{ textAlign: 'center' }}>
                 <div style={{ fontSize: 22, fontWeight: 900, color: riskStyle.text }}>{score}</div>
-                <div style={{ fontSize: 11, color: '#9ca3af' }}>/10</div>
+                <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>/10</div>
               </div>
               <button onClick={(e) => handleDelete(item.id, e)} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
                 <Trash2 size={15} color="#dc2626" />
@@ -287,10 +287,10 @@ export default function ProfilerPage() {
         Paste a client's email, WhatsApp message, or bio — AI analyzes their personality, payment risk, and negotiation style
       </p>
 
-      <div style={{ display: 'flex', gap: 6, marginBottom: 24, background: '#f3f4f6', padding: 6, borderRadius: 10, width: 'fit-content' }}>
+      <div style={{ display: 'flex', gap: 6, marginBottom: 24, background: 'var(--bg-elevated)', padding: 6, borderRadius: 10, width: 'fit-content' }}>
         {[{ key: 'analyze', label: 'Analyze Client', icon: Brain }, { key: 'history', label: 'Past Profiles', icon: Shield }].map(({ key, label, icon: Icon }) => (
           <button key={key} onClick={() => { setTab(key); setResult(null) }}
-            style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '9px 18px', borderRadius: 8, fontSize: 14, border: 'none', cursor: 'pointer', fontWeight: tab === key ? 600 : 400, background: tab === key ? '#4f46e5' : 'transparent', color: tab === key ? '#fff' : '#6b7280' }}>
+            style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '9px 18px', borderRadius: 8, fontSize: 14, border: 'none', cursor: 'pointer', fontWeight: tab === key ? 600 : 400, background: tab === key ? '#4f46e5' : 'transparent', color: tab === key ? '#fff' : 'var(--text-muted)' }}>
             <Icon size={15} /> {label}
           </button>
         ))}
@@ -301,11 +301,11 @@ export default function ProfilerPage() {
           <div>
             {/* Sample texts */}
             <div style={{ marginBottom: 14 }}>
-              <p style={{ fontSize: 12, color: '#9ca3af', marginBottom: 6 }}>Try a sample:</p>
+              <p style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 6 }}>Try a sample:</p>
               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                 {SAMPLE_TEXTS.map((s, i) => (
                   <button key={i} onClick={() => handleSample(s.text)}
-                    style={{ fontSize: 12, padding: '5px 12px', borderRadius: 999, border: '1px solid #e5e7eb', background: 'white', cursor: 'pointer', color: '#374151' }}>
+                    style={{ fontSize: 12, padding: '5px 12px', borderRadius: 999, border: '1px solid var(--border)', background: 'var(--bg-card)', cursor: 'pointer', color: 'var(--text-secondary)' }}>
                     {s.label}
                   </button>
                 ))}
@@ -316,7 +316,7 @@ export default function ProfilerPage() {
               <label style={{ fontSize: 13, fontWeight: 600, display: 'block', marginBottom: 6 }}>
                 Paste client text here
               </label>
-              <p style={{ fontSize: 12, color: '#9ca3af', marginBottom: 10 }}>
+              <p style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 10 }}>
                 Email, WhatsApp message, LinkedIn bio, project brief, proposal request — anything they wrote
               </p>
               <textarea

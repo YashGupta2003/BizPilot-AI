@@ -16,7 +16,7 @@ const SEGMENT_STYLES = {
   Loyal: { bg: '#dbeafe', text: '#1d4ed8', border: '#bfdbfe', icon: Star },
   Promising: { bg: '#ede9fe', text: '#6d28d9', border: '#c4b5fd', icon: TrendingUp },
   'At Risk': { bg: '#ffedd5', text: '#9a3412', border: '#fdba74', icon: AlertTriangle },
-  'One-Time': { bg: '#f3f4f6', text: '#4b5563', border: '#d1d5db', icon: Users },
+  'One-Time': { bg: 'var(--bg-elevated)', text: '#4b5563', border: 'var(--border-light)', icon: Users },
   New: { bg: '#e0f2fe', text: '#0369a1', border: '#bae6fd', icon: Clock },
 }
 
@@ -24,11 +24,11 @@ const URGENCY_STYLES = {
   NOW: { bg: '#dcfce7', text: '#15803d', label: '🔥 Pitch Now' },
   SOON: { bg: '#dbeafe', text: '#1d4ed8', label: '💡 Pitch Soon' },
   'RE-ENGAGE': { bg: '#fef3c7', text: '#92400e', label: '📨 Re-engage First' },
-  WAIT: { bg: '#f3f4f6', text: '#6b7280', label: '⏳ Build History' },
+  WAIT: { bg: 'var(--bg-elevated)', text: 'var(--text-muted)', label: '⏳ Build History' },
 }
 
 const CONFIDENCE_COLORS = {
-  HIGH: '#15803d', MEDIUM: '#d97706', LOW: '#6b7280'
+  HIGH: '#15803d', MEDIUM: '#d97706', LOW: 'var(--text-muted)'
 }
 
 function formatCurrency(n) {
@@ -39,10 +39,10 @@ function ScoreBar({ label, value, color = '#4f46e5' }) {
   return (
     <div style={{ marginBottom: 8 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 3 }}>
-        <span style={{ fontSize: 12, color: '#6b7280' }}>{label}</span>
+        <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>{label}</span>
         <span style={{ fontSize: 12, fontWeight: 600 }}>{value.toFixed(0)}</span>
       </div>
-      <div style={{ height: 5, background: '#f3f4f6', borderRadius: 99 }}>
+      <div style={{ height: 5, background: 'var(--bg-elevated)', borderRadius: 99 }}>
         <div style={{ height: 5, borderRadius: 99, width: `${Math.min(100, value)}%`, background: color }} />
       </div>
     </div>
@@ -69,12 +69,12 @@ function ClientLTVCard({ client, rank }) {
     <div style={{ border: `1px solid ${segStyle.border}`, borderRadius: 12, overflow: 'hidden', marginBottom: 10 }}>
       {/* Main row */}
       <div
-        style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '14px 16px', background: 'white', cursor: 'pointer' }}
+        style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '14px 16px', background: 'var(--bg-card)', cursor: 'pointer' }}
         onClick={() => setExpanded(!expanded)}
       >
         {/* Rank */}
-        <div style={{ width: 32, height: 32, borderRadius: '50%', background: rank <= 3 ? '#fef3c7' : '#f3f4f6', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-          <span style={{ fontSize: 14, fontWeight: 800, color: rank <= 3 ? '#92400e' : '#6b7280' }}>#{rank}</span>
+        <div style={{ width: 32, height: 32, borderRadius: '50%', background: rank <= 3 ? '#fef3c7' : 'var(--bg-elevated)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <span style={{ fontSize: 14, fontWeight: 800, color: rank <= 3 ? '#92400e' : 'var(--text-muted)' }}>#{rank}</span>
         </div>
 
         {/* Name + segment */}
@@ -85,15 +85,15 @@ function ClientLTVCard({ client, rank }) {
               <SegIcon size={11} />{client.segment}
             </span>
           </div>
-          <p style={{ fontSize: 12, color: '#9ca3af' }}>
+          <p style={{ fontSize: 12, color: 'var(--text-muted)' }}>
             {client.paid_count} project{client.paid_count !== 1 ? 's' : ''} · avg {formatCurrency(client.avg_project_value)} · every {client.avg_days_between_projects > 0 ? `${Math.round(client.avg_days_between_projects)}d` : 'N/A'}
           </p>
         </div>
 
         {/* Predicted value */}
         <div style={{ textAlign: 'right', flexShrink: 0 }}>
-          <p style={{ fontSize: 11, color: '#9ca3af', marginBottom: 2 }}>Predicted 12m</p>
-          <p style={{ fontSize: 18, fontWeight: 800, color: '#1a1d23' }}>{formatCurrency(client.predicted_12m_value)}</p>
+          <p style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 2 }}>Predicted 12m</p>
+          <p style={{ fontSize: 18, fontWeight: 800, color: 'var(--text-primary)' }}>{formatCurrency(client.predicted_12m_value)}</p>
           <div style={{ display: 'flex', alignItems: 'center', gap: 4, justifyContent: 'flex-end' }}>
             <div style={{ width: 6, height: 6, borderRadius: '50%', background: CONFIDENCE_COLORS[client.confidence] }} />
             <p style={{ fontSize: 11, color: CONFIDENCE_COLORS[client.confidence] }}>{client.confidence} confidence</p>
@@ -115,7 +115,7 @@ function ClientLTVCard({ client, rank }) {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 14 }}>
             {/* Score breakdown */}
             <div>
-              <p style={{ fontSize: 12, fontWeight: 700, color: '#6b7280', marginBottom: 10, textTransform: 'uppercase' }}>Score Breakdown</p>
+              <p style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-muted)', marginBottom: 10, textTransform: 'uppercase' }}>Score Breakdown</p>
               <ScoreBar label="Revenue" value={client.revenue_score} color="#4f46e5" />
               <ScoreBar label="Frequency" value={client.frequency_score} color="#7c3aed" />
               <ScoreBar label="Recency" value={client.recency_score} color="#0891b2" />
@@ -125,7 +125,7 @@ function ClientLTVCard({ client, rank }) {
 
             {/* Radar chart */}
             <div>
-              <p style={{ fontSize: 12, fontWeight: 700, color: '#6b7280', marginBottom: 6, textTransform: 'uppercase' }}>Profile Radar</p>
+              <p style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-muted)', marginBottom: 6, textTransform: 'uppercase' }}>Profile Radar</p>
               <ResponsiveContainer width="100%" height={150}>
                 <RadarChart data={radarData}>
                   <PolarGrid stroke="#e5e7eb" />
@@ -138,10 +138,10 @@ function ClientLTVCard({ client, rank }) {
 
             {/* Retainer recommendation */}
             <div>
-              <p style={{ fontSize: 12, fontWeight: 700, color: '#6b7280', marginBottom: 10, textTransform: 'uppercase' }}>Retainer Recommendation</p>
+              <p style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-muted)', marginBottom: 10, textTransform: 'uppercase' }}>Retainer Recommendation</p>
               <div style={{ padding: '10px 12px', borderRadius: 8, background: urgStyle.bg, marginBottom: 10 }}>
                 <span style={{ fontSize: 11, fontWeight: 700, color: urgStyle.text }}>{urgStyle.label}</span>
-                <p style={{ fontSize: 12.5, color: '#374151', marginTop: 4, lineHeight: 1.5 }}>{retainer.message}</p>
+                <p style={{ fontSize: 12.5, color: 'var(--text-secondary)', marginTop: 4, lineHeight: 1.5 }}>{retainer.message}</p>
                 {retainer.suggested_retainer_amount && (
                   <p style={{ fontSize: 13, fontWeight: 700, color: urgStyle.text, marginTop: 6 }}>
                     Suggested: {formatCurrency(retainer.suggested_retainer_amount)}/month
@@ -150,12 +150,12 @@ function ClientLTVCard({ client, rank }) {
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                <p style={{ fontSize: 11, color: '#9ca3af' }}>
-                  Growth: <span style={{ fontWeight: 600, color: client.growth_trajectory === 'growing' ? '#15803d' : client.growth_trajectory === 'declining' ? '#dc2626' : '#6b7280' }}>
+                <p style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+                  Growth: <span style={{ fontWeight: 600, color: client.growth_trajectory === 'growing' ? '#15803d' : client.growth_trajectory === 'declining' ? '#dc2626' : 'var(--text-muted)' }}>
                     {client.growth_trajectory} ({client.growth_factor}×)
                   </span>
                 </p>
-                <p style={{ fontSize: 11, color: '#9ca3af' }}>
+                <p style={{ fontSize: 11, color: 'var(--text-muted)' }}>
                   Disputes: {client.dispute_count} · Reminders needed: {client.reminder_count}
                   {client.has_risk_profile && ' · Risk profile: ✅'}
                 </p>
@@ -187,7 +187,7 @@ function SummaryBanner({ data }) {
   return (
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 20 }}>
       {[
-        { label: 'Total Predicted Revenue (12m)', value: formatCurrency(total_predicted_12m), color: '#4f46e5', icon: DollarSign },
+        { label: 'Total Predicted Revenue (12m)', value: formatCurrency(total_predicted_12m), color: 'var(--brand)', icon: DollarSign },
         { label: 'Champion Clients', value: champions?.length || 0, color: '#15803d', icon: Crown },
         { label: 'At-Risk Clients', value: at_risk?.length || 0, color: '#dc2626', icon: AlertTriangle },
         { label: 'Retainer Candidates', value: retainer_candidates?.length || 0, color: '#d97706', icon: Zap },
@@ -195,7 +195,7 @@ function SummaryBanner({ data }) {
         <div key={label} className="card">
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
             <Icon size={14} color={color} />
-            <p style={{ fontSize: 11, color: '#9ca3af' }}>{label}</p>
+            <p style={{ fontSize: 11, color: 'var(--text-muted)' }}>{label}</p>
           </div>
           <p style={{ fontSize: 20, fontWeight: 700, color }}>{value}</p>
         </div>
@@ -236,7 +236,7 @@ export default function LTVPage() {
       <h1 className="page-title">Client LTV Predictor</h1>
       <div style={{ textAlign: 'center', padding: 60 }}>
         <Loader2 size={32} className="spin" color="#4f46e5" />
-        <p style={{ fontSize: 14, color: '#6b7280', marginTop: 12 }}>
+        <p style={{ fontSize: 14, color: 'var(--text-muted)', marginTop: 12 }}>
           Analyzing all client data — invoices, contracts, meetings, disputes...
         </p>
       </div>
@@ -280,8 +280,8 @@ export default function LTVPage() {
               style={{
                 padding: '6px 14px', borderRadius: 999, fontSize: 12, fontWeight: 600,
                 border: filter === seg ? `2px solid ${style?.text || '#4f46e5'}` : '1px solid #e5e7eb',
-                background: filter === seg ? (style?.bg || '#eef2ff') : 'white',
-                color: filter === seg ? (style?.text || '#4f46e5') : '#6b7280',
+                background: filter === seg ? (style?.bg || '#eef2ff') : 'var(--bg-card)',
+                color: filter === seg ? (style?.text || '#4f46e5') : 'var(--text-muted)',
                 cursor: 'pointer',
               }}>
               {seg === 'all' ? 'All' : seg} ({count})
@@ -294,7 +294,7 @@ export default function LTVPage() {
       {filtered.length === 0 ? (
         <div className="card" style={{ textAlign: 'center', padding: 40 }}>
           <Users size={32} color="#9ca3af" />
-          <p style={{ fontSize: 14, color: '#6b7280', marginTop: 12 }}>
+          <p style={{ fontSize: 14, color: 'var(--text-muted)', marginTop: 12 }}>
             No clients in this segment yet.
           </p>
         </div>

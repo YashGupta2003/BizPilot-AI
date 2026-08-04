@@ -48,7 +48,7 @@ function ContractViewer({ contract, onClose }) {
 
   return (
     <div>
-      <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#4f46e5', fontSize: 13, display: 'flex', alignItems: 'center', gap: 4, marginBottom: 16 }}>
+      <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--brand)', fontSize: 13, display: 'flex', alignItems: 'center', gap: 4, marginBottom: 16 }}>
         ← Back to contracts
       </button>
 
@@ -56,24 +56,24 @@ function ContractViewer({ contract, onClose }) {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <div>
             <h2 style={{ fontSize: 17, fontWeight: 700 }}>{c.contract_title}</h2>
-            <p style={{ fontSize: 13, color: '#6b7280', marginTop: 2 }}>{contract.client_name} · {contract.project_type}</p>
+            <p style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 2 }}>{contract.client_name} · {contract.project_type}</p>
           </div>
-          <span style={{ fontSize: 12, fontWeight: 700, padding: '4px 12px', borderRadius: 999, background: 'white', color: riskStyle.text }}>
+          <span style={{ fontSize: 12, fontWeight: 700, padding: '4px 12px', borderRadius: 999, background: 'var(--bg-card)', color: riskStyle.text }}>
             {riskLevel} Risk for Freelancer
           </span>
         </div>
-        {c.risk_notes && <p style={{ fontSize: 12.5, color: '#4b5563', marginTop: 8 }}>{c.risk_notes}</p>}
+        {c.risk_notes && <p style={{ fontSize: 12.5, color: 'var(--text-secondary)', marginTop: 8 }}>{c.risk_notes}</p>}
       </div>
 
       {c.plain_english_summary && (
         <div className="card" style={{ marginBottom: 16, borderLeft: '4px solid #4f46e5' }}>
-          <h4 style={{ fontSize: 13, fontWeight: 700, marginBottom: 10, color: '#4f46e5' }}>Plain English Summary</h4>
+          <h4 style={{ fontSize: 13, fontWeight: 700, marginBottom: 10, color: 'var(--brand)' }}>Plain English Summary</h4>
           <div style={{ marginBottom: 8 }}>
-            <p style={{ fontSize: 12, color: '#9ca3af', marginBottom: 5, fontWeight: 600 }}>YOUR PROTECTIONS</p>
+            <p style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 5, fontWeight: 600 }}>YOUR PROTECTIONS</p>
             {c.plain_english_summary.what_you_get?.map((item, i) => (
               <div key={i} style={{ display: 'flex', gap: 6, marginBottom: 4 }}>
                 <CheckCircle2 size={13} color="#15803d" style={{ flexShrink: 0, marginTop: 1 }} />
-                <p style={{ fontSize: 13, color: '#374151' }}>{item}</p>
+                <p style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{item}</p>
               </div>
             ))}
           </div>
@@ -83,7 +83,7 @@ function ContractViewer({ contract, onClose }) {
           {c.plain_english_summary.what_to_watch?.map((item, i) => (
             <div key={i} style={{ display: 'flex', gap: 6, marginBottom: 4 }}>
               <AlertTriangle size={13} color="#d97706" style={{ flexShrink: 0, marginTop: 1 }} />
-              <p style={{ fontSize: 12.5, color: '#374151' }}>{item}</p>
+              <p style={{ fontSize: 12.5, color: 'var(--text-secondary)' }}>{item}</p>
             </div>
           ))}
         </div>
@@ -97,9 +97,9 @@ function ContractViewer({ contract, onClose }) {
           </button>
         </div>
         {sections.map(({ key, title }) => c[key] ? (
-          <div key={key} style={{ marginBottom: 16, paddingBottom: 16, borderBottom: '1px solid #f3f4f6' }}>
-            <h5 style={{ fontSize: 13, fontWeight: 700, color: '#4f46e5', marginBottom: 6 }}>{title}</h5>
-            <p style={{ fontSize: 13, color: '#374151', lineHeight: 1.7, whiteSpace: 'pre-wrap' }}>{c[key]}</p>
+          <div key={key} style={{ marginBottom: 16, paddingBottom: 16, borderBottom: '1px solid var(--border)' }}>
+            <h5 style={{ fontSize: 13, fontWeight: 700, color: 'var(--brand)', marginBottom: 6 }}>{title}</h5>
+            <p style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.7, whiteSpace: 'pre-wrap' }}>{c[key]}</p>
           </div>
         ) : null)}
       </div>
@@ -157,57 +157,57 @@ function ContractForm({ clients, onGenerated }) {
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
         <div>
-          <label style={{ fontSize: 12, color: '#6b7280', display: 'block', marginBottom: 4 }}>Project Type</label>
+          <label style={{ fontSize: 12, color: 'var(--text-muted)', display: 'block', marginBottom: 4 }}>Project Type</label>
           <select className="input-field" value={form.project_type} onChange={(e) => update('project_type', e.target.value)}>
             {PROJECT_TYPES.map((t) => <option key={t} value={t}>{t}</option>)}
           </select>
         </div>
         <div>
-          <label style={{ fontSize: 12, color: '#6b7280', display: 'block', marginBottom: 4 }}>Select Existing Client (optional)</label>
+          <label style={{ fontSize: 12, color: 'var(--text-muted)', display: 'block', marginBottom: 4 }}>Select Existing Client (optional)</label>
           <select className="input-field" value={form.client_id} onChange={(e) => handleClientChange(e.target.value)}>
             <option value="">Type manually below</option>
             {clients.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
           </select>
         </div>
         <div>
-          <label style={{ fontSize: 12, color: '#6b7280', display: 'block', marginBottom: 4 }}>Client Name</label>
+          <label style={{ fontSize: 12, color: 'var(--text-muted)', display: 'block', marginBottom: 4 }}>Client Name</label>
           <input className="input-field" value={form.client_name} onChange={(e) => update('client_name', e.target.value)} placeholder="Client name" />
         </div>
         <div>
-          <label style={{ fontSize: 12, color: '#6b7280', display: 'block', marginBottom: 4 }}>Project Amount</label>
+          <label style={{ fontSize: 12, color: 'var(--text-muted)', display: 'block', marginBottom: 4 }}>Project Amount</label>
           <input className="input-field" type="number" value={form.amount} onChange={(e) => update('amount', e.target.value)} placeholder="50000" />
         </div>
         <div>
-          <label style={{ fontSize: 12, color: '#6b7280', display: 'block', marginBottom: 4 }}>Currency</label>
+          <label style={{ fontSize: 12, color: 'var(--text-muted)', display: 'block', marginBottom: 4 }}>Currency</label>
           <select className="input-field" value={form.currency} onChange={(e) => update('currency', e.target.value)}>
             {['INR', 'USD', 'EUR', 'GBP', 'AUD'].map((c) => <option key={c} value={c}>{c}</option>)}
           </select>
         </div>
         <div>
-          <label style={{ fontSize: 12, color: '#6b7280', display: 'block', marginBottom: 4 }}>Client Country (for jurisdiction)</label>
+          <label style={{ fontSize: 12, color: 'var(--text-muted)', display: 'block', marginBottom: 4 }}>Client Country (for jurisdiction)</label>
           <select className="input-field" value={form.client_country} onChange={(e) => update('client_country', e.target.value)}>
             {COUNTRIES.map((c) => <option key={c} value={c}>{c}</option>)}
           </select>
         </div>
         <div>
-          <label style={{ fontSize: 12, color: '#6b7280', display: 'block', marginBottom: 4 }}>Duration (weeks)</label>
+          <label style={{ fontSize: 12, color: 'var(--text-muted)', display: 'block', marginBottom: 4 }}>Duration (weeks)</label>
           <input className="input-field" type="number" min="1" value={form.duration_weeks} onChange={(e) => update('duration_weeks', parseInt(e.target.value))} />
         </div>
         <div>
-          <label style={{ fontSize: 12, color: '#6b7280', display: 'block', marginBottom: 4 }}>Number of Milestones</label>
+          <label style={{ fontSize: 12, color: 'var(--text-muted)', display: 'block', marginBottom: 4 }}>Number of Milestones</label>
           <input className="input-field" type="number" min="1" max="10" value={form.milestones} onChange={(e) => update('milestones', parseInt(e.target.value))} />
         </div>
       </div>
 
       <div style={{ marginBottom: 12 }}>
-        <label style={{ fontSize: 12, color: '#6b7280', display: 'block', marginBottom: 4 }}>Project Description (helps generate accurate scope)</label>
+        <label style={{ fontSize: 12, color: 'var(--text-muted)', display: 'block', marginBottom: 4 }}>Project Description (helps generate accurate scope)</label>
         <textarea className="input-field" rows={3} value={form.project_description}
           onChange={(e) => update('project_description', e.target.value)}
           placeholder="e.g. Build a 5-page marketing website with contact form, SEO optimization, and CMS integration" />
       </div>
 
       <div style={{ marginBottom: 14 }}>
-        <label style={{ fontSize: 12, color: '#6b7280', display: 'block', marginBottom: 4 }}>Special Requirements or Concerns</label>
+        <label style={{ fontSize: 12, color: 'var(--text-muted)', display: 'block', marginBottom: 4 }}>Special Requirements or Concerns</label>
         <input className="input-field" value={form.special_requirements}
           onChange={(e) => update('special_requirements', e.target.value)}
           placeholder="e.g. Client wants to own all source code, NDA required, strict NDA..." />
@@ -265,10 +265,10 @@ export default function ContractPage() {
         AI-generated, legally-aware freelance contracts — tailored to your project type, amount, and client country
       </p>
 
-      <div style={{ display: 'flex', gap: 6, marginBottom: 24, background: '#f3f4f6', padding: 6, borderRadius: 10, width: 'fit-content' }}>
+      <div style={{ display: 'flex', gap: 6, marginBottom: 24, background: 'var(--bg-elevated)', padding: 6, borderRadius: 10, width: 'fit-content' }}>
         {[{ key: 'generate', label: 'Generate Contract', icon: Plus }, { key: 'history', label: 'My Contracts', icon: FileText }].map(({ key, label, icon: Icon }) => (
           <button key={key} onClick={() => { setTab(key); setViewingContract(null) }}
-            style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '9px 18px', borderRadius: 8, fontSize: 14, border: 'none', cursor: 'pointer', fontWeight: tab === key ? 600 : 400, background: tab === key ? '#4f46e5' : 'transparent', color: tab === key ? '#fff' : '#6b7280' }}>
+            style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '9px 18px', borderRadius: 8, fontSize: 14, border: 'none', cursor: 'pointer', fontWeight: tab === key ? 600 : 400, background: tab === key ? '#4f46e5' : 'transparent', color: tab === key ? '#fff' : 'var(--text-muted)' }}>
             <Icon size={15} /> {label}
           </button>
         ))}
@@ -284,7 +284,7 @@ export default function ContractPage() {
         ) : contracts.length === 0 ? (
           <div className="card" style={{ textAlign: 'center', padding: 40 }}>
             <FileText size={32} color="#9ca3af" />
-            <p style={{ fontSize: 14, color: '#6b7280', marginTop: 12 }}>No contracts yet. Generate your first one!</p>
+            <p style={{ fontSize: 14, color: 'var(--text-muted)', marginTop: 12 }}>No contracts yet. Generate your first one!</p>
           </div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -301,7 +301,7 @@ export default function ContractPage() {
                         {riskLevel} Risk
                       </span>
                     </div>
-                    <p style={{ fontSize: 12, color: '#9ca3af' }}>
+                    <p style={{ fontSize: 12, color: 'var(--text-muted)' }}>
                       {c.client_name} · {c.currency} {c.amount?.toLocaleString('en-IN')} · {c.duration_weeks} weeks
                     </p>
                   </div>

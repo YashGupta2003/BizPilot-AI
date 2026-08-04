@@ -63,7 +63,7 @@ export default function ClientsPage() {
 
       <div className="card">
         {loading ? <p>Loading...</p> : clients.length === 0 ? (
-          <p style={{ color: '#6b7280', fontSize: 14 }}>No clients yet. Add your first client.</p>
+          <p style={{ color: 'var(--text-muted)', fontSize: 14 }}>No clients yet. Add your first client.</p>
         ) : (
           <table>
             <thead>
@@ -84,7 +84,7 @@ export default function ClientsPage() {
                   <tr key={c.id} style={{ cursor: 'pointer' }}
                     onClick={() => navigate(`/clients/${c.id}`)}>
                     <td style={{ fontWeight: 600 }}>{c.name}</td>
-                    <td style={{ color: '#6b7280' }}>{c.company || '—'}</td>
+                    <td style={{ color: 'var(--text-muted)' }}>{c.company || '—'}</td>
                     <td>{formatCurrency(c.total_invoiced)}</td>
                     <td style={{ color: '#15803d', fontWeight: 600 }}>{formatCurrency(c.total_paid)}</td>
                     <td>

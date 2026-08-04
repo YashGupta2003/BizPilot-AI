@@ -25,10 +25,10 @@ function StatCard({ label, value, sub, color = '#4f46e5', icon: Icon }) {
     <div className="card">
       <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
         {Icon && <Icon size={14} color={color} />}
-        <p style={{ fontSize: 11, color: '#9ca3af', textTransform: 'uppercase', fontWeight: 600 }}>{label}</p>
+        <p style={{ fontSize: 11, color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600 }}>{label}</p>
       </div>
       <p style={{ fontSize: 20, fontWeight: 700, color }}>{value}</p>
-      {sub && <p style={{ fontSize: 11, color: '#9ca3af', marginTop: 2 }}>{sub}</p>}
+      {sub && <p style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2 }}>{sub}</p>}
     </div>
   )
 }
@@ -45,28 +45,28 @@ function AdvanceTaxTimeline({ advance }) {
 
   return (
     <div>
-      <p style={{ fontSize: 13, color: '#374151', marginBottom: 14 }}>
+      <p style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 14 }}>
         Net tax after TDS: <strong>{fmt(advance.net_tax_after_tds)}</strong>
       </p>
       <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4 }}>
         {advance.installments.map((inst) => (
           <div key={inst.installment} style={{
             minWidth: 160, padding: '12px 14px', borderRadius: 10, flexShrink: 0,
-            background: inst.is_overdue ? '#fee2e2' : inst.is_upcoming ? '#fef9c3' : '#f9fafb',
-            border: `1px solid ${inst.is_overdue ? '#fecaca' : inst.is_upcoming ? '#fde047' : '#e5e7eb'}`,
+            background: inst.is_overdue ? '#fee2e2' : inst.is_upcoming ? '#fef9c3' : 'var(--bg-elevated)',
+            border: `1px solid ${inst.is_overdue ? '#fecaca' : inst.is_upcoming ? '#fde047' : 'var(--border)'}`,
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-              <span style={{ fontSize: 11, fontWeight: 700, color: inst.is_overdue ? '#b91c1c' : inst.is_upcoming ? '#854d0e' : '#6b7280' }}>
+              <span style={{ fontSize: 11, fontWeight: 700, color: inst.is_overdue ? '#b91c1c' : inst.is_upcoming ? '#854d0e' : 'var(--text-muted)' }}>
                 {inst.label}
               </span>
               {inst.is_overdue && <span style={{ fontSize: 10, color: '#b91c1c', fontWeight: 700 }}>OVERDUE</span>}
               {inst.is_upcoming && <span style={{ fontSize: 10, color: '#854d0e', fontWeight: 700 }}>SOON</span>}
             </div>
-            <p style={{ fontSize: 18, fontWeight: 800, color: '#1a1d23' }}>{fmt(inst.this_installment_amount)}</p>
-            <p style={{ fontSize: 11, color: '#6b7280', marginTop: 2 }}>{inst.due_date}</p>
-            <p style={{ fontSize: 11, color: '#9ca3af' }}>{inst.cumulative_percent}% cumulative</p>
+            <p style={{ fontSize: 18, fontWeight: 800, color: 'var(--text-primary)' }}>{fmt(inst.this_installment_amount)}</p>
+            <p style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2 }}>{inst.due_date}</p>
+            <p style={{ fontSize: 11, color: 'var(--text-muted)' }}>{inst.cumulative_percent}% cumulative</p>
             {inst.days_until_due !== null && (
-              <p style={{ fontSize: 11, color: inst.days_until_due <= 14 ? '#dc2626' : '#6b7280', marginTop: 4, fontWeight: 600 }}>
+              <p style={{ fontSize: 11, color: inst.days_until_due <= 14 ? '#dc2626' : 'var(--text-muted)', marginTop: 4, fontWeight: 600 }}>
                 {inst.days_until_due} days left
               </p>
             )}
@@ -92,7 +92,7 @@ function GSTQuartersTable({ quarters, currentQ }) {
       </thead>
       <tbody>
         {quarters.map((q) => (
-          <tr key={q.quarter} style={{ background: q.quarter === currentQ ? '#fafafa' : 'white' }}>
+          <tr key={q.quarter} style={{ background: q.quarter === currentQ ? '#fafafa' : 'var(--bg-card)' }}>
             <td style={{ fontWeight: q.quarter === currentQ ? 700 : 400 }}>
               {q.label} {q.quarter === currentQ && '← Current'}
             </td>
@@ -103,8 +103,8 @@ function GSTQuartersTable({ quarters, currentQ }) {
             <td>
               <span style={{
                 fontSize: 11, fontWeight: 600, padding: '2px 8px', borderRadius: 999,
-                background: q.status === 'overdue' ? '#fee2e2' : q.status === 'upcoming' ? '#fef3c7' : '#f3f4f6',
-                color: q.status === 'overdue' ? '#b91c1c' : q.status === 'upcoming' ? '#92400e' : '#9ca3af',
+                background: q.status === 'overdue' ? '#fee2e2' : q.status === 'upcoming' ? '#fef3c7' : 'var(--bg-elevated)',
+                color: q.status === 'overdue' ? '#b91c1c' : q.status === 'upcoming' ? '#92400e' : 'var(--text-muted)',
               }}>
                 {q.status === 'overdue' ? '⚠️ Overdue' : q.status === 'upcoming' ? '📅 Due Soon' : '📆 Future'}
               </span>
@@ -126,15 +126,15 @@ function Checklist({ items }) {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
               <div style={{ flex: 1 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                  <span style={{ fontSize: 11, fontWeight: 700, padding: '1px 8px', borderRadius: 999, background: 'white', color: style.text }}>
+                  <span style={{ fontSize: 11, fontWeight: 700, padding: '1px 8px', borderRadius: 999, background: 'var(--bg-card)', color: style.text }}>
                     {item.priority}
                   </span>
                   <span style={{ fontSize: 11, color: style.text, fontWeight: 600 }}>{item.category}</span>
                   {item.is_overdue && <span style={{ fontSize: 10, color: '#b91c1c', fontWeight: 700 }}>OVERDUE</span>}
                 </div>
-                <p style={{ fontSize: 13.5, fontWeight: 600, color: '#1a1d23', marginBottom: 3 }}>{item.task}</p>
-                <p style={{ fontSize: 12, color: '#6b7280' }}>Due: {item.due}</p>
-                <p style={{ fontSize: 12, color: '#4f46e5', marginTop: 4 }}>→ {item.action}</p>
+                <p style={{ fontSize: 13.5, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 3 }}>{item.task}</p>
+                <p style={{ fontSize: 12, color: 'var(--text-muted)' }}>Due: {item.due}</p>
+                <p style={{ fontSize: 12, color: 'var(--brand)', marginTop: 4 }}>→ {item.action}</p>
               </div>
             </div>
           </div>
@@ -153,10 +153,10 @@ function Form26AS({ form26as }) {
       </div>
 
       <div style={{ marginBottom: 12 }}>
-        <p style={{ fontSize: 13, color: '#374151', marginBottom: 4 }}>
-          Estimated total TDS: <strong style={{ color: '#4f46e5' }}>{fmt(form26as.estimated_tds)}</strong>
+        <p style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 4 }}>
+          Estimated total TDS: <strong style={{ color: 'var(--brand)' }}>{fmt(form26as.estimated_tds)}</strong>
         </p>
-        <p style={{ fontSize: 12, color: '#9ca3af' }}>{form26as.section}</p>
+        <p style={{ fontSize: 12, color: 'var(--text-muted)' }}>{form26as.section}</p>
       </div>
 
       {form26as.client_breakdown?.length > 0 && (
@@ -173,22 +173,22 @@ function Form26AS({ form26as }) {
               <tr key={i}>
                 <td>{c.client_name}</td>
                 <td>{fmt(c.total_paid)}</td>
-                <td style={{ fontWeight: 600, color: '#4f46e5' }}>{fmt(c.estimated_tds)}</td>
+                <td style={{ fontWeight: 600, color: 'var(--brand)' }}>{fmt(c.estimated_tds)}</td>
               </tr>
             ))}
           </tbody>
         </table>
       )}
 
-      <div style={{ marginTop: 12, padding: '10px 14px', background: '#f9fafb', borderRadius: 8 }}>
-        <p style={{ fontSize: 12.5, fontWeight: 600, color: '#374151', marginBottom: 6 }}>How to verify Form 26AS:</p>
+      <div style={{ marginTop: 12, padding: '10px 14px', background: 'var(--bg-elevated)', borderRadius: 8 }}>
+        <p style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 6 }}>How to verify Form 26AS:</p>
         {[
           "Go to incometax.gov.in → Login → View Form 26AS",
           "Check Part A for TDS by deductors (your clients)",
           "Match each entry with your invoice records",
           "If TDS is missing, contact the client for TDS certificate (Form 16A)",
         ].map((step, i) => (
-          <p key={i} style={{ fontSize: 12.5, color: '#6b7280', marginBottom: 3 }}>
+          <p key={i} style={{ fontSize: 12.5, color: 'var(--text-muted)', marginBottom: 3 }}>
             {i + 1}. {step}
           </p>
         ))}
@@ -201,9 +201,9 @@ function PlainSummary({ bullets }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
       {bullets.map((b, i) => (
-        <div key={i} style={{ display: 'flex', gap: 10, padding: '10px 14px', background: '#f9fafb', borderRadius: 8, border: '1px solid #f3f4f6' }}>
+        <div key={i} style={{ display: 'flex', gap: 10, padding: '10px 14px', background: 'var(--bg-elevated)', borderRadius: 8, border: '1px solid var(--border)' }}>
           <span style={{ fontSize: 18, flexShrink: 0 }}>{b.icon}</span>
-          <p style={{ fontSize: 13.5, color: '#374151', lineHeight: 1.6 }}>{b.text}</p>
+          <p style={{ fontSize: 13.5, color: 'var(--text-secondary)', lineHeight: 1.6 }}>{b.text}</p>
         </div>
       ))}
     </div>
@@ -272,7 +272,7 @@ export default function TaxPage() {
       {loading ? (
         <div style={{ textAlign: 'center', padding: 60 }}>
           <Loader2 size={32} className="spin" color="#4f46e5" />
-          <p style={{ fontSize: 14, color: '#6b7280', marginTop: 12 }}>
+          <p style={{ fontSize: 14, color: 'var(--text-muted)', marginTop: 12 }}>
             Calculating taxes from your invoice history...
           </p>
         </div>
@@ -311,13 +311,13 @@ export default function TaxPage() {
           </div>
 
           {/* Tabs */}
-          <div style={{ display: 'flex', gap: 4, marginBottom: 20, background: '#f3f4f6', padding: 5, borderRadius: 10, overflowX: 'auto' }}>
+          <div style={{ display: 'flex', gap: 4, marginBottom: 20, background: 'var(--bg-elevated)', padding: 5, borderRadius: 10, overflowX: 'auto' }}>
             {TABS.map(({ key, label, icon: Icon }) => (
               <button key={key} onClick={() => setTab(key)}
-                style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', borderRadius: 7, fontSize: 13, border: 'none', cursor: 'pointer', fontWeight: tab === key ? 600 : 400, background: tab === key ? '#4f46e5' : 'transparent', color: tab === key ? '#fff' : '#6b7280', whiteSpace: 'nowrap' }}>
+                style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', borderRadius: 7, fontSize: 13, border: 'none', cursor: 'pointer', fontWeight: tab === key ? 600 : 400, background: tab === key ? '#4f46e5' : 'transparent', color: tab === key ? '#fff' : 'var(--text-muted)', whiteSpace: 'nowrap' }}>
                 <Icon size={14} /> {label}
                 {key === 'checklist' && report.urgent_count > 0 && (
-                  <span style={{ background: '#dc2626', color: 'white', borderRadius: 999, fontSize: 10, padding: '1px 5px', fontWeight: 700 }}>
+                  <span style={{ background: '#dc2626', color: 'var(--bg-card)', borderRadius: 999, fontSize: 10, padding: '1px 5px', fontWeight: 700 }}>
                     {report.urgent_count}
                   </span>
                 )}
@@ -334,9 +334,9 @@ export default function TaxPage() {
                   Advance Tax Schedule — {report.fy_label}
                 </h3>
                 <AdvanceTaxTimeline advance={report.advance_tax} />
-                <div style={{ marginTop: 14, padding: '10px 14px', background: '#f9fafb', borderRadius: 8 }}>
-                  <p style={{ fontSize: 12.5, fontWeight: 600, color: '#374151', marginBottom: 4 }}>How to pay advance tax:</p>
-                  <p style={{ fontSize: 12.5, color: '#6b7280' }}>
+                <div style={{ marginTop: 14, padding: '10px 14px', background: 'var(--bg-elevated)', borderRadius: 8 }}>
+                  <p style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 4 }}>How to pay advance tax:</p>
+                  <p style={{ fontSize: 12.5, color: 'var(--text-muted)' }}>
                     Go to <strong>incometaxindia.gov.in</strong> → e-Pay Tax → Challan 280 → (300) Self Assessment Tax / (100) Advance Tax → Enter PAN and amount → Pay via net banking
                   </p>
                 </div>
@@ -366,16 +366,16 @@ export default function TaxPage() {
                   Filing Checklist — Q{report.current_quarter} {QUARTER_LABELS[report.current_quarter]}
                 </h3>
                 <Checklist items={report.checklist} />
-                <div style={{ marginTop: 16, padding: '10px 14px', background: '#f9fafb', borderRadius: 8 }}>
-                  <p style={{ fontSize: 12.5, fontWeight: 600, color: '#374151', marginBottom: 6 }}>Important links:</p>
+                <div style={{ marginTop: 16, padding: '10px 14px', background: 'var(--bg-elevated)', borderRadius: 8 }}>
+                  <p style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 6 }}>Important links:</p>
                   {[
                     ['Income Tax Portal', 'incometaxindia.gov.in'],
                     ['GST Portal', 'gst.gov.in'],
                     ['TDS / Challan Payment', 'tin.tin.nsdl.com'],
                     ['Form 26AS', 'incometaxindia.gov.in → View Form 26AS'],
                   ].map(([label, url]) => (
-                    <p key={label} style={{ fontSize: 12.5, color: '#4f46e5', marginBottom: 3 }}>
-                      🔗 {label}: <span style={{ color: '#6b7280' }}>{url}</span>
+                    <p key={label} style={{ fontSize: 12.5, color: 'var(--brand)', marginBottom: 3 }}>
+                      🔗 {label}: <span style={{ color: 'var(--text-muted)' }}>{url}</span>
                     </p>
                   ))}
                 </div>

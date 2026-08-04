@@ -34,7 +34,7 @@ export default function AIInvoiceModal({ onClose, onCreated }) {
     }}>
       <div className="card" style={{ width: 480 }}>
         <h3 style={{ fontSize: 18, fontWeight: 600, marginBottom: 4 }}>Generate invoice with AI</h3>
-        <p style={{ fontSize: 13, color: '#6b7280', marginBottom: 16 }}>
+        <p style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 16 }}>
           Describe the work in plain English — the AI agent will extract line items automatically.
         </p>
 

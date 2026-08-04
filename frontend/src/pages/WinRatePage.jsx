@@ -43,7 +43,7 @@ function WinRateBar({ value, showLabel = true }) {
   const color = value >= 60 ? '#15803d' : value >= 40 ? '#d97706' : '#dc2626'
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-      <div style={{ flex: 1, height: 8, background: '#f3f4f6', borderRadius: 99 }}>
+      <div style={{ flex: 1, height: 8, background: 'var(--bg-elevated)', borderRadius: 99 }}>
         <div style={{ height: 8, borderRadius: 99, width: `${value}%`, background: color, transition: 'width 0.6s' }} />
       </div>
       {showLabel && <span style={{ fontSize: 13, fontWeight: 700, color, width: 40, textAlign: 'right' }}>{value}%</span>}
@@ -63,7 +63,7 @@ function ProbabilityGauge({ probability }) {
       <div style={{ height: 10, background: 'rgba(255,255,255,0.6)', borderRadius: 99, marginTop: 12 }}>
         <div style={{ height: 10, borderRadius: 99, width: `${probability}%`, background: color, transition: 'width 1s' }} />
       </div>
-      <p style={{ fontSize: 12, color: '#6b7280', marginTop: 8 }}>Predicted win probability</p>
+      <p style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 8 }}>Predicted win probability</p>
     </div>
   )
 }
@@ -127,35 +127,35 @@ function LogProposalModal({ clients, onLogged, onClose }) {
       <div className="card" style={{ width: 520, maxHeight: '88vh', overflowY: 'auto' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
           <h3 style={{ fontSize: 16, fontWeight: 700 }}>Log Proposal Outcome</h3>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 18, color: '#6b7280' }}>×</button>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 18, color: 'var(--text-muted)' }}>×</button>
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 12 }}>
           <div>
-            <label style={{ fontSize: 12, color: '#6b7280', display: 'block', marginBottom: 4 }}>Service Type</label>
+            <label style={{ fontSize: 12, color: 'var(--text-muted)', display: 'block', marginBottom: 4 }}>Service Type</label>
             <select className="input-field" value={form.service_type} onChange={e => update('service_type', e.target.value)}>
               {SERVICE_TYPES.map(s => <option key={s} value={s}>{s}</option>)}
             </select>
           </div>
           <div>
-            <label style={{ fontSize: 12, color: '#6b7280', display: 'block', marginBottom: 4 }}>Proposal Amount (₹)</label>
+            <label style={{ fontSize: 12, color: 'var(--text-muted)', display: 'block', marginBottom: 4 }}>Proposal Amount (₹)</label>
             <input className="input-field" type="number" value={form.amount} onChange={e => update('amount', e.target.value)} placeholder="50000" />
           </div>
           <div>
-            <label style={{ fontSize: 12, color: '#6b7280', display: 'block', marginBottom: 4 }}>Client</label>
+            <label style={{ fontSize: 12, color: 'var(--text-muted)', display: 'block', marginBottom: 4 }}>Client</label>
             <select className="input-field" value={form.client_id} onChange={e => handleClientChange(e.target.value)}>
               <option value="">Select or type below</option>
               {clients.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
             </select>
           </div>
           <div>
-            <label style={{ fontSize: 12, color: '#6b7280', display: 'block', marginBottom: 4 }}>Client Type</label>
+            <label style={{ fontSize: 12, color: 'var(--text-muted)', display: 'block', marginBottom: 4 }}>Client Type</label>
             <select className="input-field" value={form.client_type} onChange={e => update('client_type', e.target.value)}>
               {CLIENT_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
             </select>
           </div>
           <div>
-            <label style={{ fontSize: 12, color: '#6b7280', display: 'block', marginBottom: 4 }}>Outcome</label>
+            <label style={{ fontSize: 12, color: 'var(--text-muted)', display: 'block', marginBottom: 4 }}>Outcome</label>
             <select className="input-field" value={form.outcome} onChange={e => update('outcome', e.target.value)}>
               <option value="won">✅ Won</option>
               <option value="lost">❌ Lost</option>
@@ -163,7 +163,7 @@ function LogProposalModal({ clients, onLogged, onClose }) {
             </select>
           </div>
           <div>
-            <label style={{ fontSize: 12, color: '#6b7280', display: 'block', marginBottom: 4 }}>Days to close</label>
+            <label style={{ fontSize: 12, color: 'var(--text-muted)', display: 'block', marginBottom: 4 }}>Days to close</label>
             <input className="input-field" type="number" value={form.days_to_close} onChange={e => update('days_to_close', e.target.value)} placeholder="e.g. 3" />
           </div>
         </div>
@@ -174,7 +174,7 @@ function LogProposalModal({ clients, onLogged, onClose }) {
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
               {WIN_FACTORS.map(f => (
                 <button key={f} onClick={() => toggleFactor('win_factors', f)}
-                  style={{ fontSize: 12, padding: '4px 10px', borderRadius: 999, cursor: 'pointer', border: '1px solid', borderColor: form.win_factors.includes(f) ? '#15803d' : '#e5e7eb', background: form.win_factors.includes(f) ? '#dcfce7' : 'white', color: form.win_factors.includes(f) ? '#15803d' : '#6b7280' }}>
+                  style={{ fontSize: 12, padding: '4px 10px', borderRadius: 999, cursor: 'pointer', border: '1px solid', borderColor: form.win_factors.includes(f) ? '#15803d' : 'var(--border)', background: form.win_factors.includes(f) ? '#dcfce7' : 'var(--bg-card)', color: form.win_factors.includes(f) ? '#15803d' : 'var(--text-muted)' }}>
                   {f}
                 </button>
               ))}
@@ -188,7 +188,7 @@ function LogProposalModal({ clients, onLogged, onClose }) {
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
               {LOSS_REASONS.map(r => (
                 <button key={r} onClick={() => toggleFactor('loss_reasons', r)}
-                  style={{ fontSize: 12, padding: '4px 10px', borderRadius: 999, cursor: 'pointer', border: '1px solid', borderColor: form.loss_reasons.includes(r) ? '#dc2626' : '#e5e7eb', background: form.loss_reasons.includes(r) ? '#fee2e2' : 'white', color: form.loss_reasons.includes(r) ? '#dc2626' : '#6b7280' }}>
+                  style={{ fontSize: 12, padding: '4px 10px', borderRadius: 999, cursor: 'pointer', border: '1px solid', borderColor: form.loss_reasons.includes(r) ? '#dc2626' : 'var(--border)', background: form.loss_reasons.includes(r) ? '#fee2e2' : 'var(--bg-card)', color: form.loss_reasons.includes(r) ? '#dc2626' : 'var(--text-muted)' }}>
                   {r}
                 </button>
               ))}
@@ -197,7 +197,7 @@ function LogProposalModal({ clients, onLogged, onClose }) {
         )}
 
         <div style={{ marginBottom: 14 }}>
-          <label style={{ fontSize: 12, color: '#6b7280', display: 'block', marginBottom: 4 }}>Notes (optional)</label>
+          <label style={{ fontSize: 12, color: 'var(--text-muted)', display: 'block', marginBottom: 4 }}>Notes (optional)</label>
           <textarea className="input-field" rows={2} value={form.notes} onChange={e => update('notes', e.target.value)} placeholder="Any additional context..." style={{ resize: 'none' }} />
         </div>
 
@@ -248,24 +248,24 @@ function PredictPanel({ clients }) {
     <div>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 12 }}>
         <div>
-          <label style={{ fontSize: 12, color: '#6b7280', display: 'block', marginBottom: 4 }}>Service Type</label>
+          <label style={{ fontSize: 12, color: 'var(--text-muted)', display: 'block', marginBottom: 4 }}>Service Type</label>
           <select className="input-field" value={form.service_type} onChange={e => setForm(f => ({ ...f, service_type: e.target.value }))}>
             {SERVICE_TYPES.map(s => <option key={s} value={s}>{s}</option>)}
           </select>
         </div>
         <div>
-          <label style={{ fontSize: 12, color: '#6b7280', display: 'block', marginBottom: 4 }}>Proposal Amount (₹)</label>
+          <label style={{ fontSize: 12, color: 'var(--text-muted)', display: 'block', marginBottom: 4 }}>Proposal Amount (₹)</label>
           <input className="input-field" type="number" value={form.amount} onChange={e => setForm(f => ({ ...f, amount: e.target.value }))} placeholder="50000" />
         </div>
         <div>
-          <label style={{ fontSize: 12, color: '#6b7280', display: 'block', marginBottom: 4 }}>Select Client (optional)</label>
+          <label style={{ fontSize: 12, color: 'var(--text-muted)', display: 'block', marginBottom: 4 }}>Select Client (optional)</label>
           <select className="input-field" value={form.client_id} onChange={e => handleClientChange(e.target.value)}>
             <option value="">Select for auto-detection</option>
             {clients.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
           </select>
         </div>
         <div>
-          <label style={{ fontSize: 12, color: '#6b7280', display: 'block', marginBottom: 4 }}>Client Type</label>
+          <label style={{ fontSize: 12, color: 'var(--text-muted)', display: 'block', marginBottom: 4 }}>Client Type</label>
           <select className="input-field" value={form.client_type} onChange={e => setForm(f => ({ ...f, client_type: e.target.value }))}>
             {CLIENT_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
           </select>
@@ -283,19 +283,19 @@ function PredictPanel({ clients }) {
           <ProbabilityGauge probability={result.win_probability} />
 
           <div style={{ marginTop: 14, display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
-            <span style={{ fontSize: 12, fontWeight: 700, padding: '2px 8px', borderRadius: 999, background: result.confidence === 'HIGH' ? '#dcfce7' : result.confidence === 'MEDIUM' ? '#fef3c7' : '#f3f4f6', color: result.confidence === 'HIGH' ? '#15803d' : result.confidence === 'MEDIUM' ? '#92400e' : '#6b7280' }}>
+            <span style={{ fontSize: 12, fontWeight: 700, padding: '2px 8px', borderRadius: 999, background: result.confidence === 'HIGH' ? '#dcfce7' : result.confidence === 'MEDIUM' ? '#fef3c7' : 'var(--bg-elevated)', color: result.confidence === 'HIGH' ? '#15803d' : result.confidence === 'MEDIUM' ? '#92400e' : 'var(--text-muted)' }}>
               {result.confidence} confidence
             </span>
-            <span style={{ fontSize: 12, color: '#9ca3af' }}>Client detected as: {result.client_type_used}</span>
+            <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>Client detected as: {result.client_type_used}</span>
           </div>
 
           {result.explanation?.length > 0 && (
             <div className="card" style={{ marginBottom: 12 }}>
-              <p style={{ fontSize: 12, fontWeight: 700, color: '#6b7280', marginBottom: 6 }}>BASED ON YOUR DATA</p>
+              <p style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-muted)', marginBottom: 6 }}>BASED ON YOUR DATA</p>
               {result.explanation.map((e, i) => (
                 <div key={i} style={{ display: 'flex', gap: 6, marginBottom: 4 }}>
                   <BarChart3 size={13} color="#4f46e5" style={{ flexShrink: 0, marginTop: 1 }} />
-                  <p style={{ fontSize: 13, color: '#374151' }}>{e}</p>
+                  <p style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{e}</p>
                 </div>
               ))}
             </div>
@@ -303,11 +303,11 @@ function PredictPanel({ clients }) {
 
           {result.recommendations?.length > 0 && (
             <div className="card">
-              <p style={{ fontSize: 12, fontWeight: 700, color: '#6b7280', marginBottom: 8 }}>RECOMMENDATIONS</p>
+              <p style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-muted)', marginBottom: 8 }}>RECOMMENDATIONS</p>
               {result.recommendations.map((r, i) => (
                 <div key={i} style={{ display: 'flex', gap: 6, marginBottom: 6 }}>
                   <CheckCircle2 size={13} color="#15803d" style={{ flexShrink: 0, marginTop: 1 }} />
-                  <p style={{ fontSize: 13, color: '#374151' }}>{r}</p>
+                  <p style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{r}</p>
                 </div>
               ))}
             </div>
@@ -324,8 +324,8 @@ function InsightsPanel({ insights }) {
     return (
       <div style={{ textAlign: 'center', padding: 40 }}>
         <Target size={32} color="#9ca3af" />
-        <p style={{ fontSize: 14, color: '#6b7280', marginTop: 12 }}>{insights.message}</p>
-        <p style={{ fontSize: 13, color: '#9ca3af', marginTop: 6 }}>Log at least 3 proposals to see win rate patterns.</p>
+        <p style={{ fontSize: 14, color: 'var(--text-muted)', marginTop: 12 }}>{insights.message}</p>
+        <p style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 6 }}>Log at least 3 proposals to see win rate patterns.</p>
       </div>
     )
   }
@@ -337,13 +337,13 @@ function InsightsPanel({ insights }) {
       {/* Summary stats */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10, marginBottom: 20 }}>
         {[
-          { label: 'Total Proposals', value: insights.total_proposals, color: '#4f46e5' },
+          { label: 'Total Proposals', value: insights.total_proposals, color: 'var(--brand)' },
           { label: 'Win Rate', value: `${insights.overall_win_rate}%`, color: '#15803d' },
           { label: 'Avg Won Deal', value: `₹${(insights.avg_deal_size_won || 0).toLocaleString('en-IN', { maximumFractionDigits: 0 })}`, color: '#15803d' },
           { label: 'Avg Lost Deal', value: `₹${(insights.avg_deal_size_lost || 0).toLocaleString('en-IN', { maximumFractionDigits: 0 })}`, color: '#dc2626' },
         ].map(({ label, value, color }) => (
           <div key={label} className="card">
-            <p style={{ fontSize: 11, color: '#9ca3af', marginBottom: 6 }}>{label}</p>
+            <p style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 6 }}>{label}</p>
             <p style={{ fontSize: 20, fontWeight: 700, color }}>{value}</p>
           </div>
         ))}
@@ -353,8 +353,8 @@ function InsightsPanel({ insights }) {
         <div style={{ padding: '12px 16px', background: '#eef2ff', border: '1px solid #c7d2fe', borderRadius: 10, marginBottom: 16, display: 'flex', gap: 8 }}>
           <Zap size={16} color="#4f46e5" style={{ flexShrink: 0 }} />
           <div>
-            <p style={{ fontSize: 13, fontWeight: 700, color: '#4f46e5', marginBottom: 2 }}>Your Sweet Spot</p>
-            <p style={{ fontSize: 13, color: '#374151' }}>{insights.best_performing_combo.combined_message}</p>
+            <p style={{ fontSize: 13, fontWeight: 700, color: 'var(--brand)', marginBottom: 2 }}>Your Sweet Spot</p>
+            <p style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{insights.best_performing_combo.combined_message}</p>
           </div>
         </div>
       )}
@@ -366,8 +366,8 @@ function InsightsPanel({ insights }) {
           {insights.by_service_type.map((s, i) => (
             <div key={s.service_type} style={{ marginBottom: 10 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 3 }}>
-                <span style={{ fontSize: 12.5, color: '#374151' }}>{s.service_type}</span>
-                <span style={{ fontSize: 11, color: '#9ca3af' }}>{s.won}W / {s.lost}L</span>
+                <span style={{ fontSize: 12.5, color: 'var(--text-secondary)' }}>{s.service_type}</span>
+                <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{s.won}W / {s.lost}L</span>
               </div>
               <WinRateBar value={s.win_rate} />
             </div>
@@ -380,8 +380,8 @@ function InsightsPanel({ insights }) {
           {insights.by_client_type.map((c, i) => (
             <div key={c.client_type} style={{ marginBottom: 10 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 3 }}>
-                <span style={{ fontSize: 12.5, color: '#374151' }}>{c.client_type}</span>
-                <span style={{ fontSize: 11, color: '#9ca3af' }}>{c.won}W / {c.lost}L</span>
+                <span style={{ fontSize: 12.5, color: 'var(--text-secondary)' }}>{c.client_type}</span>
+                <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{c.won}W / {c.lost}L</span>
               </div>
               <WinRateBar value={c.win_rate} />
             </div>
@@ -434,7 +434,7 @@ function InsightsPanel({ insights }) {
             </h4>
             {insights.top_win_factors.map((f, i) => (
               <div key={i} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 5 }}>
-                <span style={{ fontSize: 12.5, color: '#374151' }}>{f.factor}</span>
+                <span style={{ fontSize: 12.5, color: 'var(--text-secondary)' }}>{f.factor}</span>
                 <span style={{ fontSize: 12, fontWeight: 600, color: '#15803d' }}>{f.count}×</span>
               </div>
             ))}
@@ -448,7 +448,7 @@ function InsightsPanel({ insights }) {
             </h4>
             {insights.top_loss_factors.map((f, i) => (
               <div key={i} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 5 }}>
-                <span style={{ fontSize: 12.5, color: '#374151' }}>{f.factor}</span>
+                <span style={{ fontSize: 12.5, color: 'var(--text-secondary)' }}>{f.factor}</span>
                 <span style={{ fontSize: 12, fontWeight: 600, color: '#dc2626' }}>{f.count}×</span>
               </div>
             ))}
@@ -464,7 +464,7 @@ function ProposalsList({ proposals, onDelete }) {
   return (
     <div>
       {!proposals.length ? (
-        <p style={{ textAlign: 'center', color: '#9ca3af', fontSize: 13.5, padding: 24 }}>No proposals logged yet.</p>
+        <p style={{ textAlign: 'center', color: 'var(--text-muted)', fontSize: 13.5, padding: 24 }}>No proposals logged yet.</p>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           {proposals.map(p => (
@@ -476,7 +476,7 @@ function ProposalsList({ proposals, onDelete }) {
                     {p.outcome === 'won' ? '✅ Won' : p.outcome === 'lost' ? '❌ Lost' : '⏳ Pending'}
                   </span>
                 </div>
-                <p style={{ fontSize: 12, color: '#9ca3af' }}>
+                <p style={{ fontSize: 12, color: 'var(--text-muted)' }}>
                   {p.client_name} · {p.client_type} · ₹{p.amount?.toLocaleString('en-IN')}
                   {p.days_to_close ? ` · ${p.days_to_close} days` : ''}
                 </p>
@@ -548,14 +548,14 @@ export default function WinRatePage() {
         </div>
       </div>
 
-      <div style={{ display: 'flex', gap: 6, marginBottom: 24, background: '#f3f4f6', padding: 6, borderRadius: 10, width: 'fit-content' }}>
+      <div style={{ display: 'flex', gap: 6, marginBottom: 24, background: 'var(--bg-elevated)', padding: 6, borderRadius: 10, width: 'fit-content' }}>
         {[
           { key: 'insights', label: 'Analytics', icon: BarChart3 },
           { key: 'predict', label: 'Win Predictor', icon: Zap },
           { key: 'proposals', label: 'All Proposals', icon: Target },
         ].map(({ key, label, icon: Icon }) => (
           <button key={key} onClick={() => setTab(key)}
-            style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '9px 18px', borderRadius: 8, fontSize: 14, border: 'none', cursor: 'pointer', fontWeight: tab === key ? 600 : 400, background: tab === key ? '#4f46e5' : 'transparent', color: tab === key ? '#fff' : '#6b7280' }}>
+            style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '9px 18px', borderRadius: 8, fontSize: 14, border: 'none', cursor: 'pointer', fontWeight: tab === key ? 600 : 400, background: tab === key ? '#4f46e5' : 'transparent', color: tab === key ? '#fff' : 'var(--text-muted)' }}>
             <Icon size={15} /> {label}
           </button>
         ))}
@@ -565,7 +565,7 @@ export default function WinRatePage() {
         {loading ? (
           <div style={{ textAlign: 'center', padding: 40 }}>
             <Loader2 size={28} className="spin" color="#4f46e5" />
-            <p style={{ fontSize: 14, color: '#6b7280', marginTop: 12 }}>Loading win rate data...</p>
+            <p style={{ fontSize: 14, color: 'var(--text-muted)', marginTop: 12 }}>Loading win rate data...</p>
           </div>
         ) : (
           <>

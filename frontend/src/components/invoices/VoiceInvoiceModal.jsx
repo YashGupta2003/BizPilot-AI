@@ -121,34 +121,34 @@ export default function VoiceInvoiceModal({ onClose, onCreated }) {
     <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 50 }}>
       <div className="card" style={{ width: 480, maxHeight: '85vh', overflowY: 'auto' }}>
         <h3 style={{ fontSize: 18, fontWeight: 600, marginBottom: 4 }}>Voice to Invoice</h3>
-        <p style={{ fontSize: 13, color: '#6b7280', marginBottom: 16 }}>
+        <p style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 16 }}>
           Speak the work you did and the amount — we'll turn it into an invoice.
         </p>
 
         {stage === 'idle' && (
           <div style={{ textAlign: 'center', padding: '24px 0' }}>
-            <button onClick={startRecording} style={{ width: 72, height: 72, borderRadius: '50%', border: 'none', background: '#4f46e5', color: '#fff', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
+            <button onClick={startRecording} style={{ width: 72, height: 72, borderRadius: '50%', border: 'none', background: 'var(--brand)', color: 'var(--bg-card)', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
               <Mic size={28} />
             </button>
-            <p style={{ fontSize: 13, color: '#6b7280', marginTop: 12 }}>Tap to start recording</p>
-            <p style={{ fontSize: 12, color: '#9ca3af', marginTop: 6 }}>Example: "Raj ke liye website banayi, 5000 rupaye"</p>
+            <p style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 12 }}>Tap to start recording</p>
+            <p style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 6 }}>Example: "Raj ke liye website banayi, 5000 rupaye"</p>
           </div>
         )}
 
         {stage === 'recording' && (
           <div style={{ textAlign: 'center', padding: '24px 0' }}>
-            <button onClick={stopRecording} style={{ width: 72, height: 72, borderRadius: '50%', border: 'none', background: '#dc2626', color: '#fff', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', animation: 'pulse 1.5s infinite' }}>
+            <button onClick={stopRecording} style={{ width: 72, height: 72, borderRadius: '50%', border: 'none', background: '#dc2626', color: 'var(--bg-card)', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', animation: 'pulse 1.5s infinite' }}>
               <Square size={24} />
             </button>
             <p style={{ fontSize: 16, fontWeight: 600, marginTop: 12 }}>{formatSeconds(recordingSeconds)}</p>
-            <p style={{ fontSize: 13, color: '#6b7280' }}>Recording... tap to stop</p>
+            <p style={{ fontSize: 13, color: 'var(--text-muted)' }}>Recording... tap to stop</p>
           </div>
         )}
 
         {(stage === 'transcribing' || stage === 'creating') && (
           <div style={{ textAlign: 'center', padding: '24px 0' }}>
             <Loader2 size={32} className="spin" color="#4f46e5" />
-            <p style={{ fontSize: 13, color: '#6b7280', marginTop: 12 }}>
+            <p style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 12 }}>
               {stage === 'transcribing' ? 'Transcribing your recording...' : 'Creating invoice...'}
             </p>
           </div>
@@ -156,9 +156,9 @@ export default function VoiceInvoiceModal({ onClose, onCreated }) {
 
         {stage === 'review' && preview && (
           <div>
-            <div style={{ background: '#f9fafb', borderRadius: 8, padding: 10, marginBottom: 14 }}>
-              <p style={{ fontSize: 11, color: '#9ca3af', marginBottom: 4 }}>WHAT WE HEARD</p>
-              <p style={{ fontSize: 13.5, color: '#374151' }}>{preview.transcript}</p>
+            <div style={{ background: 'var(--bg-elevated)', borderRadius: 8, padding: 10, marginBottom: 14 }}>
+              <p style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 4 }}>WHAT WE HEARD</p>
+              <p style={{ fontSize: 13.5, color: 'var(--text-secondary)' }}>{preview.transcript}</p>
             </div>
 
             {preview.matched_client_automatically && (

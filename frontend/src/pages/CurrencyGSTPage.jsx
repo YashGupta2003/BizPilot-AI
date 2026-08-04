@@ -28,7 +28,7 @@ function Tab({ label, active, onClick, icon: Icon }) {
       padding: '9px 18px', borderRadius: 8, fontSize: 14,
       border: 'none', cursor: 'pointer', fontWeight: active ? 600 : 400,
       background: active ? '#4f46e5' : 'transparent',
-      color: active ? '#fff' : '#6b7280',
+      color: active ? '#fff' : 'var(--text-muted)',
     }}>
       <Icon size={15} /> {label}
     </button>
@@ -49,7 +49,7 @@ function ExchangeRatesTab() {
   if (loading) return (
     <div style={{ textAlign: 'center', padding: 40 }}>
       <Loader2 size={28} className="spin" color="#4f46e5" />
-      <p style={{ fontSize: 14, color: '#6b7280', marginTop: 12 }}>Fetching live rates...</p>
+      <p style={{ fontSize: 14, color: 'var(--text-muted)', marginTop: 12 }}>Fetching live rates...</p>
     </div>
   )
 
@@ -59,8 +59,8 @@ function ExchangeRatesTab() {
     <div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
         <TrendingUp size={16} color="#15803d" />
-        <span style={{ fontSize: 13, color: '#6b7280' }}>Live rates — updated hourly from ECB</span>
-        <button onClick={load} style={{ marginLeft: 'auto', background: 'none', border: 'none', cursor: 'pointer', color: '#4f46e5', display: 'flex', alignItems: 'center', gap: 4, fontSize: 13 }}>
+        <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>Live rates — updated hourly from ECB</span>
+        <button onClick={load} style={{ marginLeft: 'auto', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--brand)', display: 'flex', alignItems: 'center', gap: 4, fontSize: 13 }}>
           <RefreshCw size={13} /> Refresh
         </button>
       </div>
@@ -71,13 +71,13 @@ function ExchangeRatesTab() {
               <span style={{ fontSize: 20 }}>{meta.flag}</span>
               <div>
                 <p style={{ fontSize: 13, fontWeight: 600 }}>{code}</p>
-                <p style={{ fontSize: 11, color: '#9ca3af' }}>{meta.name}</p>
+                <p style={{ fontSize: 11, color: 'var(--text-muted)' }}>{meta.name}</p>
               </div>
             </div>
-            <p style={{ fontSize: 18, fontWeight: 700, color: '#1a1d23' }}>
+            <p style={{ fontSize: 18, fontWeight: 700, color: 'var(--text-primary)' }}>
               ₹{rates[code] ? rates[code].toFixed(2) : '—'}
             </p>
-            <p style={{ fontSize: 11, color: '#9ca3af' }}>per 1 {code}</p>
+            <p style={{ fontSize: 11, color: 'var(--text-muted)' }}>per 1 {code}</p>
           </div>
         ))}
       </div>
@@ -132,7 +132,7 @@ function GSTSlabsTab() {
             <tbody>
               {filtered.map((s) => (
                 <tr key={s.sac_code}>
-                  <td><code style={{ background: '#f3f4f6', padding: '2px 6px', borderRadius: 4, fontSize: 12 }}>{s.sac_code}</code></td>
+                  <td><code style={{ background: 'var(--bg-elevated)', padding: '2px 6px', borderRadius: 4, fontSize: 12 }}>{s.sac_code}</code></td>
                   <td style={{ fontSize: 13 }}>{s.description}</td>
                   <td>
                     <span style={{ fontSize: 12, fontWeight: 700, padding: '3px 10px', borderRadius: 999, background: GST_SLAB_COLORS[s.gst_rate] + '18', color: GST_SLAB_COLORS[s.gst_rate] }}>
@@ -142,7 +142,7 @@ function GSTSlabsTab() {
                 </tr>
               ))}
               {filtered.length === 0 && (
-                <tr><td colSpan={3} style={{ textAlign: 'center', color: '#9ca3af', fontSize: 13 }}>No matching SAC codes</td></tr>
+                <tr><td colSpan={3} style={{ textAlign: 'center', color: 'var(--text-muted)', fontSize: 13 }}>No matching SAC codes</td></tr>
               )}
             </tbody>
           </table>
@@ -160,7 +160,7 @@ export default function CurrencyGSTPage() {
       <h1 className="page-title">Currency & GST</h1>
       <p className="page-subtitle">Live exchange rates, GST calculator, and SAC code reference</p>
 
-      <div style={{ display: 'flex', gap: 6, marginBottom: 24, background: '#f3f4f6', padding: 6, borderRadius: 10, width: 'fit-content' }}>
+      <div style={{ display: 'flex', gap: 6, marginBottom: 24, background: 'var(--bg-elevated)', padding: 6, borderRadius: 10, width: 'fit-content' }}>
         <Tab label="GST Calculator" active={tab === 'calculator'} onClick={() => setTab('calculator')} icon={Calculator} />
         <Tab label="Exchange Rates" active={tab === 'rates'} onClick={() => setTab('rates')} icon={Globe} />
         <Tab label="GST & SAC Codes" active={tab === 'slabs'} onClick={() => setTab('slabs')} icon={FileText} />

@@ -44,7 +44,7 @@ export default function DocumentUpload({ onReportReady }) {
   return (
     <div className="card" style={{ marginBottom: 16 }}>
       <h3 style={{ fontSize: 14, fontWeight: 600, marginBottom: 8 }}>Knowledge base</h3>
-      <p style={{ fontSize: 13, color: '#6b7280', marginBottom: 12 }}>
+      <p style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 12 }}>
         Upload contracts, invoices, or notes — ask the assistant about them, or scan contracts for risky clauses.
       </p>
 
