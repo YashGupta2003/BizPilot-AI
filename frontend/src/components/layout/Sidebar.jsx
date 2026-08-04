@@ -3,7 +3,9 @@ import {
   LayoutDashboard, Users, FileText, MessageSquare,
   Bell, Globe, Swords, Brain, Activity, ScrollText,
   Mic2, PieChart, Receipt, Gavel, Shield, DollarSign, LogOut, Scale, TrendingUp, Target,
-  Handshake, Crosshair, MessageCircleWarning
+  Handshake, Crosshair, MessageCircleWarning,
+  // New Feature Icons (13-15)
+  Zap, FileDiff, CalendarDays
 } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
 import ActivityFeed from './ActivityFeed'
@@ -32,6 +34,10 @@ const navItems = [
   { to: '/networking', label: 'Networking', icon: Handshake },
   { to: '/goals', label: 'Income Goals', icon: Crosshair },
   { to: '/tone', label: 'Tone Analyzer', icon: MessageCircleWarning },
+  // ── New Features (13-15) ──────────────────────────────────────────
+  { to: '/mental-load', label: 'Mental Load', icon: Zap },
+  { to: '/contract-compare', label: 'Contract Diff', icon: FileDiff },
+  { to: '/seasonal', label: 'Seasonal Planner', icon: CalendarDays },
 ]
 
 export default function Sidebar() {

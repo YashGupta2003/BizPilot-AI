@@ -8,7 +8,19 @@ from contextlib import asynccontextmanager
 
 from app.core.config import settings
 from app.core.database import connect_to_mongo, close_mongo_connection
-from app.routes import auth_routes, client_routes, invoice_routes, chat_routes, dashboard_routes, risk_routes, forecast_routes, voice_routes, whatsapp_routes, currency_routes, negotiation_routes, profiler_routes, burnout_routes, contract_routes,meeting_routes, portfolio_routes,client_360_routes, activity_routes, dispute_routes, ltv_routes, winrate_routes, escalation_routes, tax_routes, scope_routes, pricing_routes, health_routes, networking_routes, goal_routes, tone_routes
+from app.routes import (
+    auth_routes, client_routes, invoice_routes, chat_routes, dashboard_routes,
+    risk_routes, forecast_routes, voice_routes, whatsapp_routes, currency_routes,
+    negotiation_routes, profiler_routes, burnout_routes, contract_routes,
+    meeting_routes, portfolio_routes, client_360_routes, activity_routes,
+    dispute_routes, ltv_routes, winrate_routes, escalation_routes, tax_routes,
+    scope_routes, pricing_routes, health_routes, networking_routes, goal_routes,
+    tone_routes,
+    # ── New Feature Routes (13-15) ─────────────────────────────────────
+    mental_load_routes,          # Feature 13: Freelancer Mental Load Index
+    contract_comparator_routes,  # Feature 14: Contract Red Flag Comparator
+    seasonal_routes,             # Feature 15: Seasonal Revenue Planner
+)
 
 
 @asynccontextmanager
@@ -66,6 +78,10 @@ app.include_router(health_routes.router)
 app.include_router(networking_routes.router)
 app.include_router(goal_routes.router)
 app.include_router(tone_routes.router)
+# ── New Features (13-15) ──────────────────────────────────────────────
+app.include_router(mental_load_routes.router)          # Feature 13
+app.include_router(contract_comparator_routes.router)  # Feature 14
+app.include_router(seasonal_routes.router)             # Feature 15
 
 @app.get("/")
 async def root():

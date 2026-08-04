@@ -63,6 +63,13 @@ async def connect_to_mongo():
     await mongodb.db.escalation_logs.create_index("invoice_id")
     await mongodb.db.scope_projects.create_index("owner_id")
     await mongodb.db.scope_projects.create_index("client_id")
+    # ── New Feature Indexes (13-15) ───────────────────────────────────
+    await mongodb.db.mental_load_snapshots.create_index("owner_id")
+    await mongodb.db.mental_load_snapshots.create_index("created_at")
+    await mongodb.db.contract_comparisons.create_index("owner_id")
+    await mongodb.db.contract_comparisons.create_index("created_at")
+    await mongodb.db.seasonal_plans.create_index("owner_id")
+    await mongodb.db.seasonal_plans.create_index("created_at")
 
 
 async def close_mongo_connection():

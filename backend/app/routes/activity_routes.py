@@ -181,6 +181,55 @@ async def get_activity_feed(
             "client_name": t.get("client_name", ""),
         })
 
+    # ── NEW FEATURE 13: Mental Load snapshots ────────────────────────
+    ml_cursor = db.mental_load_snapshots.find({"owner_id": owner_id}).sort("created_at", -1)
+    recent_ml = await ml_cursor.to_list(length=3)
+    for ml in recent_ml:
+        zone = ml.get("zone", "Green Zone")
+        score = ml.get("score", 0)
+        zone_emoji = {"Green Zone": "🟢", "Yellow Zone": "🟡", "Orange Zone": "🟠", "Red Zone": "🔴"}.get(zone, "🧠")
+        events.append({
+            "type": "mental_load",
+            "title": f"{zone_emoji} Mental Load: {score}/100 — {zone}",
+            "subtitle": f"Open items: {ml.get('total_open_items', sum(ml.get('breakdown', {}).values()))}",
+            "date": ml.get("created_at", datetime.utcnow()),
+            "link": "/mental-load",
+            "color": "#7c3aed",
+            "client_name": "",
+        })
+
+    # ── NEW FEATURE 14: Contract comparisons ─────────────────────────
+    cc_cursor = db.contract_comparisons.find({"owner_id": owner_id}).sort("created_at", -1)
+    recent_cc = await cc_cursor.to_list(length=3)
+    for cc in recent_cc:
+        analysis = cc.get("analysis", {})
+        risk = analysis.get("risk_level", "unknown")
+        changes = analysis.get("changes_found", 0)
+        risk_emoji = {"low": "🟢", "medium": "🟡", "high": "🟠", "critical": "🔴"}.get(risk, "📜")
+        events.append({
+            "type": "contract_comparison",
+            "title": f"{risk_emoji} Contract compared — {risk.upper()} risk",
+            "subtitle": f"{changes} changes found",
+            "date": cc.get("created_at", datetime.utcnow()),
+            "link": "/contract-compare",
+            "color": "#dc2626",
+            "client_name": "",
+        })
+
+    # ── NEW FEATURE 15: Seasonal plans ───────────────────────────────
+    sp_cursor = db.seasonal_plans.find({"owner_id": owner_id}).sort("created_at", -1)
+    recent_sp = await sp_cursor.to_list(length=2)
+    for sp in recent_sp:
+        events.append({
+            "type": "seasonal_plan",
+            "title": "📅 Seasonal revenue plan updated",
+            "subtitle": sp.get("notes", "12-month revenue forecast generated")[:50],
+            "date": sp.get("created_at", datetime.utcnow()),
+            "link": "/seasonal",
+            "color": "#059669",
+            "client_name": "",
+        })
+
     # Sort all events by date, newest first
     events.sort(key=lambda e: e["date"] if isinstance(e["date"], datetime) else datetime.min, reverse=True)
 
@@ -345,4 +394,58 @@ async def get_smart_alerts(
                 "feature": "tone",
             })
 
-    return alerts[:12]
+    # ── Alert 7: Mental Load overload (Feature 13) ───────────────────
+    latest_ml = await db.mental_load_snapshots.find_one(
+        {"owner_id": owner_id},
+        sort=[("created_at", -1)],
+    )
+    if latest_ml and latest_ml.get("score", 0) >= 60:
+        zone = latest_ml.get("zone", "Orange Zone")
+        score = latest_ml.get("score", 0)
+        total = latest_ml.get("total_open_items", sum(latest_ml.get("breakdown", {}).values()))
+        alerts.append({
+            "level": "HIGH" if score >= 70 else "MEDIUM",
+            "icon": "🧠",
+            "message": f"Mental Load is in {zone} ({score}/100) with {total} open items. "
+                       f"Research shows error rates increase significantly above 7 active items.",
+            "action": "View Mental Load",
+            "link": "/mental-load",
+            "feature": "mental_load",
+        })
+
+    # ── Alert 8: Unsafe contract comparison (Feature 14) ─────────────
+    recent_comparison = await db.contract_comparisons.find_one(
+        {"owner_id": owner_id, "analysis.safe_to_sign": False},
+        sort=[("created_at", -1)],
+    )
+    if recent_comparison:
+        risk = recent_comparison.get("analysis", {}).get("risk_level", "unknown")
+        flags = len(recent_comparison.get("analysis", {}).get("red_flags", []))
+        if risk in ("high", "critical"):
+            alerts.append({
+                "level": "HIGH",
+                "icon": "🚩",
+                "message": f"A recent contract comparison flagged {flags} red flag(s) — {risk.upper()} risk. "
+                           f"Do NOT sign without addressing these issues.",
+                "action": "View Contract Diff",
+                "link": "/contract-compare",
+                "feature": "contract_compare",
+            })
+
+    # ── Alert 9: Seasonal slowdown warning (Feature 15) ──────────────
+    current_month_num = today.month
+    # Warn about upcoming slow months (January, May, December)
+    slow_months = {12: "January", 4: "May", 11: "December"}
+    if current_month_num in slow_months:
+        upcoming = slow_months[current_month_num]
+        alerts.append({
+            "level": "MEDIUM",
+            "icon": "📅",
+            "message": f"{upcoming} is historically a slow month. "
+                       f"Build your emergency fund now and front-load proposals.",
+            "action": "View Seasonal Planner",
+            "link": "/seasonal",
+            "feature": "seasonal",
+        })
+
+    return alerts[:15]

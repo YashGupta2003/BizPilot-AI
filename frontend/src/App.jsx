@@ -27,6 +27,10 @@ import HealthDashboardPage from './pages/HealthDashboardPage'
 import NetworkingPage from './pages/NetworkingPage'
 import GoalTrackerPage from './pages/GoalTrackerPage'
 import ToneAnalyzerPage from './pages/ToneAnalyzerPage'
+// ── New Features (13-15) ────────────────────────────────────────────
+import MentalLoadPage from './pages/MentalLoadPage'
+import ContractComparatorPage from './pages/ContractComparatorPage'
+import SeasonalPlannerPage from './pages/SeasonalPlannerPage'
 
 export default function App() {
   return (
@@ -59,6 +63,10 @@ export default function App() {
           <Route path="/networking" element={<ProtectedRoute><NetworkingPage /></ProtectedRoute>} />
           <Route path="/goals" element={<ProtectedRoute><GoalTrackerPage /></ProtectedRoute>} />
           <Route path="/tone" element={<ProtectedRoute><ToneAnalyzerPage /></ProtectedRoute>} />
+          {/* ── New Features (13-15) ────────────────────────────────── */}
+          <Route path="/mental-load" element={<ProtectedRoute><MentalLoadPage /></ProtectedRoute>} />
+          <Route path="/contract-compare" element={<ProtectedRoute><ContractComparatorPage /></ProtectedRoute>} />
+          <Route path="/seasonal" element={<ProtectedRoute><SeasonalPlannerPage /></ProtectedRoute>} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
