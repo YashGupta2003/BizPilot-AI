@@ -11,11 +11,15 @@ import { getTaxChecklist } from '../services/taxService'
 export default function DashboardPage() {
   const [summary, setSummary] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [serverError, setServerError] = useState(false)
   const [taxAlerts, setTaxAlerts] = useState(null)
   const navigate = useNavigate()
 
   useEffect(() => {
-    getDashboardSummary().then(setSummary).finally(() => setLoading(false))
+    getDashboardSummary()
+      .then(setSummary)
+      .catch(() => setServerError(true))
+      .finally(() => setLoading(false))
     getTaxChecklist().then(setTaxAlerts).catch(() => {})
   }, [])
 
@@ -57,38 +61,54 @@ export default function DashboardPage() {
             </div>
           )}
 
-          <div className="grid-4" style={{ marginBottom: 20 }}>
-            <StatCard label="Total earned"   value={formatCurrency(summary.total_earned)}   color="#15803d" />
-            <StatCard label="Pending"        value={formatCurrency(summary.total_pending)}  color="#1d4ed8" />
-            <StatCard label="Overdue"        value={formatCurrency(summary.total_overdue)}  color="#b91c1c" />
-            <StatCard label="Total clients"  value={summary.total_clients}                  color="#4f46e5" />
-          </div>
+          {serverError || !summary ? (
+            <div style={{
+              padding: '20px',
+              background: '#fef2f2',
+              border: '1px solid #fecaca',
+              borderRadius: 10,
+              marginBottom: 20,
+              textAlign: 'center',
+            }}>
+              <p style={{ color: '#991b1b', fontWeight: 600, marginBottom: 4 }}>⚠️ Could not connect to server</p>
+              <p style={{ color: '#b91c1c', fontSize: 13 }}>Make sure the backend is running at <code>http://localhost:8000</code></p>
+            </div>
+          ) : (
+            <>
+              <div className="grid-4" style={{ marginBottom: 20 }}>
+                <StatCard label="Total earned"   value={formatCurrency(summary?.total_earned)}   color="#15803d" />
+                <StatCard label="Pending"        value={formatCurrency(summary?.total_pending)}  color="#1d4ed8" />
+                <StatCard label="Overdue"        value={formatCurrency(summary?.total_overdue)}  color="#b91c1c" />
+                <StatCard label="Total clients"  value={summary?.total_clients || 0}             color="#4f46e5" />
+              </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 20 }}>
-            <CashFlowForecast />
-            <BurnoutWidget />
-          </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 20 }}>
+                <CashFlowForecast />
+                <BurnoutWidget />
+              </div>
 
-          <div className="card">
-            <h3 style={{ fontSize: 15, fontWeight: 600, marginBottom: 14 }}>Top Clients by Revenue</h3>
-            {!summary.top_clients?.length ? (
-              <p style={{ color: '#6b7280', fontSize: 14 }}>No invoices yet.</p>
-            ) : (
-              <table>
-                <thead>
-                  <tr><th>Client</th><th>Total Invoiced</th></tr>
-                </thead>
-                <tbody>
-                  {summary.top_clients.map((c, i) => (
-                    <tr key={i}>
-                      <td>{c.name}</td>
-                      <td>{formatCurrency(c.total)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
-          </div>
+              <div className="card">
+                <h3 style={{ fontSize: 15, fontWeight: 600, marginBottom: 14 }}>Top Clients by Revenue</h3>
+                {!summary?.top_clients?.length ? (
+                  <p style={{ color: '#6b7280', fontSize: 14 }}>No invoices yet.</p>
+                ) : (
+                  <table>
+                    <thead>
+                      <tr><th>Client</th><th>Total Invoiced</th></tr>
+                    </thead>
+                    <tbody>
+                      {summary.top_clients.map((c, i) => (
+                        <tr key={i}>
+                          <td>{c.name}</td>
+                          <td>{formatCurrency(c.total)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
+              </div>
+            </>
+          )}
         </>
       )}
     </AppLayout>

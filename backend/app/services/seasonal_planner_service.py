@@ -2,6 +2,7 @@ import numpy as np
 from datetime import datetime
 from bson import ObjectId
 from typing import List, Dict, Any
+from app.models.serializers import serialize_doc, serialize_list
 
 INDIAN_BUSINESS_CALENDAR = {
     1: {"name": "January", "events": ["New Year"], "pattern": "slow", "note": "Post-holiday slowdown, clients settling budgets"},
@@ -154,15 +155,16 @@ async def get_seasonal_insights(db, owner_id: str):
     return plan["insights"]
 
 async def save_seasonal_plan(db, owner_id: str, plan_data: dict):
-    plan_data["owner_id"] = owner_id
-    plan_data["created_at"] = datetime.utcnow()
-    
-    result = await db["seasonal_plans"].insert_one(plan_data)
-    plan_data["_id"] = str(result.inserted_id)
-    return plan_data
+    # Work on a copy — pymongo's insert_one mutates the dict in-place,
+    # setting _id to an ObjectId which FastAPI cannot serialize.
+    doc = dict(plan_data)
+    doc["owner_id"] = owner_id
+    doc["created_at"] = datetime.utcnow()
+
+    await db["seasonal_plans"].insert_one(doc)
+    # serialize_doc converts _id ObjectId → "id" string
+    return serialize_doc(doc)
 
 async def get_seasonal_history(db, owner_id: str):
     plans = await db["seasonal_plans"].find({"owner_id": owner_id}).sort("created_at", -1).to_list(None)
-    for p in plans:
-        p["_id"] = str(p["_id"])
-    return plans
+    return serialize_list(plans)

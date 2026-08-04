@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import AppLayout from '../components/layout/AppLayout'
 import { compareContracts, getComparisonHistory, deleteComparison } from '../services/contractComparatorService'
 import { getClients } from '../services/clientService'
-import { getContracts } from '../services/contractService'
+import { listContracts } from '../services/contractService'
 import { Loader2, FileDiff, AlertTriangle, CheckCircle, XCircle, Trash2, ShieldAlert, ArrowRight } from 'lucide-react'
 
 export default function ContractComparatorPage() {
@@ -38,7 +38,7 @@ export default function ContractComparatorPage() {
     try {
       const [clientsData, contractsData] = await Promise.all([
         getClients(),
-        getContracts()
+        listContracts()
       ])
       setClients(clientsData || [])
       setContracts(contractsData || [])
