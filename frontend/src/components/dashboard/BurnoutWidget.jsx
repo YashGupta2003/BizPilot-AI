@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react'
-import { TrendingDown, AlertTriangle, CheckCircle2, Loader2, Activity } from 'lucide-react'
+import { AlertTriangle, Loader2, Activity } from 'lucide-react'
 import { getBurnoutPrediction } from '../../services/burnoutService'
 
-const BURNOUT_COLORS = {
-  Healthy: { bg: '#dcfce7', border: '#86efac', text: '#15803d', bar: '#22c55e' },
-  Caution: { bg: '#fef9c3', border: '#fde047', text: '#854d0e', bar: '#eab308' },
-  Warning: { bg: '#ffedd5', border: '#fdba74', text: '#9a3412', bar: '#f97316' },
-  Critical: { bg: '#fee2e2', border: '#fca5a5', text: '#991b1b', bar: '#ef4444' },
+const LEVEL_COLORS = {
+  Healthy:  { color: 'var(--green)',  bg: 'var(--green-bg)',  bar: 'var(--green)' },
+  Caution:  { color: 'var(--blue)',   bg: 'var(--blue-bg)',   bar: 'var(--blue)' },
+  Warning:  { color: 'var(--amber)',  bg: 'var(--amber-bg)',  bar: 'var(--amber)' },
+  Critical: { color: 'var(--red)',    bg: 'var(--red-bg)',    bar: 'var(--red)' },
 }
 
 export default function BurnoutWidget() {
@@ -22,68 +22,66 @@ export default function BurnoutWidget() {
   }, [])
 
   if (loading) return (
-    <div className="card">
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
-        <Activity size={16} color="#4f46e5" />
-        <h3 style={{ fontSize: 14, fontWeight: 600 }}>Income Stability</h3>
-      </div>
-      <Loader2 size={20} className="spin" color="#4f46e5" />
+    <div className="card" style={{ display: 'flex', alignItems: 'center', gap: 10, color: 'var(--text-muted)', fontSize: 14 }}>
+      <Loader2 size={16} className="spin" style={{ color: 'var(--brand)' }} /> Loading stability data…
     </div>
   )
 
-  if (error) return (
+  if (error || !data) return (
     <div className="card">
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
-        <Activity size={16} color="#4f46e5" />
-        <h3 style={{ fontSize: 14, fontWeight: 600 }}>Income Stability</h3>
+        <Activity size={16} color="var(--brand)" />
+        <h3 className="section-title" style={{ marginBottom: 0 }}>Income Stability</h3>
       </div>
-      <p style={{ fontSize: 13, color: '#9ca3af' }}>{error}</p>
+      <p style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{error || 'No data yet.'}</p>
     </div>
   )
 
-  if (!data) return null
-
-  const colors = BURNOUT_COLORS[data.burnout_label] || BURNOUT_COLORS.Caution
-  const pct = data.burnout_score
+  const colors = LEVEL_COLORS[data.burnout_label] || LEVEL_COLORS.Caution
+  const pct = Math.min(100, data.burnout_score || 0)
 
   return (
-    <div className="card" style={{ border: `1px solid ${colors.border}`, background: colors.bg }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
+    <div className="card" style={{ borderLeft: `3px solid ${colors.color}` }}>
+      {/* Header */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <Activity size={16} color={colors.text} />
-          <h3 style={{ fontSize: 14, fontWeight: 600, color: '#1a1d23' }}>Income Stability</h3>
+          <Activity size={15} color={colors.color} />
+          <h3 className="section-title" style={{ marginBottom: 0 }}>Income Stability</h3>
         </div>
-        <span style={{ fontSize: 11, fontWeight: 700, padding: '2px 8px', borderRadius: 999, background: 'white', color: colors.text }}>
+        <span className="badge" style={{ background: colors.bg, color: colors.color }}>
           {data.burnout_label}
         </span>
       </div>
 
-      <div style={{ marginBottom: 10 }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-          <span style={{ fontSize: 12, color: colors.text }}>Burnout Risk</span>
-          <span style={{ fontSize: 13, fontWeight: 700, color: colors.text }}>{data.burnout_score}/100</span>
+      {/* Progress bar */}
+      <div style={{ marginBottom: 16 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
+          <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>Burnout Risk Score</span>
+          <span style={{ fontSize: 14, fontWeight: 700, color: colors.color }}>{pct}/100</span>
         </div>
-        <div style={{ height: 8, background: 'rgba(255,255,255,0.6)', borderRadius: 99 }}>
-          <div style={{ height: 8, borderRadius: 99, width: `${pct}%`, background: colors.bar, transition: 'width 0.8s' }} />
-        </div>
-      </div>
-
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 10 }}>
-        <div style={{ background: 'rgba(255,255,255,0.7)', borderRadius: 7, padding: '8px 10px' }}>
-          <p style={{ fontSize: 11, color: colors.text, marginBottom: 2 }}>Gap Risk (Next Month)</p>
-          <p style={{ fontSize: 16, fontWeight: 700, color: colors.text }}>{data.gap_probability_next_month}%</p>
-        </div>
-        <div style={{ background: 'rgba(255,255,255,0.7)', borderRadius: 7, padding: '8px 10px' }}>
-          <p style={{ fontSize: 11, color: colors.text, marginBottom: 2 }}>Income Volatility</p>
-          <p style={{ fontSize: 16, fontWeight: 700, color: colors.text }}>{data.volatility_label}</p>
+        <div style={{ height: 6, background: 'var(--bg-elevated)', borderRadius: 99, overflow: 'hidden' }}>
+          <div style={{ height: '100%', borderRadius: 99, width: `${pct}%`, background: colors.bar, transition: 'width 1s ease' }} />
         </div>
       </div>
 
+      {/* Mini stats */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 14 }}>
+        <div style={{ background: 'var(--bg-elevated)', borderRadius: 8, padding: '10px 12px' }}>
+          <p style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 4 }}>Gap Risk (Next Month)</p>
+          <p style={{ fontSize: 18, fontWeight: 700, color: colors.color }}>{data.gap_probability_next_month}%</p>
+        </div>
+        <div style={{ background: 'var(--bg-elevated)', borderRadius: 8, padding: '10px 12px' }}>
+          <p style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 4 }}>Volatility</p>
+          <p style={{ fontSize: 18, fontWeight: 700, color: 'var(--text-primary)' }}>{data.volatility_label}</p>
+        </div>
+      </div>
+
+      {/* Recommendation */}
       {data.recommendations?.[0] && (
-        <div style={{ background: 'rgba(255,255,255,0.8)', borderRadius: 8, padding: '8px 10px', display: 'flex', gap: 6 }}>
-          <AlertTriangle size={13} color={colors.text} style={{ flexShrink: 0, marginTop: 2 }} />
-          <p style={{ fontSize: 12, color: '#374151', lineHeight: 1.5 }}>
-            <strong style={{ color: colors.text }}>{data.recommendations[0].priority}:</strong>{' '}
+        <div style={{ background: colors.bg, border: `1px solid ${colors.color}22`, borderRadius: 8, padding: '10px 12px', display: 'flex', gap: 8 }}>
+          <AlertTriangle size={13} color={colors.color} style={{ flexShrink: 0, marginTop: 2 }} />
+          <p style={{ fontSize: 12.5, color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+            <strong style={{ color: colors.color }}>{data.recommendations[0].priority}:</strong>{' '}
             {data.recommendations[0].action}
           </p>
         </div>

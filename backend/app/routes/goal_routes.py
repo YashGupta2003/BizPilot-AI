@@ -48,7 +48,7 @@ async def get_current_goal(
         return None
         
     progress = await get_goal_progress(db, owner_id, goal)
-    return progress
+    return serialize_doc(progress)
 
 @router.get("/history")
 async def get_goal_history(
@@ -63,7 +63,7 @@ async def get_goal_history(
     history = []
     for goal in goals:
         progress = await get_goal_progress(db, owner_id, goal)
-        history.append(progress)
+        history.append(serialize_doc(progress))
         
     return history
 

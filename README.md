@@ -1320,6 +1320,42 @@ If you're studying this codebase to learn full-stack development, AI integration
   • tone_analyses — communication tone analysis results
   
   You can now run uvicorn app.main:app --reload --port 8000 and npm run dev to see all 3 features live! 🚀
+
+
+    ## ✅ All Bugs Fixed + Full Redesign Complete                                                                                           
+                                                                                                                                          
+  ### 🐛 Bugs Fixed                                                                                                                       
+  
+   Area                                     │ Issue                                            │ Fix
+  ──────────────────────────────────────────┼──────────────────────────────────────────────────┼──────────────────────────────────────────
+   Frontend                                 │ getContracts import didn't exist                 │ → listContracts
+   Frontend                                 │ summary.total_earned crash when backend offline  │ Added .catch() + null guard
+   Backend                                  │ langchain.prompts removed in v1.x                │ → langchain_core.prompts
+   Backend                                  │ seasonal_planner_service — raw ObjectId returned │ Fixed with serialize_doc() on a copy
+   Backend                                  │ goal_routes.py — raw ObjectId in progress dict   │ Fixed with serialize_doc()
+  
+  ### 🎨 UI Redesign — What's New
+  
+   Component                        │ Change
+  ──────────────────────────────────┼─────────────────────────────────────────────────────────────────────────────────────────────────────
+   index.css                        │ Complete rewrite — dark navy design system, CSS variables, Inter font, 40+ component classes
+   index.html                       │ Google Fonts Inter, SEO meta, emoji favicon
+   Sidebar                          │ 4 grouped sections (Main / Finance / Intelligence / AI Tools), user avatar chip, active link accent
+   Login & Signup                   │ Dark auth cards, password toggle, proper error alerts, branded loading
+   Dashboard                        │ Stat cards with icons, Quick Actions grid, client avatar initials, server error state + retry
+   SmartAlerts                      │ Dark-mode compatible alert styling
+   CashFlowForecast                 │ Dark custom tooltip, CSS variable chart colors
+   BurnoutWidget                    │ Dark mini-stat cards, colored left-border accent
+   ProtectedRoute                   │ Branded rocket loading screen instead of blank white
+  
+  ### 🚀 Start the app:
+  
+    # Terminal 1 — backend
+    cd backend && source venv/bin/activate
+    python -m uvicorn app.main:app --reload --port 8000
+  
+    # Terminal 2 — frontend
+    cd frontend && npm run dev
   
 <div align="center">
 
