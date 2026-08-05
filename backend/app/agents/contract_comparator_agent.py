@@ -1,9 +1,29 @@
 import json
 import re
 from typing import Dict, Any, Optional
+from pydantic import BaseModel
 from langchain_groq import ChatGroq
 from langchain_core.prompts import PromptTemplate
 from app.core.config import settings
+
+class Change(BaseModel):
+    clause_name: str
+    your_version: str
+    client_version: str
+    change_type: str
+    severity: str
+    explanation: str
+    recommendation: str
+
+class ContractComparison(BaseModel):
+    total_clauses_compared: int
+    changes_found: int
+    risk_level: str
+    changes: list[Change] = []
+    red_flags: list[str] = []
+    negotiation_points: list[str] = []
+    safe_to_sign: bool
+    overall_summary: str
 
 class ContractComparisonError(Exception):
     pass
@@ -74,7 +94,8 @@ Output JSON format EXACTLY as below, and nothing else:
             input_variables=["your_contract", "client_contract", "client_profile_text", "dispute_text"]
         )
         
-        chain = prompt | llm
+        structured_llm = llm.with_structured_output(ContractComparison)
+        chain = prompt | structured_llm
         result = await chain.ainvoke({
             "your_contract": your_contract,
             "client_contract": client_contract,
@@ -82,29 +103,12 @@ Output JSON format EXACTLY as below, and nothing else:
             "dispute_text": dispute_text
         })
         
-        return _extract_json(result.content)
+        return result.model_dump()
         
     except Exception as e:
         raise ContractComparisonError(f"Failed to compare contracts: {str(e)}")
 
-def _extract_json(text: str) -> dict:
-    try:
-        text = text.strip()
-        if text.startswith("```json"):
-            text = text[7:]
-        elif text.startswith("```"):
-            text = text[3:]
-        if text.endswith("```"):
-            text = text[:-3]
-        return json.loads(text.strip())
-    except json.JSONDecodeError:
-        match = re.search(r'\{.*\}', text, re.DOTALL)
-        if match:
-            try:
-                return json.loads(match.group(0))
-            except json.JSONDecodeError:
-                pass
-        raise ContractComparisonError("Failed to parse JSON response from LLM")
+
 
 def _fallback_comparison(your_contract: str, client_contract: str) -> Dict[str, Any]:
     """

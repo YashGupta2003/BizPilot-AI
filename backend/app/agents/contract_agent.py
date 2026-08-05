@@ -23,8 +23,34 @@ CONTRACT SECTIONS GENERATED:
 import json
 import re
 from typing import Optional
+from pydantic import BaseModel
 from langchain_core.messages import SystemMessage, HumanMessage
 from langchain_groq import ChatGroq
+
+class PlainEnglishSummary(BaseModel):
+    what_you_get: list[str]
+    payment_flow: str
+    what_to_watch: list[str]
+
+class ContractExtraction(BaseModel):
+    contract_title: str
+    parties_section: str
+    scope_section: str
+    payment_section: str
+    revisions_section: str
+    ip_section: str
+    confidentiality_section: str
+    kill_fee_section: str
+    late_payment_section: str
+    termination_section: str
+    dispute_section: str
+    governing_law: str
+    plain_english_summary: PlainEnglishSummary
+    recommended_advance_percent: float
+    recommended_kill_fee_percent: float
+    total_sections: int
+    risk_level_for_freelancer: str
+    risk_notes: str
 from app.core.config import settings
 
 
@@ -79,15 +105,7 @@ Respond ONLY with valid JSON in this exact shape:
 }"""
 
 
-def _extract_json(raw: str) -> dict:
-    text = raw.strip()
-    text = re.sub(r"^```(?:json)?", "", text).strip()
-    text = re.sub(r"```$", "", text).strip()
-    first = text.find("{")
-    last = text.rfind("}")
-    if first != -1 and last != -1:
-        text = text[first:last + 1]
-    return json.loads(text)
+
 
 
 def _fallback_contract(
@@ -178,18 +196,16 @@ async def generate_contract(
 
 Make it strongly protective of the freelancer while remaining professional and fair."""
 
+    structured_llm = llm.with_structured_output(ContractExtraction)
+
     try:
-        response = await llm.ainvoke([
+        response = await structured_llm.ainvoke([
             SystemMessage(content=CONTRACT_SYSTEM_PROMPT),
             HumanMessage(content=prompt),
         ])
+        data = response.model_dump()
     except Exception as exc:
         raise ContractError(f"AI contract generation failed: {exc}")
-
-    try:
-        data = _extract_json(response.content)
-    except (json.JSONDecodeError, ValueError) as exc:
-        raise ContractError(f"Could not parse AI response: {exc}")
 
     required = ["contract_title", "parties_section", "payment_section", "ip_section"]
     for field in required:

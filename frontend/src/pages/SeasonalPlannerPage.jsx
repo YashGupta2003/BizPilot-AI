@@ -3,7 +3,7 @@ import AppLayout from '../components/layout/AppLayout';
 import { 
   getSeasonalPlan, 
   saveSeasonalPlan 
-} from '../services/seasonalService';
+} from '../services/seasonalPlannerService';
 import { 
   Loader2, 
   Calendar, 

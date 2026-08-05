@@ -28,12 +28,12 @@ def cosine_similarity(a: np.ndarray, b: np.ndarray) -> float:
     return float(np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b) + 1e-10))
 
 
-async def store_document_chunks(db, owner_id, filename: str, chunks: list[str], client_id=None) -> int:
+async def store_document_chunks(db, model, owner_id, filename: str, chunks: list[str], client_id=None) -> int:
     """Embeds each chunk and inserts it as a MongoDB document."""
     if not chunks:
         return 0
 
-    embeddings = embed_texts(chunks)
+    embeddings = embed_texts(model, chunks)
 
     documents = []
     for index, (chunk, embedding) in enumerate(zip(chunks, embeddings)):
@@ -67,7 +67,7 @@ async def get_full_document_text(db, owner_id, filename: str) -> str:
     return "\n".join(c["chunk_text"] for c in chunks)
 
 
-async def search_similar_chunks(db, owner_id, query: str, client_id=None, top_k: int = 4) -> list[dict]:
+async def search_similar_chunks(db, model, owner_id, query: str, client_id=None, top_k: int = 4) -> list[dict]:
     """
     Finds the most semantically relevant chunks for a query.
     Returns chunks sorted by similarity, highest first.
@@ -76,19 +76,48 @@ async def search_similar_chunks(db, owner_id, query: str, client_id=None, top_k:
     if client_id:
         query_filter["client_id"] = client_id
 
-    cursor = db.documents.find(query_filter)
-    all_chunks = await cursor.to_list(length=5000)
+    query_embedding = embed_query(model, query)
+    
+    # Required MongoDB Atlas Vector Search Index definition (create in Atlas UI):
+    # {
+    #   "fields": [
+    #     {
+    #       "numDimensions": 384,
+    #       "path": "embedding",
+    #       "similarity": "cosine",
+    #       "type": "vector"
+    #     },
+    #     {
+    #       "path": "owner_id",
+    #       "type": "filter"
+    #     },
+    #     {
+    #       "path": "client_id",
+    #       "type": "filter"
+    #     }
+    #   ]
+    # }
 
-    if not all_chunks:
-        return []
+    pipeline = [
+        {
+            "$vectorSearch": {
+                "index": "vector_index",
+                "path": "embedding",
+                "queryVector": query_embedding.tolist(),
+                "numCandidates": top_k * 10,
+                "limit": top_k,
+                "filter": query_filter
+            }
+        },
+        {
+            "$project": {
+                "text": "$chunk_text",
+                "filename": 1,
+                "score": {"$meta": "vectorSearchScore"}
+            }
+        }
+    ]
 
-    query_embedding = embed_query(query)
-
-    scored = []
-    for chunk in all_chunks:
-        chunk_embedding = np.array(chunk["embedding"])
-        score = cosine_similarity(query_embedding, chunk_embedding)
-        scored.append({"text": chunk["chunk_text"], "filename": chunk["filename"], "score": score})
-
-    scored.sort(key=lambda x: x["score"], reverse=True)
-    return scored[:top_k]
+    cursor = db.documents.aggregate(pipeline)
+    scored = await cursor.to_list(length=top_k)
+    return scored

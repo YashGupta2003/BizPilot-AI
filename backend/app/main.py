@@ -8,6 +8,7 @@ from contextlib import asynccontextmanager
 
 from app.core.config import settings
 from app.core.database import connect_to_mongo, close_mongo_connection
+from app.rag.embedder import load_embedding_model_async
 from app.routes import (
     auth_routes, client_routes, invoice_routes, chat_routes, dashboard_routes,
     risk_routes, forecast_routes, voice_routes, whatsapp_routes, currency_routes,
@@ -27,6 +28,7 @@ from app.routes import (
 async def lifespan(app: FastAPI):
     # Runs once on startup
     await connect_to_mongo()
+    app.state.embedding_model = await load_embedding_model_async()
     yield
     # Runs once on shutdown
     await close_mongo_connection()

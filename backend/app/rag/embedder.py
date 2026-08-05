@@ -12,26 +12,21 @@ Texts with similar MEANING get vectors that are close together in this
 from sentence_transformers import SentenceTransformer
 import numpy as np
 
-# Loaded once when the server starts — loading it per-request would be very slow
-_model = None
+import asyncio
+from functools import partial
+
+async def load_embedding_model_async():
+    print("Loading embedding model in background (~80MB)...")
+    loop = asyncio.get_running_loop()
+    return await loop.run_in_executor(None, SentenceTransformer, "all-MiniLM-L6-v2")
 
 
-def get_embedding_model():
-    global _model
-    if _model is None:
-        print("Loading embedding model (first time only, downloads ~80MB)...")
-        _model = SentenceTransformer("all-MiniLM-L6-v2")
-    return _model
-
-
-def embed_texts(texts: list[str]) -> np.ndarray:
+def embed_texts(model: SentenceTransformer, texts: list[str]) -> np.ndarray:
     """Convert a list of text chunks into a list of embedding vectors."""
-    model = get_embedding_model()
     embeddings = model.encode(texts, convert_to_numpy=True, show_progress_bar=False)
     return embeddings
 
 
-def embed_query(query: str) -> np.ndarray:
+def embed_query(model: SentenceTransformer, query: str) -> np.ndarray:
     """Convert a single search query into an embedding vector."""
-    model = get_embedding_model()
     return model.encode([query], convert_to_numpy=True, show_progress_bar=False)[0]

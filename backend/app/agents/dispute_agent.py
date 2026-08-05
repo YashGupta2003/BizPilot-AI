@@ -20,8 +20,22 @@ as evidence in the response — this is what makes it unique.
 import json
 import re
 from typing import Optional
+from pydantic import BaseModel
 from langchain_core.messages import SystemMessage, HumanMessage
 from langchain_groq import ChatGroq
+
+class DisputeExtraction(BaseModel):
+    dispute_type: str
+    client_has_valid_point: bool
+    validity_reason: str
+    recommended_response_type: str
+    evidence_found: list[str] = []
+    response_subject: str
+    response_body: str
+    escalation_letter: Optional[str] = None
+    suggested_resolution: Optional[str] = None
+    red_flags: list[str] = []
+    next_steps: list[str] = []
 from app.core.config import settings
 
 
@@ -64,15 +78,7 @@ Always reference specific evidence from the provided data.
 Never be rude, never apologize unnecessarily, never make promises not in the contract."""
 
 
-def _extract_json(raw: str) -> dict:
-    text = raw.strip()
-    text = re.sub(r"^```(?:json)?", "", text).strip()
-    text = re.sub(r"```$", "", text).strip()
-    first = text.find("{")
-    last = text.rfind("}")
-    if first != -1 and last != -1:
-        text = text[first:last + 1]
-    return json.loads(text)
+
 
 
 def _build_context_summary(
@@ -216,18 +222,16 @@ async def analyze_dispute(
         reminders, client_profile, client_name, freelancer_name,
     )
 
+    structured_llm = llm.with_structured_output(DisputeExtraction)
+
     try:
-        response = await llm.ainvoke([
+        response = await structured_llm.ainvoke([
             SystemMessage(content=DISPUTE_ANALYSIS_PROMPT),
             HumanMessage(content=context),
         ])
+        data = response.model_dump()
     except Exception as exc:
         raise DisputeAnalysisError(f"AI analysis failed: {exc}")
-
-    try:
-        data = _extract_json(response.content)
-    except (json.JSONDecodeError, ValueError) as exc:
-        raise DisputeAnalysisError(f"Could not parse AI response: {exc}")
 
     # Ensure all required fields exist
     data.setdefault("dispute_type", "OTHER")

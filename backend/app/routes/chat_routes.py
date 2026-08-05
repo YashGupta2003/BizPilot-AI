@@ -1,8 +1,7 @@
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form, Request
 from bson import ObjectId
 from bson.errors import InvalidId
 import os
-import shutil
 
 from app.core.database import get_database
 from app.core.deps import get_current_user
@@ -10,10 +9,18 @@ from app.schemas.chat_schema import ChatMessage, ChatResponse
 from app.agents.chat_agent import handle_chat
 from app.rag.document_loader import load_text_from_file, chunk_text
 from app.rag.retriever import store_document_chunks
+from app.services.storage_service import LocalStorageService, S3StorageService
 
 router = APIRouter(prefix="/api/chat", tags=["Chat & Documents"])
 
-UPLOAD_DIR = "data/uploads"
+# Use S3 if bucket is configured, otherwise fallback to local
+AWS_BUCKET = os.getenv("AWS_BUCKET_NAME")
+if AWS_BUCKET:
+    storage_service = S3StorageService(bucket_name=AWS_BUCKET)
+else:
+    storage_service = LocalStorageService(upload_dir="data/uploads")
+
+
 
 
 def to_object_id_or_none(id_str: str | None):
@@ -26,14 +33,16 @@ def to_object_id_or_none(id_str: str | None):
 
 
 @router.post("", response_model=ChatResponse)
-async def chat(payload: ChatMessage, current_user: dict = Depends(get_current_user), db=Depends(get_database)):
+async def chat(request: Request, payload: ChatMessage, current_user: dict = Depends(get_current_user), db=Depends(get_database)):
     client_id = to_object_id_or_none(payload.client_id)
-    result = await handle_chat(db, current_user["_id"], payload.message, client_id=client_id)
+    model = request.app.state.embedding_model
+    result = await handle_chat(db, model, current_user["_id"], payload.message, client_id=client_id)
     return result
 
 
 @router.post("/upload-document")
 async def upload_document(
+    request: Request,
     file: UploadFile = File(...),
     client_id: str | None = Form(None),
     current_user: dict = Depends(get_current_user),
@@ -43,11 +52,7 @@ async def upload_document(
     Upload a PDF/DOCX/TXT, chunk it, embed it, and store in MongoDB.
     This is the RAG ingestion endpoint your frontend's upload button calls.
     """
-    os.makedirs(UPLOAD_DIR, exist_ok=True)
-    filepath = os.path.join(UPLOAD_DIR, file.filename)
-
-    with open(filepath, "wb") as buffer:
-        shutil.copyfileobj(file.file, buffer)
+    filepath = await storage_service.upload_file(file, file.filename)
 
     try:
         text = load_text_from_file(filepath)
@@ -56,7 +61,8 @@ async def upload_document(
 
     chunks = chunk_text(text)
     client_obj_id = to_object_id_or_none(client_id)
-    chunks_created = await store_document_chunks(db, current_user["_id"], file.filename, chunks, client_id=client_obj_id)
+    model = request.app.state.embedding_model
+    chunks_created = await store_document_chunks(db, model, current_user["_id"], file.filename, chunks, client_id=client_obj_id)
 
     return {
         "filename": file.filename,

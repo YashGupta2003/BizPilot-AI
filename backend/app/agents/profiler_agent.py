@@ -21,8 +21,29 @@ import json
 import re
 from typing import Optional
 
+from pydantic import BaseModel, Field
 from langchain_core.messages import SystemMessage, HumanMessage
 from langchain_groq import ChatGroq
+
+class RedFlag(BaseModel):
+    phrase: str
+    risk: str
+    reason: str
+
+class ProfilerExtraction(BaseModel):
+    overall_risk_score: int
+    overall_risk_label: str
+    client_type: str
+    payment_behavior: str
+    communication_style: str
+    scope_respect: str
+    professionalism_level: str
+    red_flags: list[RedFlag] = []
+    green_flags: list[str] = []
+    negotiation_approach: str
+    recommended_actions: list[str] = []
+    questions_to_ask: list[str] = []
+    summary: str
 
 from app.core.config import settings
 
@@ -107,15 +128,7 @@ Be specific and honest. If the text is very short, work with what you have but n
 limited data. Never fabricate information that isn't in the text."""
 
 
-def _extract_json(raw: str) -> dict:
-    text = raw.strip()
-    text = re.sub(r"^```(?:json)?", "", text).strip()
-    text = re.sub(r"```$", "", text).strip()
-    first = text.find("{")
-    last = text.rfind("}")
-    if first != -1 and last != -1:
-        text = text[first:last + 1]
-    return json.loads(text)
+
 
 
 def _fallback_profile(client_text: str) -> dict:
@@ -187,20 +200,16 @@ async def analyze_client_profile(client_text: str) -> dict:
         temperature=0.2,  # low temperature for consistent, analytical output
     )
 
+    structured_llm = llm.with_structured_output(ProfilerExtraction)
+
     try:
-        response = await llm.ainvoke([
+        response = await structured_llm.ainvoke([
             SystemMessage(content=PROFILER_SYSTEM_PROMPT),
             HumanMessage(content=f"Analyze this client text:\n\n{client_text}"),
         ])
+        data = response.model_dump()
     except Exception as exc:
         raise ProfilerError(f"AI analysis failed: {exc}")
-
-    raw = response.content.strip()
-
-    try:
-        data = _extract_json(raw)
-    except (json.JSONDecodeError, ValueError) as exc:
-        raise ProfilerError(f"Could not parse AI response as JSON: {exc}")
 
     # Validate and sanitize required fields
     required_fields = [

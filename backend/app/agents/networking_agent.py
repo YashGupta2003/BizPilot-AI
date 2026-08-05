@@ -1,6 +1,17 @@
 from app.core.config import settings
+from pydantic import BaseModel
 import json
 import re
+
+class Recommendation(BaseModel):
+    service_type: str
+    why_needed: str
+    referral_fee_percent: float
+    collaboration_model: str
+
+class NetworkingExtraction(BaseModel):
+    recommendations: list[Recommendation] = []
+    revenue_opportunity: float
 
 def _build_fallback_response(gap_data, current_services):
     suggestions = []
@@ -16,19 +27,7 @@ def _build_fallback_response(gap_data, current_services):
         "revenue_opportunity": sum([gap.get("count", 0) for gap in gap_data.get("service_gaps", [])]) * 1000
     }
 
-def _extract_json(text):
-    patterns = [r'```json\s*(.*?)\s*```', r'```\s*(.*?)\s*```', r'(\{.*\})', r'(\[.*\])']
-    for pattern in patterns:
-        match = re.search(pattern, text, re.DOTALL)
-        if match:
-            try:
-                return json.loads(match.group(1))
-            except json.JSONDecodeError:
-                continue
-    try:
-        return json.loads(text)
-    except:
-        return None
+
 
 async def generate_networking_recommendations(gap_data: dict, current_services: list) -> dict:
     if not settings.GROQ_API_KEY:
@@ -73,8 +72,9 @@ Service Gaps Data: {json.dumps(gap_data.get("service_gaps", []))}
             HumanMessage(content=human_prompt)
         ]
         
-        response = llm.invoke(messages)
-        result = _extract_json(response.content)
+        structured_llm = llm.with_structured_output(NetworkingExtraction)
+        response = structured_llm.invoke(messages)
+        result = response.model_dump() if response else None
         
         if not result:
             return _build_fallback_response(gap_data, current_services)

@@ -19,8 +19,41 @@ import json
 import re
 from datetime import datetime
 from typing import Optional
+from pydantic import BaseModel
 from langchain_core.messages import SystemMessage, HumanMessage
 from langchain_groq import ChatGroq
+
+class ScopeDeliverable(BaseModel):
+    item: str
+    description: str
+    estimated_hours: Optional[float] = None
+    is_included: bool = True
+
+class ScopeExtraction(BaseModel):
+    deliverables: list[ScopeDeliverable] = []
+    explicitly_excluded: list[str] = []
+    revision_limit: Optional[int] = None
+    total_estimated_value: Optional[float] = None
+    currency: str = "INR"
+    summary: str
+
+class DriftItem(BaseModel):
+    description: str
+    severity: str
+    reason: str
+    estimated_hours: float
+    estimated_value: float
+    source: str
+
+class DriftDetection(BaseModel):
+    drift_detected: bool
+    drift_items: list[DriftItem] = []
+    items_in_scope: list[str] = []
+    total_extra_value: float
+    total_extra_hours: float
+    scope_completion_percent: float
+    recommendation: str
+    urgency: str
 from app.core.config import settings
 
 
@@ -90,20 +123,16 @@ The email should:
 Output ONLY the email body. Under 250 words. Professional tone."""
 
 
-def _extract_json(raw: str) -> dict:
-    text = raw.strip()
-    text = re.sub(r"^```(?:json)?", "", text).strip()
-    text = re.sub(r"```$", "", text).strip()
-    first = text.find("{")
-    last = text.rfind("}")
-    if first != -1 and last != -1:
-        text = text[first:last + 1]
-    return json.loads(text)
+
 
 
 def _estimate_value_from_hours(hours: float, default_rate: float = 1500) -> float:
     """Estimate rupee value from hours at default rate."""
-    return round(hours * default_rate, 2)
+    from decimal import Decimal, ROUND_HALF_UP
+    hours_dec = Decimal(str(hours))
+    rate_dec = Decimal(str(default_rate))
+    val = (hours_dec * rate_dec).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+    return float(val)
 
 
 async def extract_scope_from_text(text: str) -> dict:
@@ -117,12 +146,14 @@ async def extract_scope_from_text(text: str) -> dict:
 
     llm = ChatGroq(model=settings.GROQ_MODEL, api_key=settings.GROQ_API_KEY, temperature=0.1)
 
+    structured_llm = llm.with_structured_output(ScopeExtraction)
+
     try:
-        response = await llm.ainvoke([
+        response = await structured_llm.ainvoke([
             SystemMessage(content=SCOPE_LOCK_PROMPT),
             HumanMessage(content=f"Extract scope from:\n\n{text}"),
         ])
-        data = _extract_json(response.content)
+        data = response.model_dump()
     except Exception:
         return _fallback_scope_extraction(text)
 
@@ -182,12 +213,14 @@ Hourly rate: {locked_scope.get('currency', 'INR')} {hourly_rate}/hour
 CURRENT TASKS / CLIENT MESSAGES:
 {current_input}"""
 
+    structured_llm = llm.with_structured_output(DriftDetection)
+
     try:
-        response = await llm.ainvoke([
+        response = await structured_llm.ainvoke([
             SystemMessage(content=DRIFT_DETECTION_PROMPT),
             HumanMessage(content=scope_summary),
         ])
-        data = _extract_json(response.content)
+        data = response.model_dump()
     except Exception:
         return _fallback_drift_detection(current_input, locked_scope, hourly_rate)
 

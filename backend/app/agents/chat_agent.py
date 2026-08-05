@@ -36,11 +36,11 @@ async def detect_needs_documents(message: str) -> bool:
     return any(keyword in message.lower() for keyword in document_keywords)
 
 
-async def handle_chat(db, owner_id, message: str, client_id: str | None = None) -> dict:
+async def handle_chat(db, model, owner_id, message: str, client_id: str | None = None) -> dict:
     needs_docs = await detect_needs_documents(message)
 
     if needs_docs:
-        chunks = await search_similar_chunks(db, owner_id, message, client_id=client_id, top_k=4)
+        chunks = await search_similar_chunks(db, model, owner_id, message, client_id=client_id, top_k=4)
 
         if not chunks:
             return {

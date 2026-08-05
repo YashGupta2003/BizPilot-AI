@@ -15,9 +15,35 @@ import json
 import re
 from datetime import datetime
 from typing import Optional
+from pydantic import BaseModel, Field
 from langchain_core.messages import SystemMessage, HumanMessage
 from langchain_groq import ChatGroq
 from app.core.config import settings
+
+class Deliverable(BaseModel):
+    item: str
+    description: str
+    quantity: int = 1
+    estimated_hours: Optional[float] = None
+    deadline: Optional[str] = None
+
+class MeetingExtraction(BaseModel):
+    client_name: Optional[str] = None
+    project_name: Optional[str] = None
+    deliverables: list[Deliverable] = []
+    total_price_agreed: Optional[float] = None
+    currency: str = "INR"
+    hourly_rate: Optional[float] = None
+    revision_count: int = 2
+    project_start_date: Optional[str] = None
+    project_deadline: Optional[str] = None
+    payment_terms: Optional[str] = None
+    advance_percent: int = 50
+    next_steps: list[str] = []
+    client_requirements: list[str] = []
+    things_not_included: list[str] = []
+    concerns_flagged: list[str] = []
+    meeting_summary: Optional[str] = None
 
 
 MEETING_EXTRACTION_PROMPT = """You are an expert project manager and business analyst
@@ -79,15 +105,7 @@ Keep it professional, clear, and under 300 words.
 Use bullet points for deliverables and next steps."""
 
 
-def _extract_json(raw: str) -> dict:
-    text = raw.strip()
-    text = re.sub(r"^```(?:json)?", "", text).strip()
-    text = re.sub(r"```$", "", text).strip()
-    first = text.find("{")
-    last = text.rfind("}")
-    if first != -1 and last != -1:
-        text = text[first:last + 1]
-    return json.loads(text)
+
 
 
 def _fallback_extraction(notes: str) -> dict:
@@ -126,18 +144,16 @@ async def extract_meeting_data(notes: str) -> dict:
 
     llm = ChatGroq(model=settings.GROQ_MODEL, api_key=settings.GROQ_API_KEY, temperature=0.1)
 
+    structured_llm = llm.with_structured_output(MeetingExtraction)
+
     try:
-        response = await llm.ainvoke([
+        response = await structured_llm.ainvoke([
             SystemMessage(content=MEETING_EXTRACTION_PROMPT),
             HumanMessage(content=f"Extract from these meeting notes:\n\n{notes}"),
         ])
+        data = response.model_dump()
     except Exception as exc:
         raise MeetingExtractionError(f"AI extraction failed: {exc}")
-
-    try:
-        data = _extract_json(response.content)
-    except (json.JSONDecodeError, ValueError) as exc:
-        raise MeetingExtractionError(f"Could not parse AI response: {exc}")
 
     # Ensure required fields exist
     data.setdefault("deliverables", [])

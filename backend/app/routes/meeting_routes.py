@@ -60,12 +60,15 @@ async def extract_meeting(
     # SYNC: resolve client_id
     client_id_obj = None
     client_name = extracted.get("client_name") or "Unknown Client"
+    invoice_id = None
+    invoice_number = None
 
     if payload.client_id:
         client_doc = await db.clients.find_one({
             "_id": ObjectId(payload.client_id),
             "owner_id": current_user["_id"],
         })
+        
         if client_doc:
             client_id_obj = client_doc["_id"]
             client_name = client_doc.get("name", client_name)
@@ -79,8 +82,6 @@ async def extract_meeting(
             )
 
     # SYNC: Auto-create draft invoice from extracted deliverables
-    invoice_id = None
-    invoice_number = None
     deliverables = extracted.get("deliverables", [])
     total_price = extracted.get("total_price_agreed")
 
@@ -88,24 +89,27 @@ async def extract_meeting(
         invoice_items = []
         if total_price and len(deliverables) > 0:
             # Distribute total price across deliverables evenly
-            per_item = round(total_price / len(deliverables), 2)
+            from decimal import Decimal
+            per_item = float(round(Decimal(str(total_price)) / Decimal(str(len(deliverables))), 2))
             for d in deliverables:
                 invoice_items.append({
                     "description": d["item"],
                     "quantity": d.get("quantity", 1),
                     "rate": per_item,
-                    "amount": per_item * d.get("quantity", 1),
+                    "amount": float(Decimal(str(per_item)) * Decimal(str(d.get("quantity", 1)))),
                 })
         else:
             for d in deliverables:
                 rate = 0
                 if d.get("estimated_hours") and extracted.get("hourly_rate"):
-                    rate = d["estimated_hours"] * extracted["hourly_rate"]
+                    from decimal import Decimal
+                    rate = float(Decimal(str(d["estimated_hours"])) * Decimal(str(extracted["hourly_rate"])))
+                from decimal import Decimal
                 invoice_items.append({
                     "description": d["item"],
                     "quantity": d.get("quantity", 1),
                     "rate": rate,
-                    "amount": rate * d.get("quantity", 1),
+                    "amount": float(Decimal(str(rate)) * Decimal(str(d.get("quantity", 1)))),
                 })
 
         if invoice_items:

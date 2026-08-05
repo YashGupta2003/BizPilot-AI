@@ -25,21 +25,28 @@ async def generate_invoice_number(db, owner_id) -> str:
 
 def calculate_invoice_totals(items: list, tax_percent: float) -> dict:
     """items is a list of dicts with quantity, rate (amount computed here)."""
-    subtotal = 0
+    from decimal import Decimal, ROUND_HALF_UP
+    subtotal = Decimal("0")
     computed_items = []
+    
+    # Convert tax percent to decimal
+    tax_rate = Decimal(str(tax_percent)) / Decimal("100")
+    
     for item in items:
-        amount = round(item["quantity"] * item["rate"], 2)
-        computed_items.append({**item, "amount": amount})
+        qty = Decimal(str(item["quantity"]))
+        rate = Decimal(str(item["rate"]))
+        amount = (qty * rate).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+        computed_items.append({**item, "amount": float(amount)})
         subtotal += amount
 
-    tax_amount = round(subtotal * (tax_percent / 100), 2)
-    total = round(subtotal + tax_amount, 2)
+    tax_amount = (subtotal * tax_rate).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+    total = (subtotal + tax_amount).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
 
     return {
         "items": computed_items,
-        "subtotal": round(subtotal, 2),
-        "tax_amount": tax_amount,
-        "total": total,
+        "subtotal": float(subtotal),
+        "tax_amount": float(tax_amount),
+        "total": float(total),
     }
 
 

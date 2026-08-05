@@ -17,8 +17,15 @@ import re
 from langchain_core.messages import SystemMessage, HumanMessage
 from langchain_groq import ChatGroq
 
+from pydantic import BaseModel
 from app.core.config import settings
 from app.schemas.risk_schema import RiskFlag
+
+class RiskExtraction(BaseModel):
+    overall_risk_level: str
+    summary: str
+    flags: list[RiskFlag] = []
+    missing_clauses: list[str] = []
 
 # Categories we specifically ask the model to check — this keeps the analysis
 # focused and consistent across different contracts, rather than letting the
@@ -76,24 +83,7 @@ def _get_llm():
     return ChatGroq(model=settings.GROQ_MODEL, api_key=settings.GROQ_API_KEY, temperature=0)
 
 
-def _extract_json(raw: str) -> dict:
-    """
-    LLMs sometimes wrap JSON in markdown fences or add stray text before/after
-    the JSON object even when explicitly told not to. This strips common
-    wrapping patterns and extracts the first complete {...} block, so a small
-    formatting slip from the model doesn't break the whole feature.
-    """
-    text = raw.strip()
-    text = re.sub(r"^```(?:json)?", "", text).strip()
-    text = re.sub(r"```$", "", text).strip()
 
-    # If there's still leading/trailing noise, grab the outermost JSON object.
-    first_brace = text.find("{")
-    last_brace = text.rfind("}")
-    if first_brace != -1 and last_brace != -1 and last_brace > first_brace:
-        text = text[first_brace:last_brace + 1]
-
-    return json.loads(text)
 
 
 class RiskAnalysisError(Exception):
@@ -123,14 +113,15 @@ async def analyze_contract_risk(document_text: str) -> dict:
 
     prompt = RISK_ANALYZER_PROMPT.format(categories=", ".join(RISK_CATEGORIES))
 
-    response = await llm.ainvoke([
-        SystemMessage(content=prompt),
-        HumanMessage(content=f"Contract text:\n\n{trimmed_text}"),
-    ])
-
+    structured_llm = llm.with_structured_output(RiskExtraction)
+    
     try:
-        parsed = _extract_json(response.content)
-    except (json.JSONDecodeError, ValueError) as exc:
+        response = await structured_llm.ainvoke([
+            SystemMessage(content=prompt),
+            HumanMessage(content=f"Contract text:\n\n{trimmed_text}"),
+        ])
+        parsed = response.model_dump()
+    except Exception as exc:
         raise RiskAnalysisError(f"Could not parse the AI's analysis as valid JSON: {exc}")
 
     # Validate structure before trusting it — this is the safety net against
@@ -145,6 +136,7 @@ async def analyze_contract_risk(document_text: str) -> dict:
         flags_raw = parsed.get("flags", [])
         flags = []
         for f in flags_raw:
+            # Pydantic already handles the RiskFlag dict, but we format it as requested
             flag = RiskFlag(
                 category=str(f.get("category", "General")),
                 severity=str(f.get("severity", "medium")).lower() if str(f.get("severity", "medium")).lower() in {"high", "medium", "low"} else "medium",

@@ -5,7 +5,7 @@ CONCEPT: Add `current_user: dict = Depends(get_current_user)` to any route,
 and FastAPI will automatically run this function first. If the token is
 missing/invalid, the user gets a 401 error before your route code even runs.
 """
-from fastapi import Depends, HTTPException, status, Query
+from fastapi import Depends, HTTPException, status, Query, Request
 from fastapi.security import OAuth2PasswordBearer
 from typing import Optional
 from bson import ObjectId
@@ -40,20 +40,17 @@ async def _resolve_user_from_token(token: str | None, db) -> dict:
     return user
 
 
-async def get_current_user(token: str = Depends(oauth2_scheme), db=Depends(get_database)) -> dict:
-    """Standard auth: reads the token from the Authorization: Bearer header."""
+async def get_current_user(request: Request, db=Depends(get_database)) -> dict:
+    """Standard auth: reads the token from the HttpOnly cookie."""
+    token = request.cookies.get("bizpilot_token")
     return await _resolve_user_from_token(token, db)
 
 
 async def get_current_user_from_header_or_query(
-    header_token: Optional[str] = Depends(oauth2_scheme),
+    request: Request,
     query_token: Optional[str] = Query(None, alias="token"),
     db=Depends(get_database),
 ) -> dict:
-    """
-    Auth for direct-link downloads (e.g. PDF). A plain <a href> click can't
-    attach a custom header, so for these specific routes we also accept
-    ?token=... in the URL as a fallback.
-    """
-    token = header_token or query_token
+    """Alternative auth for endpoints like SSE/WebSockets where setting cookies/headers is hard."""
+    token = request.cookies.get("bizpilot_token") or query_token
     return await _resolve_user_from_token(token, db)

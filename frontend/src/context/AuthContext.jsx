@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react'
-import { login as loginApi, signup as signupApi } from '../services/authService'
+import { login as loginApi, signup as signupApi, getMe as getMeApi, logout as logoutApi } from '../services/authService'
 
 const AuthContext = createContext(null)
 
@@ -8,32 +8,39 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('bizpilot_user')
-    const token = localStorage.getItem('bizpilot_token')
-    if (storedUser && token) {
-      setUser(JSON.parse(storedUser))
+    const fetchMe = async () => {
+      try {
+        const user = await getMeApi()
+        setUser(user)
+        localStorage.setItem('bizpilot_user', JSON.stringify(user))
+      } catch (err) {
+        localStorage.removeItem('bizpilot_user')
+        setUser(null)
+      } finally {
+        setLoading(false)
+      }
     }
-    setLoading(false)
+    fetchMe()
   }, [])
 
   async function login(email, password) {
-    const data = await loginApi(email, password)
-    localStorage.setItem('bizpilot_token', data.access_token)
-    localStorage.setItem('bizpilot_user', JSON.stringify(data.user))
-    setUser(data.user)
-    return data
+    const user = await loginApi(email, password)
+    localStorage.setItem('bizpilot_user', JSON.stringify(user))
+    setUser(user)
+    return user
   }
 
   async function signup(payload) {
-    const data = await signupApi(payload)
-    localStorage.setItem('bizpilot_token', data.access_token)
-    localStorage.setItem('bizpilot_user', JSON.stringify(data.user))
-    setUser(data.user)
-    return data
+    const user = await signupApi(payload)
+    localStorage.setItem('bizpilot_user', JSON.stringify(user))
+    setUser(user)
+    return user
   }
 
-  function logout() {
-    localStorage.removeItem('bizpilot_token')
+  async function logout() {
+    try {
+      await logoutApi()
+    } catch(e) {}
     localStorage.removeItem('bizpilot_user')
     setUser(null)
   }

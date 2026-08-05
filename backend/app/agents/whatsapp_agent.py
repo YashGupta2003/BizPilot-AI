@@ -182,9 +182,14 @@ async def send_whatsapp_reminder(
             "TWILIO_AUTH_TOKEN to backend/.env"
         )
 
-    phone = client_phone.strip().replace(" ", "").replace("-", "")
-    if not phone.startswith("+"):
-        phone = "+91" + phone.lstrip("0")
+    import phonenumbers
+    try:
+        parsed_phone = phonenumbers.parse(client_phone, "IN")
+        if not phonenumbers.is_valid_number(parsed_phone):
+            raise WhatsAppSendError("Invalid phone number format")
+        phone = phonenumbers.format_number(parsed_phone, phonenumbers.PhoneNumberFormat.E164)
+    except phonenumbers.NumberParseException as e:
+        raise WhatsAppSendError(f"Phone number parsing failed: {e}")
 
     to_number = f"whatsapp:{phone}"
 

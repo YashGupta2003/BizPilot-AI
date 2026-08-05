@@ -1,5 +1,39 @@
 from app.core.config import settings
 import json, re
+from pydantic import BaseModel
+from typing import Optional
+
+class ToneDimension(BaseModel):
+    dimension: str
+    score: int
+    evidence: str
+
+class ToneShift(BaseModel):
+    detected: bool
+    direction: str
+    description: str
+
+class Alert(BaseModel):
+    level: str
+    message: str
+    recommendation: str
+
+class ResponsePattern(BaseModel):
+    avg_length: str
+    response_speed: str
+    initiative: str
+
+class ToneExtraction(BaseModel):
+    overall_sentiment: str
+    overall_score: int
+    tone_dimensions: list[ToneDimension] = []
+    tone_shift: ToneShift
+    alerts: list[Alert] = []
+    communication_style: str
+    response_pattern: ResponsePattern
+    relationship_health: str
+    recommended_actions: list[str] = []
+    summary: str
 
 def _build_fallback_response(text: str, client_context: dict = None):
     text_lower = text.lower()
@@ -55,19 +89,7 @@ def _build_fallback_response(text: str, client_context: dict = None):
         "summary": "This is a fallback analysis generated using basic keyword matching due to missing API key."
     }
 
-def _extract_json(text):
-    patterns = [r'```json\s*(.*?)\s*```', r'```\s*(.*?)\s*```', r'(\{.*\})', r'(\[.*\])']
-    for pattern in patterns:
-        match = re.search(pattern, text, re.DOTALL)
-        if match:
-            try:
-                return json.loads(match.group(1))
-            except json.JSONDecodeError:
-                continue
-    try:
-        return json.loads(text)
-    except:
-        return None
+
 
 async def analyze_communication_tone(text: str, client_context: dict = None) -> dict:
     if not settings.GROQ_API_KEY:
@@ -125,8 +147,9 @@ Return your analysis EXACTLY as a JSON object with the following structure:
             HumanMessage(content=prompt)
         ]
         
-        response = await llm.ainvoke(messages)
-        result = _extract_json(response.content)
+        structured_llm = llm.with_structured_output(ToneExtraction)
+        response = await structured_llm.ainvoke(messages)
+        result = response.model_dump() if response else None
         
         if result:
             return result
