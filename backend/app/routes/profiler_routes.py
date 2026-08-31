@@ -8,6 +8,7 @@ DELETE /api/profiler/history/{id}   -> delete a saved profile
 """
 from fastapi import APIRouter, Depends, HTTPException
 from bson import ObjectId
+from bson.errors import InvalidId
 from datetime import datetime
 
 from app.core.database import get_database
@@ -37,11 +38,21 @@ async def analyze_client(
     except ProfilerError as exc:
         raise HTTPException(status_code=502, detail=str(exc))
 
+    client_id_obj = None
+    if payload.client_id:
+        try:
+            client_id_obj = ObjectId(payload.client_id)
+        except (InvalidId, Exception):
+            raise HTTPException(status_code=400, detail="Invalid ID format")
+        client_doc = await db.clients.find_one({"_id": client_id_obj, "owner_id": current_user["_id"]})
+        if not client_doc:
+            raise HTTPException(status_code=404, detail="Client not found")
+
     # Save to DB for history
     record = {
         "owner_id": current_user["_id"],
         "client_text": payload.client_text[:2000],  # cap stored text length
-        "client_id": ObjectId(payload.client_id) if payload.client_id else None,
+        "client_id": client_id_obj,
         "profile": profile,
         "analyzed_at": datetime.utcnow(),
     }
@@ -69,8 +80,12 @@ async def get_profile(
     current_user: dict = Depends(get_current_user),
     db=Depends(get_database),
 ):
+    try:
+        pid = ObjectId(profile_id)
+    except (InvalidId, Exception):
+        raise HTTPException(status_code=400, detail="Invalid ID format")
     record = await db.client_profiles.find_one({
-        "_id": ObjectId(profile_id),
+        "_id": pid,
         "owner_id": current_user["_id"],
     })
     if not record:
@@ -84,8 +99,12 @@ async def delete_profile(
     current_user: dict = Depends(get_current_user),
     db=Depends(get_database),
 ):
+    try:
+        pid = ObjectId(profile_id)
+    except (InvalidId, Exception):
+        raise HTTPException(status_code=400, detail="Invalid ID format")
     result = await db.client_profiles.delete_one({
-        "_id": ObjectId(profile_id),
+        "_id": pid,
         "owner_id": current_user["_id"],
     })
     if result.deleted_count == 0:

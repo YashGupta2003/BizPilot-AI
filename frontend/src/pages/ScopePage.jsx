@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
 import {
   Shield, AlertTriangle, CheckCircle2, Loader2,
   Plus, Trash2, ChevronRight, Copy, Lock,
-  RefreshCw, Zap, Clock, DollarSign
+  RefreshCw, Zap
 } from 'lucide-react'
 import AppLayout from '../components/layout/AppLayout'
 import {
@@ -353,6 +352,8 @@ function ProjectDetail({ project, onBack, onRefresh }) {
     try {
       const res = await checkDrift(project.id, checkInput)
       setResult(res)
+    } catch (err) {
+      console.error('Failed to check drift:', err)
     } finally {
       setChecking(false)
     }
@@ -365,6 +366,8 @@ function ProjectDetail({ project, onBack, onRefresh }) {
       await relockScope(project.id, relockText)
       setShowRelock(false)
       onRefresh()
+    } catch (err) {
+      console.error('Failed to relock scope:', err)
     } finally {
       setRelocking(false)
     }
@@ -566,8 +569,12 @@ export default function ScopePage() {
   async function handleDelete(id, e) {
     e.stopPropagation()
     if (!confirm('Delete this project?')) return
-    await deleteScopeProject(id)
-    setProjects(p => p.filter(x => x.id !== id))
+    try {
+      await deleteScopeProject(id)
+      setProjects(p => p.filter(x => x.id !== id))
+    } catch (err) {
+      console.error('Failed to delete:', err)
+    }
   }
 
   async function refreshSelected() {

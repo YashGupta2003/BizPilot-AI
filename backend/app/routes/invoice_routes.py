@@ -1,7 +1,7 @@
 """
 Invoice routes — combines MongoDB CRUD with the agentic AI invoice extractor.
 """
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import FileResponse
 from datetime import datetime, date
 from bson import ObjectId
@@ -55,7 +55,7 @@ async def _create_invoice_document(db, current_user, client_id: str, items: list
     return serialize_doc(invoice_doc)
 
 
-@router.post("", response_model=dict)
+@router.post("", response_model=dict, status_code=status.HTTP_201_CREATED)
 async def create_invoice(payload: InvoiceCreate, current_user: dict = Depends(get_current_user), db=Depends(get_database)):
     items = [item.model_dump() for item in payload.items]
     return await _create_invoice_document(

@@ -19,7 +19,7 @@ from app.models.serializers import serialize_doc
 router = APIRouter(prefix="/api/auth", tags=["Authentication"])
 
 
-@router.post("/signup", response_model=UserOut)
+@router.post("/signup", response_model=UserOut, status_code=status.HTTP_201_CREATED)
 async def signup(payload: UserSignup, response: Response, db=Depends(get_database)):
     # Check if email already exists — find_one returns None if nothing matches
     existing_user = await db.users.find_one({"email": payload.email})

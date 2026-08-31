@@ -46,25 +46,37 @@ async def list_clients(current_user: dict = Depends(get_current_user), db=Depend
     # For each client, compute totals from their invoices using an aggregation pipeline.
     # CONCEPT: an aggregation pipeline is a list of stages MongoDB runs in sequence,
     # similar to chaining .filter().groupBy().sum() in pandas.
+    client_ids = [c["_id"] for c in clients]
+
+    pipeline = [
+        {"$match": {"client_id": {"$in": client_ids}}},
+        {"$group": {
+            "_id": {"client_id": "$client_id", "status": "$status"},
+            "total": {"$sum": "$total"}
+        }}
+    ]
+    agg_result = await db.invoices.aggregate(pipeline).to_list(length=1000)
+
+    client_totals = {c_id: {"total_invoiced": 0, "total_paid": 0, "total_pending": 0} for c_id in client_ids}
+
+    for r in agg_result:
+        c_id = r["_id"]["client_id"]
+        status = r["_id"]["status"]
+        total = r["total"]
+
+        client_totals[c_id]["total_invoiced"] += total
+        if status == "paid":
+            client_totals[c_id]["total_paid"] += total
+        elif status in ("sent", "overdue", "draft"):
+            client_totals[c_id]["total_pending"] += total
+
     enriched = []
     for client in clients:
-        pipeline = [
-            {"$match": {"client_id": client["_id"]}},
-            {"$group": {
-                "_id": "$status",
-                "total": {"$sum": "$total"}
-            }}
-        ]
-        agg_result = await db.invoices.aggregate(pipeline).to_list(length=20)
-
-        total_invoiced = sum(r["total"] for r in agg_result)
-        total_paid = sum(r["total"] for r in agg_result if r["_id"] == "paid")
-        total_pending = sum(r["total"] for r in agg_result if r["_id"] in ("sent", "overdue", "draft"))
-
+        c_id = client["_id"]
         client_out = serialize_doc(client)
-        client_out["total_invoiced"] = total_invoiced
-        client_out["total_paid"] = total_paid
-        client_out["total_pending"] = total_pending
+        client_out["total_invoiced"] = client_totals.get(c_id, {}).get("total_invoiced", 0)
+        client_out["total_paid"] = client_totals.get(c_id, {}).get("total_paid", 0)
+        client_out["total_pending"] = client_totals.get(c_id, {}).get("total_pending", 0)
         enriched.append(client_out)
 
     return enriched

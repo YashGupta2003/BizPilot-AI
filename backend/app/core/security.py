@@ -6,7 +6,7 @@ JWT (JSON Web Token) is how the user stays "logged in" — after login, the serv
 gives the frontend a signed token. The frontend sends it back on every request,
 and we verify the signature instead of re-checking the password every time.
 """
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import bcrypt
 from jose import jwt, JWTError
 from app.core.config import settings
@@ -20,8 +20,11 @@ def hash_password(password: str) -> str:
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    password_bytes = plain_password.encode("utf-8")[:72]
-    return bcrypt.checkpw(password_bytes, hashed_password.encode("utf-8"))
+    try:
+        password_bytes = plain_password.encode("utf-8")[:72]
+        return bcrypt.checkpw(password_bytes, hashed_password.encode("utf-8"))
+    except (ValueError, TypeError, AttributeError):
+        return False
 
 
 def create_access_token(data: dict) -> str:
@@ -30,7 +33,7 @@ def create_access_token(data: dict) -> str:
     'sub' (subject) is the JWT-standard field for "who this token belongs to"
     """
     to_encode = data.copy()
-    expire = datetime.utcnow() + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+    expire = datetime.now(timezone.utc) + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     to_encode.update({"exp": expire})
     return jwt.encode(to_encode, settings.JWT_SECRET_KEY, algorithm=settings.JWT_ALGORITHM)
 

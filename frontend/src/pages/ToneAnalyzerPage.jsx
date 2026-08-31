@@ -20,10 +20,11 @@ export default function ToneAnalyzerPage() {
 
   const fetchClients = useCallback(async () => {
     try {
-      const res = await clientService.getClients()
-      setClients(res.data || [])
+      const data = await clientService.getClients()
+      setClients(Array.isArray(data) ? data : [])
     } catch (err) {
       console.error('Failed to load clients', err)
+      setError('Failed to load clients.')
     }
   }, [])
 
@@ -34,6 +35,7 @@ export default function ToneAnalyzerPage() {
       setHistory(res.data || [])
     } catch (err) {
       console.error('Failed to load history', err)
+      setError('Failed to load history.')
     } finally {
       setHistoryLoading(false)
     }
@@ -73,11 +75,12 @@ export default function ToneAnalyzerPage() {
     try {
       await toneService.deleteAnalysis(id)
       fetchHistory()
-      if (result && result._id === id) {
+      if (result && (result.id || result._id) === id) {
         setResult(null)
       }
     } catch (err) {
       console.error('Failed to delete', err)
+      setError('Failed to delete analysis.')
     }
   }
 
@@ -148,7 +151,7 @@ export default function ToneAnalyzerPage() {
               >
                 <option value="">Select a client...</option>
                 {clients.map(c => (
-                  <option key={c._id} value={c._id}>{c.name}</option>
+                  <option key={c.id || c._id} value={c.id || c._id}>{c.name}</option>
                 ))}
               </select>
             </div>
@@ -299,7 +302,7 @@ export default function ToneAnalyzerPage() {
           ) : (
             <div style={{ display: 'grid', gap: 16 }}>
               {history.map(item => (
-                <div key={item._id} style={{ background: 'var(--bg-card)', borderRadius: 12, padding: 16, boxShadow: '0 1px 3px rgba(0,0,0,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div key={item.id || item._id} style={{ background: 'var(--bg-card)', borderRadius: 12, padding: 16, boxShadow: '0 1px 3px rgba(0,0,0,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <div>
                     <div style={{ fontWeight: 600, color: 'var(--text-primary)', marginBottom: 4 }}>
                       {item.client_name || 'Unknown Client'} <span style={{ color: 'var(--text-muted)', fontWeight: 400, fontSize: 14 }}>via {item.communication_type}</span>
@@ -319,7 +322,7 @@ export default function ToneAnalyzerPage() {
                       View
                     </button>
                     <button 
-                      onClick={() => handleDelete(item._id)}
+                      onClick={() => handleDelete(item.id || item._id)}
                       style={{ background: '#fee2e2', color: '#dc2626', border: 'none', padding: '6px', borderRadius: 6, cursor: 'pointer' }}
                     >
                       <Trash2 size={16} />

@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from bson import ObjectId
+from bson.errors import InvalidId
 from datetime import datetime
 from app.core.database import get_database
 from app.core.deps import get_current_user
@@ -12,6 +13,7 @@ router = APIRouter(prefix="/api/networking", tags=["Networking"])
 
 @router.get("/opportunities")
 async def get_opportunities(
+    force_refresh: bool = False,
     current_user: dict = Depends(get_current_user),
     db = Depends(get_database)
 ):
@@ -34,8 +36,9 @@ async def get_opportunities(
     }
     
     # Save analysis to history
-    result = await db["networking_analyses"].insert_one(full_analysis)
-    full_analysis["_id"] = result.inserted_id
+    if force_refresh:
+        result = await db["networking_analyses"].insert_one(full_analysis)
+        full_analysis["_id"] = result.inserted_id
     
     return serialize_doc(full_analysis)
 
@@ -46,7 +49,17 @@ async def analyze_for_client(
     db = Depends(get_database)
 ):
     owner_id = str(current_user["_id"])
-    
+    client_id_obj = None
+    if req.client_id:
+        try:
+            client_id_obj = ObjectId(req.client_id)
+        except (InvalidId, Exception):
+            raise HTTPException(status_code=400, detail="Invalid ID format")
+            
+        client = await db.clients.find_one({"_id": client_id_obj, "owner_id": current_user["_id"]})
+        if not client:
+            raise HTTPException(status_code=404, detail="Client not found")
+            
     # 1. Analyze gaps
     gap_data = await analyze_networking_opportunities(db, owner_id, req.client_id)
     
@@ -56,7 +69,7 @@ async def analyze_for_client(
     
     full_analysis = {
         "owner_id": ObjectId(owner_id),
-        "client_id": ObjectId(req.client_id) if req.client_id else None,
+        "client_id": client_id_obj,
         "created_at": datetime.utcnow(),
         "gap_analysis": gap_data,
         "recommendations": ai_recommendations.get("recommendations", []),
@@ -85,7 +98,11 @@ async def delete_analysis(
     db = Depends(get_database)
 ):
     owner_id = current_user["_id"]
-    result = await db["networking_analyses"].delete_one({"_id": ObjectId(id), "owner_id": owner_id})
+    try:
+        aid = ObjectId(id)
+    except (InvalidId, Exception):
+        raise HTTPException(status_code=400, detail="Invalid ID format")
+    result = await db["networking_analyses"].delete_one({"_id": aid, "owner_id": owner_id})
     
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Analysis not found")

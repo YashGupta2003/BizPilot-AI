@@ -63,7 +63,7 @@ export default function ContractComparatorPage() {
     const id = e.target.value
     setSelectedContractId(id)
     if (id) {
-      const selected = contracts.find(c => c._id === id)
+      const selected = contracts.find(c => (c.id || c._id) === id)
       if (selected && selected.contract_text) {
         setYourContract(selected.contract_text)
       } else if (selected && selected.details) {
@@ -121,11 +121,11 @@ export default function ContractComparatorPage() {
 
   const getRiskColor = (level) => {
     switch (level?.toLowerCase()) {
-      case 'critical': return 'var(--danger-color)'
+      case 'critical': return 'var(--red)'
       case 'high': return '#f97316'
-      case 'medium': return 'var(--warning-color)'
-      case 'low': return 'var(--success-color)'
-      default: return 'var(--text-color)'
+      case 'medium': return 'var(--amber)'
+      case 'low': return 'var(--green)'
+      default: return 'var(--text-primary)'
     }
   }
 
@@ -150,11 +150,11 @@ export default function ContractComparatorPage() {
 
   const getChangeTypeIcon = (type) => {
     switch (type?.toLowerCase()) {
-      case 'removed': return <span style={{ color: 'var(--danger-color)' }}>🗑️ Removed</span>
-      case 'added': return <span style={{ color: 'var(--success-color)' }}>➕ Added</span>
-      case 'modified': return <span style={{ color: 'var(--warning-color)' }}>✏️ Modified</span>
-      case 'weakened': return <span style={{ color: 'var(--danger-color)' }}>📉 Weakened</span>
-      case 'strengthened': return <span style={{ color: 'var(--success-color)' }}>📈 Strengthened</span>
+      case 'removed': return <span style={{ color: 'var(--red)' }}>🗑️ Removed</span>
+      case 'added': return <span style={{ color: 'var(--green)' }}>➕ Added</span>
+      case 'modified': return <span style={{ color: 'var(--amber)' }}>✏️ Modified</span>
+      case 'weakened': return <span style={{ color: 'var(--red)' }}>📉 Weakened</span>
+      case 'strengthened': return <span style={{ color: 'var(--green)' }}>📈 Strengthened</span>
       default: return type
     }
   }
@@ -163,20 +163,20 @@ export default function ContractComparatorPage() {
     <AppLayout>
       <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem' }}>
-          <FileDiff size={32} color="var(--primary-color)" />
+          <FileDiff size={32} color="var(--brand)" />
           <div>
             <h1 className="page-title" style={{ marginBottom: '0.25rem' }}>Contract Comparator</h1>
             <p className="page-subtitle">Analyze client modifications and spot red flags instantly</p>
           </div>
         </div>
 
-        <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.5rem' }}>
+        <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem', borderBottom: '1px solid var(--border)', paddingBottom: '0.5rem' }}>
           <button 
             style={{ 
               background: 'none', border: 'none', padding: '0.5rem 1rem', cursor: 'pointer',
               fontWeight: activeTab === 'compare' ? 'bold' : 'normal',
-              color: activeTab === 'compare' ? 'var(--primary-color)' : 'inherit',
-              borderBottom: activeTab === 'compare' ? '2px solid var(--primary-color)' : 'none'
+              color: activeTab === 'compare' ? 'var(--brand)' : 'inherit',
+              borderBottom: activeTab === 'compare' ? '2px solid var(--brand)' : 'none'
             }}
             onClick={() => setActiveTab('compare')}
           >
@@ -186,8 +186,8 @@ export default function ContractComparatorPage() {
             style={{ 
               background: 'none', border: 'none', padding: '0.5rem 1rem', cursor: 'pointer',
               fontWeight: activeTab === 'history' ? 'bold' : 'normal',
-              color: activeTab === 'history' ? 'var(--primary-color)' : 'inherit',
-              borderBottom: activeTab === 'history' ? '2px solid var(--primary-color)' : 'none'
+              color: activeTab === 'history' ? 'var(--brand)' : 'inherit',
+              borderBottom: activeTab === 'history' ? '2px solid var(--brand)' : 'none'
             }}
             onClick={() => setActiveTab('history')}
           >
@@ -208,26 +208,26 @@ export default function ContractComparatorPage() {
                 <div>
                   <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>Load Existing Contract (Optional)</label>
                   <select 
-                    style={{ width: '100%', padding: '0.5rem', borderRadius: '4px', border: '1px solid var(--border-color)' }}
+                    style={{ width: '100%', padding: '0.5rem', borderRadius: '4px', border: '1px solid var(--border)' }}
                     value={selectedContractId}
                     onChange={handleContractSelect}
                   >
                     <option value="">-- Select a Contract --</option>
                     {contracts.map(c => (
-                      <option key={c._id} value={c._id}>{c.title || `Contract ${c._id}`}</option>
+                      <option key={(c.id || c._id)} value={(c.id || c._id)}>{c.title || `Contract ${(c.id || c._id)}`}</option>
                     ))}
                   </select>
                 </div>
                 <div>
                   <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>Link to Client (Optional)</label>
                   <select 
-                    style={{ width: '100%', padding: '0.5rem', borderRadius: '4px', border: '1px solid var(--border-color)' }}
+                    style={{ width: '100%', padding: '0.5rem', borderRadius: '4px', border: '1px solid var(--border)' }}
                     value={selectedClientId}
                     onChange={e => setSelectedClientId(e.target.value)}
                   >
                     <option value="">-- Select a Client --</option>
                     {clients.map(c => (
-                      <option key={c._id} value={c._id}>{c.name}</option>
+                      <option key={(c.id || c._id)} value={(c.id || c._id)}>{c.name}</option>
                     ))}
                   </select>
                 </div>
@@ -235,22 +235,22 @@ export default function ContractComparatorPage() {
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
                 <div>
-                  <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold', color: 'var(--primary-color)' }}>
+                  <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold', color: 'var(--brand)' }}>
                     Your Version (Baseline)
                   </label>
                   <textarea
-                    style={{ width: '100%', height: '300px', padding: '1rem', borderRadius: '8px', border: '1px solid var(--border-color)', resize: 'vertical', fontFamily: 'monospace' }}
+                    style={{ width: '100%', height: '300px', padding: '1rem', borderRadius: '8px', border: '1px solid var(--border)', resize: 'vertical', fontFamily: 'monospace' }}
                     placeholder="Paste your standard contract here..."
                     value={yourContract}
                     onChange={e => setYourContract(e.target.value)}
                   />
                 </div>
                 <div>
-                  <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold', color: 'var(--danger-color)' }}>
+                  <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold', color: 'var(--red)' }}>
                     Client's Version (Modified)
                   </label>
                   <textarea
-                    style={{ width: '100%', height: '300px', padding: '1rem', borderRadius: '8px', border: '1px solid var(--border-color)', resize: 'vertical', fontFamily: 'monospace' }}
+                    style={{ width: '100%', height: '300px', padding: '1rem', borderRadius: '8px', border: '1px solid var(--border)', resize: 'vertical', fontFamily: 'monospace' }}
                     placeholder="Paste the client's modified contract here..."
                     value={clientContract}
                     onChange={e => setClientContract(e.target.value)}
@@ -301,7 +301,7 @@ export default function ContractComparatorPage() {
                       <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Changes</div>
                     </div>
                     <div>
-                      <div style={{ fontSize: '2rem', fontWeight: 'bold', color: 'var(--danger-color)' }}>{analysisResult.red_flags?.length || 0}</div>
+                      <div style={{ fontSize: '2rem', fontWeight: 'bold', color: 'var(--red)' }}>{analysisResult.red_flags?.length || 0}</div>
                       <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Red Flags</div>
                     </div>
                   </div>
@@ -315,8 +315,8 @@ export default function ContractComparatorPage() {
                 {(analysisResult.red_flags?.length > 0 || analysisResult.negotiation_points?.length > 0) && (
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginBottom: '1.5rem' }}>
                     {analysisResult.red_flags?.length > 0 && (
-                      <div className="card" style={{ borderLeft: '4px solid var(--danger-color)' }}>
-                        <h3 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--danger-color)' }}>
+                      <div className="card" style={{ borderLeft: '4px solid var(--red)' }}>
+                        <h3 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--red)' }}>
                           <ShieldAlert size={20} /> Critical Red Flags
                         </h3>
                         <ul style={{ paddingLeft: '1.5rem', margin: 0 }}>
@@ -327,8 +327,8 @@ export default function ContractComparatorPage() {
                       </div>
                     )}
                     {analysisResult.negotiation_points?.length > 0 && (
-                      <div className="card" style={{ borderLeft: '4px solid var(--primary-color)' }}>
-                        <h3 style={{ color: 'var(--primary-color)' }}>Key Negotiation Points</h3>
+                      <div className="card" style={{ borderLeft: '4px solid var(--brand)' }}>
+                        <h3 style={{ color: 'var(--brand)' }}>Key Negotiation Points</h3>
                         <ul style={{ paddingLeft: '1.5rem', margin: 0 }}>
                           {analysisResult.negotiation_points.map((point, idx) => (
                             <li key={idx} style={{ marginBottom: '0.5rem' }}>{point}</li>
@@ -344,7 +344,7 @@ export default function ContractComparatorPage() {
                   {analysisResult.changes?.length > 0 ? (
                     analysisResult.changes.map((change, idx) => (
                       <div key={idx} className="card" style={{ padding: '0', overflow: 'hidden' }}>
-                        <div style={{ backgroundColor: 'var(--bg-elevated)', padding: '0.75rem 1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-color)' }}>
+                        <div style={{ backgroundColor: 'var(--bg-elevated)', padding: '0.75rem 1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)' }}>
                           <h4 style={{ margin: 0 }}>{change.clause_name}</h4>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                             {getChangeTypeIcon(change.change_type)}
@@ -352,7 +352,7 @@ export default function ContractComparatorPage() {
                           </div>
                         </div>
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
-                          <div style={{ padding: '1rem', borderRight: '1px solid var(--border-color)', backgroundColor: '#f0fdf4' }}>
+                          <div style={{ padding: '1rem', borderRight: '1px solid var(--border)', backgroundColor: '#f0fdf4' }}>
                             <div style={{ fontSize: '0.75rem', fontWeight: 'bold', color: '#166534', marginBottom: '0.5rem' }}>YOUR VERSION</div>
                             <div style={{ fontFamily: 'monospace', whiteSpace: 'pre-wrap', fontSize: '0.9rem' }}>{change.your_version}</div>
                           </div>
@@ -361,7 +361,7 @@ export default function ContractComparatorPage() {
                             <div style={{ fontFamily: 'monospace', whiteSpace: 'pre-wrap', fontSize: '0.9rem' }}>{change.client_version}</div>
                           </div>
                         </div>
-                        <div style={{ padding: '1rem', borderTop: '1px solid var(--border-color)' }}>
+                        <div style={{ padding: '1rem', borderTop: '1px solid var(--border)' }}>
                           <div style={{ marginBottom: '0.5rem' }}>
                             <strong>Why this matters:</strong> {change.explanation}
                           </div>
@@ -386,16 +386,16 @@ export default function ContractComparatorPage() {
           <div className="card">
             {loading ? (
               <div style={{ display: 'flex', justifyContent: 'center', padding: '3rem' }}>
-                <Loader2 className="spin" size={32} color="var(--primary-color)" />
+                <Loader2 className="spin" size={32} color="var(--brand)" />
               </div>
             ) : history.length > 0 ? (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 {history.map((item) => (
                   <div 
-                    key={item._id} 
+                    key={(item.id || item._id)} 
                     style={{ 
                       padding: '1rem', 
-                      border: '1px solid var(--border-color)', 
+                      border: '1px solid var(--border)', 
                       borderRadius: '8px',
                       display: 'flex',
                       justifyContent: 'space-between',
@@ -403,8 +403,8 @@ export default function ContractComparatorPage() {
                       cursor: 'pointer',
                       transition: 'border-color 0.2s'
                     }}
-                    onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--primary-color)'}
-                    onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border-color)'}
+                    onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--brand)'}
+                    onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border)'}
                     onClick={() => viewHistoryItem(item)}
                   >
                     <div>
@@ -413,9 +413,9 @@ export default function ContractComparatorPage() {
                           Comparison on {new Date(item.created_at).toLocaleDateString()}
                         </span>
                         {item.analysis?.safe_to_sign ? (
-                          <span style={{ color: 'var(--success-color)', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '4px' }}><CheckCircle size={14} /> Safe</span>
+                          <span style={{ color: 'var(--green)', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '4px' }}><CheckCircle size={14} /> Safe</span>
                         ) : (
-                          <span style={{ color: 'var(--danger-color)', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '4px' }}><XCircle size={14} /> Risky</span>
+                          <span style={{ color: 'var(--red)', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '4px' }}><XCircle size={14} /> Risky</span>
                         )}
                         <span style={{ color: getRiskColor(item.analysis?.risk_level), fontSize: '0.8rem', fontWeight: 'bold', textTransform: 'uppercase' }}>
                           {item.analysis?.risk_level} Risk
@@ -427,13 +427,13 @@ export default function ContractComparatorPage() {
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                       <button 
-                        style={{ background: 'none', border: 'none', color: 'var(--primary-color)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
+                        style={{ background: 'none', border: 'none', color: 'var(--brand)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
                       >
                         View <ArrowRight size={16} />
                       </button>
                       <button 
-                        style={{ background: 'none', border: 'none', color: 'var(--danger-color)', cursor: 'pointer', padding: '0.5rem' }}
-                        onClick={(e) => handleDeleteHistory(item._id, e)}
+                        style={{ background: 'none', border: 'none', color: 'var(--red)', cursor: 'pointer', padding: '0.5rem' }}
+                        onClick={(e) => handleDeleteHistory((item.id || item._id), e)}
                         title="Delete comparison"
                       >
                         <Trash2 size={18} />

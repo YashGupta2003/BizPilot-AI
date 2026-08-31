@@ -132,11 +132,11 @@ export default function BurnoutPage() {
           <h3 style={{ fontSize: 14, fontWeight: 600, marginBottom: 16 }}>Monthly Revenue (Last 6 Months)</h3>
           <ResponsiveContainer width="100%" height={200}>
             <AreaChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
               <XAxis dataKey="month" tick={{ fontSize: 11 }} />
               <YAxis tick={{ fontSize: 11 }} tickFormatter={(v) => `₹${(v / 1000).toFixed(0)}k`} />
               <Tooltip formatter={(v) => formatCurrency(v)} />
-              <Area type="monotone" dataKey="revenue" stroke="#4f46e5" fill="#eef2ff" strokeWidth={2} name="Revenue" />
+              <Area type="monotone" dataKey="revenue" stroke="var(--brand)" fill="var(--border)" strokeWidth={2} name="Revenue" />
             </AreaChart>
           </ResponsiveContainer>
           {data.best_month && (

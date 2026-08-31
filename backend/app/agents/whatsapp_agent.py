@@ -196,7 +196,9 @@ async def send_whatsapp_reminder(
     try:
         from twilio.rest import Client as TwilioClient
         twilio_client = TwilioClient(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
-        sent_message = twilio_client.messages.create(
+        import asyncio
+        sent_message = await asyncio.to_thread(
+            twilio_client.messages.create,
             from_=settings.TWILIO_WHATSAPP_FROM,
             to=to_number,
             body=message,

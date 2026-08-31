@@ -1,5 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel
+from bson import ObjectId
+from bson.errors import InvalidId
 from typing import Optional
 from app.core.database import get_database
 from app.core.deps import get_current_user
@@ -26,6 +28,15 @@ async def suggest_price(
     SYNC: reads invoices + proposals + client_profiles +
     disputes + scope_projects + contracts to suggest optimal price.
     """
+    if payload.client_id:
+        try:
+            client_id_obj = ObjectId(payload.client_id)
+        except (InvalidId, Exception):
+            raise HTTPException(status_code=400, detail="Invalid ID format")
+        client_doc = await db.clients.find_one({"_id": client_id_obj, "owner_id": current_user["_id"]})
+        if not client_doc:
+            raise HTTPException(status_code=404, detail="Client not found")
+            
     try:
         suggestion = await get_pricing_suggestion(
             db=db,

@@ -61,6 +61,11 @@ async def upload_document(
 
     chunks = chunk_text(text)
     client_obj_id = to_object_id_or_none(client_id)
+    if client_obj_id:
+        client_doc = await db.clients.find_one({"_id": client_obj_id, "owner_id": current_user["_id"]})
+        if not client_doc:
+            raise HTTPException(status_code=404, detail="Client not found")
+            
     model = request.app.state.embedding_model
     chunks_created = await store_document_chunks(db, model, current_user["_id"], file.filename, chunks, client_id=client_obj_id)
 

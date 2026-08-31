@@ -15,7 +15,17 @@ export const updateInvoiceStatus = async (id, status) =>
 
 export const deleteInvoice = async (id) => (await api.delete(`/invoices/${id}`)).data
 
+export const downloadInvoicePdf = async (id) => {
+  const response = await api.get(`/invoices/${id}/pdf`, { responseType: 'blob' })
+  return window.URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }))
+}
+
+/**
+ * @deprecated Use downloadInvoicePdf instead to avoid token exposure in URL.
+ */
 export const getInvoicePdfUrl = (id) => {
-  const token = localStorage.getItem('bizpilot_token')
+  const userStr = localStorage.getItem('bizpilot_user')
+  const user = userStr ? JSON.parse(userStr) : null
+  const token = user?.token || ''
   return `http://localhost:8000/api/invoices/${id}/pdf?token=${token}`
 }

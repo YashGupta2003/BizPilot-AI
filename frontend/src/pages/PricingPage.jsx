@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import {
-  DollarSign, Loader2, Zap, TrendingUp, AlertTriangle,
-  CheckCircle2, BarChart3, RefreshCw, Info
+   Loader2, Zap, BarChart3
 } from 'lucide-react'
 import AppLayout from '../components/layout/AppLayout'
 import { getPricingSuggestion, getPricingHistory } from '../services/pricingService'
@@ -260,6 +259,8 @@ export default function PricingPage() {
     try {
       const data = await getPricingSuggestion(form)
       setResult(data)
+    } catch (err) {
+      console.error('Failed to get suggestion:', err)
     } finally {
       setLoading(false)
     }

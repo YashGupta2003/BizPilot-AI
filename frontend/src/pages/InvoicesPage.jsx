@@ -21,9 +21,14 @@ export default function InvoicesPage() {
 
   async function loadInvoices() {
     setLoading(true)
-    const data = await getInvoices()
-    setInvoices(data)
-    setLoading(false)
+    try {
+      const data = await getInvoices()
+      setInvoices(data)
+    } catch (err) {
+      console.error('Failed to load data:', err)
+    } finally {
+      setLoading(false)
+    }
   }
 
   async function handleAICreated() {
@@ -38,19 +43,27 @@ export default function InvoicesPage() {
 
   async function handleDelete(id) {
     if (!confirm('Delete this invoice?')) return
-    await deleteInvoice(id)
-    await loadInvoices()
+    try {
+      await deleteInvoice(id)
+      await loadInvoices()
+    } catch (err) {
+      console.error('Failed to delete:', err)
+    }
   }
   
   async function handleStatusChange(id, status) {
-    await updateInvoiceStatus(id, status)
-    if (status === 'paid') {
-    const log = confirm(
-      'Invoice marked as paid! Did this come from a proposal? Click OK to log the win.'
-    )
-    if (log) navigate('/winrate')
-  }
-    await loadInvoices()
+    try {
+      await updateInvoiceStatus(id, status)
+      if (status === 'paid') {
+        const log = confirm(
+          'Invoice marked as paid! Did this come from a proposal? Click OK to log the win.'
+        )
+        if (log) navigate('/winrate')
+      }
+      await loadInvoices()
+    } catch (err) {
+      console.error('Failed to update status:', err)
+    }
   }
 
   function formatCurrency(amount, currency = 'INR') {

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import {
-  Users, FileText, ScrollText, Mic2, MessageSquare,
+   FileText, ScrollText, Mic2, MessageSquare,
   Brain, AlertTriangle, CheckCircle2, TrendingUp,
   Clock, DollarSign, Activity, ChevronRight
 } from 'lucide-react'
@@ -76,8 +76,8 @@ function TimelineItem({ event }) {
 
   return (
     <div style={{ display: 'flex', gap: 12, paddingBottom: 14, borderBottom: '1px solid var(--border)' }}>
-      <div style={{ width: 32, height: 32, borderRadius: '50%', background: color + '18', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-        <Icon size={15} color={color} />
+      <div style={{ width: 32, height: 32, borderRadius: '50%', background: color, opacity: 0.85, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+        <Icon size={16} color="white" />
       </div>
       <div style={{ flex: 1 }}>
         <p style={{ fontSize: 13.5, fontWeight: 600, color: 'var(--text-primary)' }}>{event.title}</p>
@@ -122,13 +122,27 @@ export default function Client360Page() {
   const [ltv, setLtv] = useState(null)
 
   useEffect(() => {
-    api.get(`/client360/${clientId}`)
-      .then((res) => setData(res.data))
-      .finally(() => setLoading(false))
+    async function loadData() {
+      try {
+        const res = await api.get(`/client360/${clientId}`)
+        setData(res.data)
+      } catch (err) {
+        console.error('Failed to load data:', err)
+      } finally {
+        setLoading(false)
+      }
+    }
+    loadData()
 
-    getClientLTV(clientId)
-      .then(setLtv)
-      .catch(() => {})
+    async function loadLtv() {
+      try {
+        const res = await getClientLTV(clientId)
+        setLtv(res)
+      } catch (err) {
+        console.error('Failed to load LTV:', err)
+      }
+    }
+    loadLtv()
   }, [clientId])
 
   if (loading) return (

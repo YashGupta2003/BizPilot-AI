@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import {
-  TrendingUp, TrendingDown, Zap, AlertTriangle,
+  TrendingUp, Zap, AlertTriangle,
   Loader2, BarChart3, Users, DollarSign, Star
 } from 'lucide-react'
 import AppLayout from '../components/layout/AppLayout'
@@ -104,7 +104,7 @@ export default function PortfolioPage() {
           <h3 style={{ fontSize: 14, fontWeight: 600, marginBottom: 16 }}>Revenue by Service Type</h3>
           <ResponsiveContainer width="100%" height={220}>
             <BarChart data={data.service_breakdown} layout="vertical" margin={{ left: 10 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
               <XAxis type="number" tick={{ fontSize: 11 }} tickFormatter={(v) => `₹${(v / 1000).toFixed(0)}k`} />
               <YAxis type="category" dataKey="service_type" tick={{ fontSize: 11 }} width={110} />
               <Tooltip formatter={(v) => formatCurrency(v)} />

@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import {
   FileText, Loader2, CheckCircle2, AlertTriangle,
   Calendar, DollarSign, RefreshCw, ChevronRight,
@@ -92,7 +91,7 @@ function GSTQuartersTable({ quarters, currentQ }) {
       </thead>
       <tbody>
         {quarters.map((q) => (
-          <tr key={q.quarter} style={{ background: q.quarter === currentQ ? '#fafafa' : 'var(--bg-card)' }}>
+          <tr key={q.quarter} style={{ background: q.quarter === currentQ ? 'var(--bg-hover)' : 'var(--bg-card)' }}>
             <td style={{ fontWeight: q.quarter === currentQ ? 700 : 400 }}>
               {q.label} {q.quarter === currentQ && '← Current'}
             </td>

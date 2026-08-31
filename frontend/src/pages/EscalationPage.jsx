@@ -82,18 +82,24 @@ function EscalationCard({ item }) {
     try {
       const doc = await generateEscalationDoc(item.invoice_id, stage || stageOverride)
       setDocument(doc)
+    } catch (err) {
+      console.error('Failed to generate:', err)
     } finally {
       setGenerating(false)
     }
   }
 
   async function handleLogSent(method) {
-    await logEscalationSent(item.invoice_id, {
-      stage: document?.stage || item.stage,
-      method,
-      notes: `Stage ${item.stage} — ${item.stage_label}`,
-    })
-    setLogged(true)
+    try {
+      await logEscalationSent(item.invoice_id, {
+        stage: document?.stage || item.stage,
+        method,
+        notes: `Stage ${item.stage} — ${item.stage_label}`,
+      })
+      setLogged(true)
+    } catch (err) {
+      console.error('Failed to log sent:', err)
+    }
   }
 
   function copyDoc() {

@@ -2,20 +2,19 @@ from bson import ObjectId
 from app.services.portfolio_service import SERVICE_KEYWORDS, classify_service_type
 
 async def analyze_networking_opportunities(db, owner_id: str, client_id: str = None) -> dict:
-    owner_object_id = ObjectId(owner_id)
-    match_filter = {"owner_id": owner_object_id}
+    match_filter = {"owner_id": owner_id}
     
     if client_id:
-        match_filter["client_id"] = ObjectId(client_id)
+        match_filter["client_id"] = client_id
         
     # Get paid invoices to understand current services
-    invoices = await db["invoices"].find({"owner_id": owner_object_id, "status": "paid"}).to_list(100)
+    invoices = await db["invoices"].find({**match_filter, "status": "paid"}).to_list(100)
     
     # Get lost proposals
-    lost_proposals = await db["proposals"].find({"owner_id": owner_object_id, "status": "lost"}).to_list(100)
+    lost_proposals = await db["proposals"].find({**match_filter, "outcome": "lost"}).to_list(100)
     
     # Get meetings
-    meetings = await db["meetings"].find({"owner_id": owner_object_id}).to_list(100)
+    meetings = await db["meetings"].find(match_filter).to_list(100)
     
     # Analyze current services
     current_services = {}

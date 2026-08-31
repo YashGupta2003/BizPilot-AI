@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { TrendingUp, TrendingDown, Minus, AlertCircle, Loader2 } from 'lucide-react'
 import {
   ComposedChart, Line, Area, XAxis, YAxis, CartesianGrid,
-  Tooltip, ResponsiveContainer, Legend,
+  Tooltip, ResponsiveContainer,
 } from 'recharts'
 import { getCashFlowForecast } from '../../services/forecastService'
 

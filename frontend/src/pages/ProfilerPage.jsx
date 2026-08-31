@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react'
 import {
-  Brain, AlertTriangle, CheckCircle2, Loader2,
-  RefreshCw, Trash2, ChevronRight, Shield,
-  MessageSquare, Clock, DollarSign, User, Lightbulb
+  Brain, AlertTriangle, CheckCircle2, Loader2, Trash2, ChevronRight, Shield,
+  MessageSquare, DollarSign, User, Lightbulb
 } from 'lucide-react'
 import AppLayout from '../components/layout/AppLayout'
 import { analyzeClient, getProfileHistory, deleteProfile } from '../services/profilerService'
@@ -190,16 +189,32 @@ function HistoryTab() {
   const [loading, setLoading] = useState(true)
   const [selected, setSelected] = useState(null)
 
+  async function loadHistory() {
+    setLoading(true)
+    try {
+      const data = await getProfileHistory()
+      setHistory(data)
+    } catch (err) {
+      console.error('Failed to load history:', err)
+    } finally {
+      setLoading(false)
+    }
+  }
+
   useEffect(() => {
-    getProfileHistory().then(setHistory).finally(() => setLoading(false))
+    loadHistory()
   }, [])
 
   async function handleDelete(id, e) {
     e.stopPropagation()
     if (!confirm('Delete this profile?')) return
-    await deleteProfile(id)
-    setHistory((h) => h.filter((item) => item.id !== id))
-    if (selected?.id === id) setSelected(null)
+    try {
+      await deleteProfile(id)
+      setHistory((h) => h.filter((item) => item.id !== id))
+      if (selected?.id === id) setSelected(null)
+    } catch (err) {
+      console.error('Failed to delete:', err)
+    }
   }
 
   if (loading) return <div style={{ textAlign: 'center', padding: 24 }}><Loader2 size={24} className="spin" color="#4f46e5" /></div>

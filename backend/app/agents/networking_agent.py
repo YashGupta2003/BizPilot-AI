@@ -73,7 +73,7 @@ Service Gaps Data: {json.dumps(gap_data.get("service_gaps", []))}
         ]
         
         structured_llm = llm.with_structured_output(NetworkingExtraction)
-        response = structured_llm.invoke(messages)
+        response = await structured_llm.ainvoke(messages)
         result = response.model_dump() if response else None
         
         if not result:

@@ -183,7 +183,7 @@ function AnalysisResult({ result }) {
                   <Copy size={12} /> {copiedEsc ? 'Copied!' : 'Copy Letter'}
                 </button>
               </div>
-              <div style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.8, whiteSpace: 'pre-wrap', padding: '10px 12px', background: '#fff5f5', borderRadius: 8, border: '1px solid #fecaca' }}>
+              <div style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.8, whiteSpace: 'pre-wrap', padding: '10px 12px', background: 'var(--bg-card)', borderRadius: 8, border: '1px solid var(--red)' }}>
                 {analysis.escalation_letter}
               </div>
             </div>
@@ -216,9 +216,13 @@ function HistoryTab() {
   async function handleDelete(id, e) {
     e.stopPropagation()
     if (!confirm('Delete this dispute record?')) return
-    await deleteDispute(id)
-    setHistory((h) => h.filter((item) => item.id !== id))
-    if (selected?.id === id) setSelected(null)
+    try {
+      await deleteDispute(id)
+      setHistory((h) => h.filter((item) => item.id !== id))
+      if (selected?.id === id) setSelected(null)
+    } catch (err) {
+      console.error('Failed to delete:', err)
+    }
   }
 
   if (loading) return <div style={{ textAlign: 'center', padding: 24 }}><Loader2 size={24} className="spin" color="#4f46e5" /></div>

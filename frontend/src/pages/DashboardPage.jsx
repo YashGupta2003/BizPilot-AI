@@ -169,8 +169,8 @@ export default function DashboardPage() {
                     onMouseEnter={e => { e.currentTarget.style.borderColor = color; e.currentTarget.style.background = 'var(--bg-hover)' }}
                     onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.background = 'var(--bg-elevated)' }}
                   >
-                    <div style={{ width: 30, height: 30, background: `${color}18`, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <Icon size={15} color={color} />
+                    <div style={{ width: 30, height: 30, background: color, opacity: 0.85, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <Icon size={15} color="white" />
                     </div>
                     <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>{label}</span>
                   </button>

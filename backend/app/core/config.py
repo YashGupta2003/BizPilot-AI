@@ -2,7 +2,9 @@
 Central configuration for the whole backend.
 Everything reads settings from here instead of scattering os.getenv() calls everywhere.
 """
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic import model_validator
+import logging
 
 
 class Settings(BaseSettings):
@@ -30,9 +32,14 @@ class Settings(BaseSettings):
     ENVIRONMENT: str = "development"
     CORS_ORIGINS: str = "http://localhost:5173"
 
-    class Config:
-        env_file = ".env"
-        extra = "ignore"
+    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
+
+    @model_validator(mode='after')
+    def validate_jwt_secret(self) -> 'Settings':
+        if self.ENVIRONMENT != 'development':
+            if self.JWT_SECRET_KEY == "dev_secret_change_me" or len(self.JWT_SECRET_KEY) < 32:
+                logging.warning("INSECURE JWT SECRET KEY FOR PRODUCTION!")
+        return self
 
 
 # Single shared instance — import this everywhere else

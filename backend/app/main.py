@@ -29,9 +29,11 @@ async def lifespan(app: FastAPI):
     # Runs once on startup
     await connect_to_mongo()
     app.state.embedding_model = await load_embedding_model_async()
-    yield
-    # Runs once on shutdown
-    await close_mongo_connection()
+    try:
+        yield
+    finally:
+        # Runs once on shutdown
+        await close_mongo_connection()
 
 
 app = FastAPI(
@@ -44,7 +46,7 @@ app = FastAPI(
 # CORS — lets the React frontend (running on a different port) talk to this API
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.CORS_ORIGINS.split(","),
+    allow_origins=[o.strip() for o in settings.CORS_ORIGINS.split(',') if o.strip()],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

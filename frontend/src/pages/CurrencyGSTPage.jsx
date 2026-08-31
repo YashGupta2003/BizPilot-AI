@@ -39,9 +39,16 @@ function ExchangeRatesTab() {
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(true)
 
-  function load() {
+  async function load() {
     setLoading(true)
-    getExchangeRates().then(setData).finally(() => setLoading(false))
+    try {
+      const result = await getExchangeRates()
+      setData(result)
+    } catch (err) {
+      console.error('Failed to load rates:', err)
+    } finally {
+      setLoading(false)
+    }
   }
 
   useEffect(() => { load() }, [])
@@ -91,7 +98,18 @@ function GSTSlabsTab() {
   const [search, setSearch] = useState('')
 
   useEffect(() => {
-    getSACList().then((d) => setSacList(d.sac_codes || [])).finally(() => setLoading(false))
+    async function loadSac() {
+      setLoading(true)
+      try {
+        const d = await getSACList()
+        setSacList(d.sac_codes || [])
+      } catch (err) {
+        console.error('Failed to load SAC list:', err)
+      } finally {
+        setLoading(false)
+      }
+    }
+    loadSac()
   }, [])
 
   const filtered = sacList.filter((s) =>

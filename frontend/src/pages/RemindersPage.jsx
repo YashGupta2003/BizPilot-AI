@@ -7,9 +7,9 @@ import AppLayout from '../components/layout/AppLayout'
 import { getOverduePreviews, sendReminder } from '../services/reminderService'
 
 const SEVERITY_COLORS = {
-  low: { bg: '#fef3c7', border: '#fde68a', text: '#92400e', label: 'Gentle reminder' },
-  medium: { bg: '#fee2e2', border: '#fecaca', text: '#b91c1c', label: 'Follow-up needed' },
-  high: { bg: '#fdf2f8', border: '#f5d0fe', text: '#86198f', label: 'Urgent' },
+  low: { bg: 'var(--bg-card)', border: 'var(--amber)', text: 'var(--amber)', label: 'Gentle reminder' },
+  medium: { bg: 'var(--bg-card)', border: 'var(--red)', text: 'var(--red)', label: 'Follow-up needed' },
+  high: { bg: 'var(--bg-card)', border: 'var(--purple)', text: 'var(--purple)', label: 'Urgent' },
 }
 
 function getSeverity(daysOverdue) {
@@ -169,7 +169,7 @@ export default function RemindersPage() {
         </button>
       </div>
 
-      <div className="card" style={{ marginBottom: 20, borderLeft: '4px solid #4f46e5', background: '#eef2ff' }}>
+      <div className="card" style={{ marginBottom: 20, borderLeft: '4px solid var(--brand)', background: 'var(--bg-card)' }}>
         <h3 style={{ fontSize: 14, fontWeight: 600, marginBottom: 8, color: 'var(--brand)' }}>Twilio WhatsApp Setup (one-time, free)</h3>
         <ol style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 2, paddingLeft: 18 }}>
           <li>Sign up free at <strong>console.twilio.com</strong></li>

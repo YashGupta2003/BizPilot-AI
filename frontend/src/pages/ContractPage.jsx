@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import {
   FileText, Loader2, AlertTriangle, CheckCircle2,
-  Shield, Trash2, Download, Plus, RefreshCw
+  Shield, Trash2, Download, Plus
 } from 'lucide-react'
 import AppLayout from '../components/layout/AppLayout'
 import { generateContract, listContracts, deleteContract } from '../services/contractService'
@@ -236,26 +236,45 @@ export default function ContractPage() {
     getClients().then(setClients).catch(() => {})
   }, [])
 
+  async function loadContracts() {
+    setLoadingContracts(true)
+    try {
+      const data = await listContracts()
+      setContracts(data)
+    } catch (err) {
+      console.error('Failed to load data:', err)
+    } finally {
+      setLoadingContracts(false)
+    }
+  }
+
   useEffect(() => {
     if (tab === 'history') {
-      setLoadingContracts(true)
-      listContracts().then(setContracts).finally(() => setLoadingContracts(false))
+      loadContracts()
     }
   }, [tab])
 
   async function handleGenerated(contract) {
     setViewingContract(contract)
     setTab('history')
-    const updated = await listContracts()
-    setContracts(updated)
+    try {
+      const updated = await listContracts()
+      setContracts(updated)
+    } catch (err) {
+      console.error('Failed to load data:', err)
+    }
   }
 
   async function handleDelete(id, e) {
     e.stopPropagation()
     if (!confirm('Delete this contract?')) return
-    await deleteContract(id)
-    setContracts((c) => c.filter((item) => item.id !== id))
-    if (viewingContract?.id === id) setViewingContract(null)
+    try {
+      await deleteContract(id)
+      setContracts((c) => c.filter((item) => item.id !== id))
+      if (viewingContract?.id === id) setViewingContract(null)
+    } catch (err) {
+      console.error('Failed to delete:', err)
+    }
   }
 
   return (

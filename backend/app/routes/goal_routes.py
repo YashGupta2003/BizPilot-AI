@@ -1,3 +1,4 @@
+import asyncio
 from fastapi import APIRouter, Depends, HTTPException
 from bson import ObjectId
 from datetime import datetime
@@ -60,10 +61,9 @@ async def get_goal_history(
     
     goals = await goals_cursor.to_list(length=50) if hasattr(goals_cursor, 'to_list') else list(goals_cursor)
     
-    history = []
-    for goal in goals:
-        progress = await get_goal_progress(db, owner_id, goal)
-        history.append(serialize_doc(progress))
+    tasks = [get_goal_progress(db, owner_id, goal) for goal in goals]
+    progresses = await asyncio.gather(*tasks)
+    history = [serialize_doc(p) for p in progresses]
         
     return history
 

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
   Activity, Loader2, RefreshCw, ChevronRight,
-  AlertTriangle, CheckCircle2, TrendingUp, Users
+  AlertTriangle, CheckCircle2, Users
 } from 'lucide-react'
 import AppLayout from '../components/layout/AppLayout'
 import { getAllHealthScores } from '../services/healthService'
@@ -162,6 +162,8 @@ export default function HealthDashboardPage() {
     try {
       const result = await getAllHealthScores()
       setData(result)
+    } catch (err) {
+      console.error('Failed to load data:', err)
     } finally {
       setLoading(false)
     }

@@ -55,7 +55,31 @@ async def get_monthly_revenue_history(db, owner_id) -> list[MonthlyRevenuePoint]
     ]
     rows = await db.invoices.aggregate(pipeline).to_list(length=240)  # 20 years of months, generous cap
 
-    return [MonthlyRevenuePoint(month_label=r["_id"], total_revenue=r["total_revenue"]) for r in rows]
+    points = [MonthlyRevenuePoint(month_label=r["_id"], total_revenue=r["total_revenue"]) for r in rows]
+    if not points:
+        return points
+
+    filled_points = []
+    current_label = points[0].month_label
+    end_label = points[-1].month_label
+
+    point_map = {p.month_label: p.total_revenue for p in points}
+
+    while True:
+        revenue = point_map.get(current_label, 0)
+        filled_points.append(MonthlyRevenuePoint(month_label=current_label, total_revenue=revenue))
+        
+        if current_label == end_label:
+            break
+            
+        y, m = map(int, current_label.split("-"))
+        m += 1
+        if m > 12:
+            m = 1
+            y += 1
+        current_label = f"{y:04d}-{m:02d}"
+
+    return filled_points
 
 
 def _next_month_labels(last_label: str, count: int) -> list[str]:

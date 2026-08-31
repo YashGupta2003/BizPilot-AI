@@ -9,6 +9,7 @@ from fastapi import Depends, HTTPException, status, Query, Request
 from fastapi.security import OAuth2PasswordBearer
 from typing import Optional
 from bson import ObjectId
+from bson.errors import InvalidId
 from app.core.security import decode_access_token
 from app.core.database import get_database
 
@@ -33,7 +34,11 @@ async def _resolve_user_from_token(token: str | None, db) -> dict:
     if user_id is None:
         raise credentials_exception
 
-    user = await db.users.find_one({"_id": ObjectId(user_id)})
+    try:
+        user = await db.users.find_one({"_id": ObjectId(user_id)}, {"password_hash": 0})
+    except InvalidId:
+        raise credentials_exception
+        
     if user is None:
         raise credentials_exception
 
@@ -41,8 +46,13 @@ async def _resolve_user_from_token(token: str | None, db) -> dict:
 
 
 async def get_current_user(request: Request, db=Depends(get_database)) -> dict:
-    """Standard auth: reads the token from the HttpOnly cookie."""
-    token = request.cookies.get("bizpilot_token")
+    """Standard auth: reads the token from the Authorization header or HttpOnly cookie."""
+    auth_header = request.headers.get("authorization")
+    token = None
+    if auth_header and auth_header.lower().startswith("bearer "):
+        token = auth_header.split(" ", 1)[1]
+    if not token:
+        token = request.cookies.get("bizpilot_token")
     return await _resolve_user_from_token(token, db)
 
 

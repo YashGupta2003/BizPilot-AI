@@ -118,6 +118,25 @@ async def search_similar_chunks(db, model, owner_id, query: str, client_id=None,
         }
     ]
 
-    cursor = db.documents.aggregate(pipeline)
-    scored = await cursor.to_list(length=top_k)
-    return scored
+    try:
+        cursor = db.documents.aggregate(pipeline)
+        scored = await cursor.to_list(length=top_k)
+        return scored
+    except Exception as e:
+        # Fallback for local MongoDB without $vectorSearch
+        cursor = db.documents.find(query_filter)
+        all_chunks = await cursor.to_list(length=10000)
+        
+        scored_chunks = []
+        for doc in all_chunks:
+            if "embedding" in doc:
+                doc_embedding = np.array(doc["embedding"])
+                score = cosine_similarity(query_embedding, doc_embedding)
+                scored_chunks.append({
+                    "text": doc.get("chunk_text"),
+                    "filename": doc.get("filename"),
+                    "score": score
+                })
+        
+        scored_chunks.sort(key=lambda x: x["score"], reverse=True)
+        return scored_chunks[:top_k]

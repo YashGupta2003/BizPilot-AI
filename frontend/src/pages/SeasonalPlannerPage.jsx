@@ -284,12 +284,12 @@ export default function SeasonalPlannerPage() {
             </div>
 
             {activeMonthData.preparation_tasks.length > 0 && (
-              <div style={{ marginBottom: '1.5rem', padding: '1rem', backgroundColor: '#eff6ff', borderRadius: '0.5rem' }}>
-                <h5 style={{ margin: '0 0 0.5rem 0', color: '#1e40af' }}>Proactive Preparation (Do this now)</h5>
+              <div style={{ marginBottom: '1.5rem', padding: '1rem', backgroundColor: 'var(--bg-card)', borderRadius: '0.5rem', border: '1px solid var(--border)' }}>
+                <h5 style={{ margin: '0 0 0.5rem 0', color: 'var(--brand)' }}>Proactive Preparation (Do this now)</h5>
                 <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
                   {activeMonthData.preparation_tasks.map((task, idx) => (
-                    <li key={idx} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem', fontSize: '0.875rem', color: '#1e3a8a' }}>
-                      <AlertCircle size={16} style={{ marginTop: '2px', flexShrink: 0 }} />
+                    <li key={idx} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem', marginBottom: '0.5rem', fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
+                      <AlertCircle size={16} style={{ marginTop: '2px', flexShrink: 0, color: 'var(--brand)' }} />
                       <span>{task}</span>
                     </li>
                   ))}
@@ -298,9 +298,9 @@ export default function SeasonalPlannerPage() {
             )}
 
             {activeMonthData.emergency_fund_target > 0 && (
-              <div style={{ padding: '1rem', backgroundColor: '#fef2f2', borderRadius: '0.5rem' }}>
-                <h5 style={{ margin: '0 0 0.5rem 0', color: '#991b1b' }}>Emergency Fund Target</h5>
-                <p style={{ margin: 0, fontSize: '0.875rem', color: '#7f1d1d' }}>
+              <div style={{ padding: '1rem', backgroundColor: 'var(--bg-card)', borderRadius: '0.5rem', border: '1px solid var(--red)' }}>
+                <h5 style={{ margin: '0 0 0.5rem 0', color: 'var(--red)' }}>Emergency Fund Target</h5>
+                <p style={{ margin: 0, fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
                   Aim to save <strong>₹{activeMonthData.emergency_fund_target.toLocaleString()}</strong> this month to prepare for upcoming slow periods.
                 </p>
               </div>

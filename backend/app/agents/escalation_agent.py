@@ -199,9 +199,8 @@ Payment Deadline in Letter: {deadline_7 if stage == 2 else deadline_5 if stage =
             HumanMessage(content=f"Generate the document for:\n{context}"),
         ])
         document_body = response.content.strip()
-    except Exception as exc:
-        document_body = f"AI generation failed: {exc}. Please use the template below."
-        document_body += _fallback_document(stage, invoice, client, freelancer_name,
+    except Exception:
+        document_body = _fallback_document(stage, invoice, client, freelancer_name,
                                             business_name, amount, late_fee, total_due,
                                             today, deadline_7, len(reminders))["body"]
 
@@ -327,6 +326,32 @@ async def get_all_escalations(db, owner_id) -> list[dict]:
     invoices = await db.invoices.aggregate(pipeline).to_list(length=100)
 
     results = []
+    
+    invoice_ids = [inv["_id"] for inv in invoices]
+    client_ids = [inv["client_id"] for inv in invoices if inv.get("client_id")]
+
+    all_reminders = await db.whatsapp_reminders.find({"invoice_id": {"$in": invoice_ids}, "owner_id": owner_id}).to_list(None)
+    reminders_by_inv = {}
+    for r in all_reminders:
+        reminders_by_inv.setdefault(r["invoice_id"], []).append(r)
+
+    all_clients = await db.clients.find({"_id": {"$in": client_ids}}).to_list(None)
+    clients_by_id = {c["_id"]: c for c in all_clients}
+
+    all_profiles = await db.client_profiles.find({"client_id": {"$in": client_ids}, "owner_id": owner_id}).sort([("analyzed_at", -1)]).to_list(None)
+    profiles_by_client = {}
+    for p in all_profiles:
+        if p["client_id"] not in profiles_by_client:
+            profiles_by_client[p["client_id"]] = p
+
+    all_contracts = await db.contracts.find({"client_id": {"$in": client_ids}, "owner_id": owner_id}).to_list(None)
+    contracts_by_client = {}
+    for c in all_contracts:
+        contracts_by_client.setdefault(c["client_id"], []).append(c)
+
+    all_disputes = await db.disputes.find({"client_id": {"$in": client_ids}, "owner_id": owner_id}).to_list(None)
+    disputes_by_client = {d["client_id"]: d for d in all_disputes}
+
     for inv in invoices:
         due_date_str = inv.get("due_date", "")
         try:
@@ -341,39 +366,18 @@ async def get_all_escalations(db, owner_id) -> list[dict]:
         stage_info = _get_escalation_stage(days_overdue)
         late_fee = _calculate_late_fee(inv.get("total", 0), days_overdue)
 
-        # Get reminder history
-        reminders = await db.whatsapp_reminders.find(
-            {"invoice_id": inv["_id"], "owner_id": owner_id}
-        ).to_list(length=20)
-
-        # Get client info
+        reminders = reminders_by_inv.get(inv["_id"], [])
+        
         client = {}
-        if inv.get("client_id"):
-            client_doc = await db.clients.find_one({"_id": inv["client_id"]})
-            if client_doc:
-                client = dict(client_doc)
+        client_id = inv.get("client_id")
+        if client_id and client_id in clients_by_id:
+            client = dict(clients_by_id[client_id])
 
-        # Get client risk profile
-        risk_profile = None
-        if inv.get("client_id"):
-            risk_profile = await db.client_profiles.find_one(
-                {"client_id": inv["client_id"], "owner_id": owner_id},
-                sort=[("analyzed_at", -1)],
-            )
-
-        # Get contracts
-        contracts = []
-        if inv.get("client_id"):
-            con_cursor = db.contracts.find(
-                {"client_id": inv["client_id"], "owner_id": owner_id}
-            )
-            contracts = await con_cursor.to_list(length=3)
-
-        # Check for existing dispute
-        dispute = await db.disputes.find_one({
-            "client_id": inv.get("client_id"),
-            "owner_id": owner_id,
-        })
+        risk_profile = profiles_by_client.get(client_id) if client_id else None
+        
+        contracts = contracts_by_client.get(client_id, [])[:3] if client_id else []
+        
+        dispute = disputes_by_client.get(client_id) if client_id else None
 
         # Calculate urgency based on risk profile
         urgency = "NORMAL"

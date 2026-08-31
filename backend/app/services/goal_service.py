@@ -29,7 +29,8 @@ async def get_reverse_plan(db, owner_id: str, gap: float, target: float, win_rat
         "description": f"Close {count_b} Brand Identity project(s) at ₹{SERVICE_MARKET_RATES['Brand Identity']} each"
     })
     
-    proposals_needed = max(1, round((gap / 30000) / win_rate))
+    safe_win_rate = win_rate if win_rate > 0 else 0.01
+    proposals_needed = max(1, round((gap / 30000) / safe_win_rate))
     options.append({
         "title": f"Option C: Volume Outreach",
         "description": f"Send {proposals_needed} proposals (at your {int(win_rate*100)}% win rate)"
@@ -50,7 +51,7 @@ async def get_goal_progress(db, owner_id: str, goal: dict) -> dict:
         start_date = datetime(year, month, 1)
         _, last_day = calendar.monthrange(year, month)
         end_date = datetime(year, month, last_day, 23, 59, 59)
-    except:
+    except Exception:
         year, month = datetime.now().year, datetime.now().month
         start_date = datetime(year, month, 1)
         _, last_day = calendar.monthrange(year, month)
@@ -63,12 +64,12 @@ async def get_goal_progress(db, owner_id: str, goal: dict) -> dict:
     
     invoices = await invoices_cursor.to_list(length=100) if hasattr(invoices_cursor, 'to_list') else list(invoices_cursor)
     
-    earned = sum(inv.get("amount", 0) for inv in invoices if inv.get("status") == "paid")
-    pending = sum(inv.get("amount", 0) for inv in invoices if inv.get("status") in ["sent", "draft", "pending"])
+    earned = sum(inv.get("total", 0) for inv in invoices if inv.get("status") == "paid")
+    pending = sum(inv.get("total", 0) for inv in invoices if inv.get("status") in ["sent", "draft", "pending"])
     
     proposals_cursor = db["proposals"].find({
         "owner_id": owner_id,
-        "status": "pending"
+        "outcome": "pending"
     })
     
     proposals = await proposals_cursor.to_list(length=100) if hasattr(proposals_cursor, 'to_list') else list(proposals_cursor)

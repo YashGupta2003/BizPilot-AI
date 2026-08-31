@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Plus, Trash2, Eye, Activity } from 'lucide-react'
+import { Plus, Trash2, Eye } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import AppLayout from '../components/layout/AppLayout'
 import ClientFormModal from '../components/clients/ClientFormModal'
@@ -33,15 +33,23 @@ export default function ClientsPage() {
   }
 
   async function handleSave(payload) {
-    await createClient(payload)
-    setShowModal(false)
-    await loadClients()
+    try {
+      await createClient(payload)
+      setShowModal(false)
+      await loadClients()
+    } catch (err) {
+      console.error('Failed to save:', err)
+    }
   }
 
   async function handleDelete(id) {
     if (!confirm('Delete this client?')) return
-    await deleteClient(id)
-    await loadClients()
+    try {
+      await deleteClient(id)
+      await loadClients()
+    } catch (err) {
+      console.error('Failed to delete:', err)
+    }
   }
 
   function formatCurrency(amount) {

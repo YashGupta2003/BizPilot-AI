@@ -27,16 +27,16 @@ async def analyze_tone_route(
                 client_name = client.get("name")
                 
                 # Fetch context (simplified)
-                invoices = await db["invoices"].find({"client_id": str(client_id_obj), "owner_id": owner_id}).to_list(10)
+                invoices = await db["invoices"].find({"client_id": client_id_obj, "owner_id": owner_id}).to_list(10)
                 invoices_data = serialize_list(invoices)
                 
                 client_context = {
                     "client_name": client_name,
                     "industry": client.get("industry"),
                     "status": client.get("status"),
-                    "recent_invoices": [{"status": inv.get("status"), "amount": inv.get("amount")} for inv in invoices_data]
+                    "recent_invoices": [{"status": inv.get("status"), "amount": inv.get("total")} for inv in invoices_data]
                 }
-        except:
+        except Exception:
             pass
 
     analysis_result = await analyze_communication_tone(
@@ -77,7 +77,7 @@ async def get_tone_analysis(
     owner_id = current_user["_id"]
     try:
         obj_id = ObjectId(id)
-    except:
+    except Exception:
         raise HTTPException(status_code=400, detail="Invalid ID format")
         
     analysis = await db["tone_analyses"].find_one({"_id": obj_id, "owner_id": owner_id})
@@ -108,7 +108,7 @@ async def delete_tone_analysis(
     owner_id = current_user["_id"]
     try:
         obj_id = ObjectId(id)
-    except:
+    except Exception:
         raise HTTPException(status_code=400, detail="Invalid ID format")
         
     result = await db["tone_analyses"].delete_one({"_id": obj_id, "owner_id": owner_id})

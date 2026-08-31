@@ -27,7 +27,7 @@ mongodb = MongoDB()
 
 async def connect_to_mongo():
     """Called once when the FastAPI app starts up."""
-    mongodb.client = AsyncIOMotorClient(settings.MONGO_URI)
+    mongodb.client = AsyncIOMotorClient(settings.MONGO_URI, serverSelectionTimeoutMS=5000)
     mongodb.db = mongodb.client[settings.MONGO_DB_NAME]
 
     # This line actually tests the connection (Motor connects lazily otherwise)
@@ -37,45 +37,52 @@ async def connect_to_mongo():
     # Create indexes — this is a MongoDB performance concept.
     # An index makes searching by that field much faster (like a SQL index).
     # unique=True also enforces no duplicate emails at the database level.
-    await mongodb.db.users.create_index("email", unique=True)
-    await mongodb.db.clients.create_index("owner_id")
-    await mongodb.db.invoices.create_index("owner_id")
-    await mongodb.db.invoices.create_index("client_id")
-    await mongodb.db.documents.create_index("owner_id")
-    await mongodb.db.contract_risk_reports.create_index("owner_id")
-    await mongodb.db.contract_risk_reports.create_index("filename")
-    await mongodb.db.whatsapp_reminders.create_index("owner_id")
-    await mongodb.db.whatsapp_reminders.create_index([("invoice_id", 1), ("sent_date", 1)])
-    await mongodb.db.negotiation_sessions.create_index("owner_id")
-    await mongodb.db.negotiation_sessions.create_index("status")
-    await mongodb.db.client_profiles.create_index("owner_id")
-    await mongodb.db.client_profiles.create_index("analyzed_at")
-    await mongodb.db.contracts.create_index("owner_id")
-    await mongodb.db.contracts.create_index("client_id")
-    await mongodb.db.meetings.create_index("owner_id")
-    await mongodb.db.meetings.create_index("client_id")
-    await mongodb.db.disputes.create_index("owner_id")
-    await mongodb.db.disputes.create_index("client_id")
-    await mongodb.db.proposals.create_index("owner_id")
-    await mongodb.db.proposals.create_index("outcome")
-    await mongodb.db.proposals.create_index("service_type")
-    await mongodb.db.escalation_logs.create_index("owner_id")
-    await mongodb.db.escalation_logs.create_index("invoice_id")
-    await mongodb.db.scope_projects.create_index("owner_id")
-    await mongodb.db.scope_projects.create_index("client_id")
-    # ── New Feature Indexes (13-15) ───────────────────────────────────
-    await mongodb.db.mental_load_snapshots.create_index("owner_id")
-    await mongodb.db.mental_load_snapshots.create_index("created_at")
-    await mongodb.db.contract_comparisons.create_index("owner_id")
-    await mongodb.db.contract_comparisons.create_index("created_at")
-    await mongodb.db.seasonal_plans.create_index("owner_id")
-    await mongodb.db.seasonal_plans.create_index("created_at")
+    indexes = [
+        (mongodb.db.users, "email", {"unique": True}),
+        (mongodb.db.clients, "owner_id", {}),
+        (mongodb.db.invoices, "owner_id", {}),
+        (mongodb.db.invoices, "client_id", {}),
+        (mongodb.db.documents, "owner_id", {}),
+        (mongodb.db.contract_risk_reports, "owner_id", {}),
+        (mongodb.db.contract_risk_reports, "filename", {}),
+        (mongodb.db.whatsapp_reminders, "owner_id", {}),
+        (mongodb.db.whatsapp_reminders, [("invoice_id", 1), ("sent_date", 1)], {}),
+        (mongodb.db.negotiation_sessions, "owner_id", {}),
+        (mongodb.db.negotiation_sessions, "status", {}),
+        (mongodb.db.client_profiles, "owner_id", {}),
+        (mongodb.db.client_profiles, "analyzed_at", {}),
+        (mongodb.db.contracts, "owner_id", {}),
+        (mongodb.db.contracts, "client_id", {}),
+        (mongodb.db.meetings, "owner_id", {}),
+        (mongodb.db.meetings, "client_id", {}),
+        (mongodb.db.disputes, "owner_id", {}),
+        (mongodb.db.disputes, "client_id", {}),
+        (mongodb.db.proposals, "owner_id", {}),
+        (mongodb.db.proposals, "outcome", {}),
+        (mongodb.db.proposals, "service_type", {}),
+        (mongodb.db.escalation_logs, "owner_id", {}),
+        (mongodb.db.escalation_logs, "invoice_id", {}),
+        (mongodb.db.scope_projects, "owner_id", {}),
+        (mongodb.db.scope_projects, "client_id", {}),
+        (mongodb.db.mental_load_snapshots, "owner_id", {}),
+        (mongodb.db.mental_load_snapshots, "created_at", {}),
+        (mongodb.db.contract_comparisons, "owner_id", {}),
+        (mongodb.db.contract_comparisons, "created_at", {}),
+        (mongodb.db.seasonal_plans, "owner_id", {}),
+        (mongodb.db.seasonal_plans, "created_at", {}),
+    ]
+    for coll, key, kwargs in indexes:
+        try:
+            await coll.create_index(key, **kwargs)
+        except Exception as e:
+            print(f"Failed to create index on {coll.name}: {e}")
 
 
 async def close_mongo_connection():
     """Called once when the FastAPI app shuts down."""
-    mongodb.client.close()
-    print("MongoDB connection closed.")
+    if mongodb.client is not None:
+        mongodb.client.close()
+        print("MongoDB connection closed.")
 
 
 def get_database():

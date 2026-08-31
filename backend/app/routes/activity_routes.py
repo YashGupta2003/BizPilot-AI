@@ -261,12 +261,15 @@ async def get_smart_alerts(
         "status": "overdue",
     }).to_list(length=50)
 
+    overdue_inv_ids = [inv["_id"] for inv in overdue_invoices]
+    reminders_today = await db.whatsapp_reminders.find({
+        "invoice_id": {"$in": overdue_inv_ids},
+        "sent_date": str(today.date()),
+    }).to_list(length=50)
+    reminded_inv_ids = {r["invoice_id"] for r in reminders_today}
+
     for inv in overdue_invoices:
-        reminder_today = await db.whatsapp_reminders.find_one({
-            "invoice_id": inv["_id"],
-            "sent_date": str(today.date()),
-        })
-        if not reminder_today:
+        if inv["_id"] not in reminded_inv_ids:
             alerts.append({
                 "level": "HIGH",
                 "icon": "💰",
@@ -282,14 +285,22 @@ async def get_smart_alerts(
         if inv.get("client_id"):
             paid_client_ids.add(inv["client_id"])
 
-    for client_id in list(paid_client_ids)[:5]:
-        has_contract = await db.contracts.find_one({
-            "client_id": client_id,
+    client_ids_to_check = list(paid_client_ids)[:5]
+    if client_ids_to_check:
+        contracts = await db.contracts.find({
+            "client_id": {"$in": client_ids_to_check},
             "owner_id": owner_id,
-        })
-        if not has_contract:
-            client = await db.clients.find_one({"_id": client_id})
-            if client:
+        }).to_list(length=100)
+        contract_client_ids = {c["client_id"] for c in contracts}
+        
+        no_contract_client_ids = [c_id for c_id in client_ids_to_check if c_id not in contract_client_ids]
+        if no_contract_client_ids:
+            clients_without_contract = await db.clients.find({
+                "_id": {"$in": no_contract_client_ids},
+                "owner_id": owner_id
+            }).to_list(length=len(no_contract_client_ids))
+            
+            for client in clients_without_contract:
                 alerts.append({
                     "level": "MEDIUM",
                     "icon": "📜",
@@ -323,17 +334,23 @@ async def get_smart_alerts(
         "profile.overall_risk_score": {"$gte": 7},
     }).to_list(length=10)
 
-    for profile in high_risk_profiles:
-        if profile.get("client_id"):
-            pending = await db.invoices.find_one({
-                "client_id": profile["client_id"],
-                "owner_id": owner_id,
-                "status": {"$in": ["sent", "overdue"]},
-            })
-            if pending:
-                client = await db.clients.find_one({"_id": profile["client_id"]})
-                if client:
-                    alerts.append({
+    profile_client_ids = [p["client_id"] for p in high_risk_profiles if p.get("client_id")]
+    if profile_client_ids:
+        pending_invoices = await db.invoices.find({
+            "client_id": {"$in": profile_client_ids},
+            "owner_id": owner_id,
+            "status": {"$in": ["sent", "overdue"]},
+        }).to_list(length=100)
+        pending_client_ids = {inv["client_id"] for inv in pending_invoices}
+        
+        if pending_client_ids:
+            high_risk_clients = await db.clients.find({
+                "_id": {"$in": list(pending_client_ids)},
+                "owner_id": owner_id
+            }).to_list(length=len(pending_client_ids))
+            
+            for client in high_risk_clients:
+                alerts.append({
                         "level": "HIGH",
                         "icon": "⚠️",
                         "message": f"{client.get('name')} was profiled as HIGH RISK and has a pending/overdue invoice. Follow up urgently.",

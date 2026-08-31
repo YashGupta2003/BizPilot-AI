@@ -197,7 +197,7 @@ async def _calculate_client_ltv(db, owner_id, client: dict) -> dict:
 
     # ── 12-MONTH REVENUE PREDICTION ───────────────────────────────
     if avg_days_between > 0 and avg_days_between < 365:
-        projected_hires_per_year = 365 / avg_days_between
+        projected_hires_per_year = min(24.0, 365 / max(avg_days_between, 15))
     elif paid_count == 1:
         projected_hires_per_year = 1.5  # optimistic for 1-time clients
     else:

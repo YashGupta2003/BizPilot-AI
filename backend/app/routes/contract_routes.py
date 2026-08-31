@@ -1,5 +1,6 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from bson import ObjectId
+from bson.errors import InvalidId
 from datetime import datetime
 from pydantic import BaseModel
 from typing import Optional
@@ -25,7 +26,7 @@ class GenerateContractRequest(BaseModel):
     client_id: Optional[str] = None  # sync with existing client
 
 
-@router.post("/generate")
+@router.post("/generate", status_code=status.HTTP_201_CREATED)
 async def generate_new_contract(
     payload: GenerateContractRequest,
     current_user: dict = Depends(get_current_user),
@@ -41,9 +42,14 @@ async def generate_new_contract(
 
     # SYNC with clients collection — auto-fill client name if client_id given
     if payload.client_id:
-        client_doc = await db.clients.find_one({"_id": ObjectId(payload.client_id)})
-        if client_doc:
-            client_name = client_doc.get("name", payload.client_name)
+        try:
+            c_id = ObjectId(payload.client_id)
+        except (InvalidId, Exception):
+            raise HTTPException(status_code=400, detail="Invalid ID format")
+        client_doc = await db.clients.find_one({"_id": c_id, "owner_id": current_user["_id"]})
+        if not client_doc:
+            raise HTTPException(status_code=404, detail="Client not found")
+        client_name = client_doc.get("name", payload.client_name)
 
     try:
         contract_data = await generate_contract(

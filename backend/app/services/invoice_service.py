@@ -2,7 +2,7 @@
 Invoice business logic, separated from the route handlers (clean architecture pattern:
 routes handle HTTP, services handle business rules, this keeps things testable).
 """
-from datetime import datetime
+from datetime import datetime, timezone
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import mm
 from reportlab.pdfgen import canvas
@@ -11,16 +11,12 @@ import os
 
 async def generate_invoice_number(db, owner_id) -> str:
     """
-    Creates invoice numbers like INV-2026-0001, incrementing per user per year.
-    CONCEPT: We count existing invoices for this user this year using count_documents.
+    Creates invoice numbers like INV-YYYYMMDD-XXXX to avoid race conditions.
     """
-    year = datetime.utcnow().year
-    count = await db.invoices.count_documents({
-        "owner_id": owner_id,
-        "invoice_number": {"$regex": f"^INV-{year}-"}
-    })
-    next_number = count + 1
-    return f"INV-{year}-{next_number:04d}"
+    import random
+    now = datetime.now(timezone.utc)
+    random_suffix = random.randint(1000, 9999)
+    return f"INV-{now.strftime('%Y%m%d')}-{random_suffix}"
 
 
 def calculate_invoice_totals(items: list, tax_percent: float) -> dict:
@@ -93,6 +89,10 @@ def generate_invoice_pdf(invoice: dict, business_name: str, output_dir: str) -> 
     c.setFont("Helvetica", 10)
     y -= 8 * mm
     for item in invoice["items"]:
+        if y < 40 * mm:
+            c.showPage()
+            c.setFont("Helvetica", 10)
+            y = height - 40 * mm
         c.drawString(20 * mm, y, str(item["description"])[:55])
         c.drawString(120 * mm, y, str(item["quantity"]))
         c.drawString(140 * mm, y, f"{item['rate']:.2f}")
@@ -111,7 +111,8 @@ def generate_invoice_pdf(invoice: dict, business_name: str, output_dir: str) -> 
     y -= 7 * mm
     c.setFont("Helvetica-Bold", 11)
     c.drawString(140 * mm, y, "Total:")
-    c.drawString(165 * mm, y, f"{invoice['currency']} {invoice['total']:.2f}")
+    currency_str = invoice.get("currency", "").replace("₹", "Rs.")
+    c.drawString(165 * mm, y, f"{currency_str} {invoice['total']:.2f}")
 
     if invoice.get("notes"):
         y -= 15 * mm

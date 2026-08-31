@@ -77,7 +77,9 @@ async def _call_llm(user_message: str) -> str:
             "This is a placeholder reply so you can keep testing the rest of the app.)"
         )
 
-    response = client.chat.completions.create(
+    import asyncio
+    response = await asyncio.to_thread(
+        client.chat.completions.create,
         model=MODEL_NAME,
         messages=[
             {"role": "system", "content": SYSTEM_PROMPT},

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import AppLayout from '../components/layout/AppLayout'
-import { Target, TrendingUp, DollarSign, Calendar, CheckCircle, ArrowRight, Loader2, Plus, Trash2 } from 'lucide-react'
+import { Target, TrendingUp, Calendar, CheckCircle, Loader2, Plus, Trash2 } from 'lucide-react'
 import goalService from '../services/goalService'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 
@@ -64,7 +64,7 @@ export default function GoalTrackerPage() {
     }
   }
 
-  const formatCurrency = (amount) => `₹${amount.toLocaleString('en-IN')}`
+  const formatCurrency = (amount) => `₹${(amount || 0).toLocaleString('en-IN')}`
 
   const getProgressColor = (percent) => {
     if (percent >= 80) return '#10b981' // Green
@@ -181,7 +181,7 @@ export default function GoalTrackerPage() {
                     </div>
                   </div>
 
-                  <div style={{ display: 'flex', gap: 24, marginTop: 24, padding: 16, backgroundColor: '#e0e7ff', borderRadius: 8, color: '#3730a3' }}>
+                  <div style={{ display: 'flex', gap: 24, marginTop: 24, padding: 16, backgroundColor: 'var(--bg-card)', borderRadius: 8, color: 'var(--brand)', border: '1px solid var(--border)' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                       <Calendar size={20} />
                       <span style={{ fontWeight: 500 }}>Days Remaining: {currentGoal.days_remaining}</span>
@@ -198,7 +198,7 @@ export default function GoalTrackerPage() {
                   <h2 style={{ fontSize: 20, fontWeight: 600, marginBottom: 16 }}>Reverse Plan to Close the Gap</h2>
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 16 }}>
                     {currentGoal.reverse_plan_options.map((opt, idx) => (
-                      <div key={idx} style={{ padding: 20, border: '1px solid var(--border)', borderRadius: 8, backgroundColor: '#f8fafc' }}>
+                      <div key={idx} style={{ padding: 20, border: '1px solid var(--border)', borderRadius: 8, backgroundColor: 'var(--bg-card)' }}>
                         <h3 style={{ fontSize: 16, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 8 }}>{opt.title}</h3>
                         <p style={{ color: 'var(--text-secondary)' }}>{opt.description}</p>
                       </div>

@@ -339,6 +339,30 @@ async def calculate_mental_load_score(db, owner_id) -> dict:
     Queries 10+ collections across the entire BizPilot platform to build
     a holistic picture of the freelancer's cognitive load.
     """
+    # Check latest snapshot timestamp
+    latest = await db.mental_load_snapshots.find_one(
+        {"owner_id": owner_id},
+        sort=[("created_at", -1)]
+    )
+    if latest and latest.get("created_at"):
+        if datetime.utcnow() - latest["created_at"] < timedelta(hours=1):
+            return {
+                "score": latest.get("score", 0),
+                "total_open_items": latest.get("total_open_items", 0),
+                "zone": latest.get("zone", ""),
+                "zone_color": latest.get("zone_color", ""),
+                "zone_emoji": "",
+                "message": "",
+                "detail": "",
+                "breakdown": latest.get("breakdown", {}),
+                "recommendations": [],
+                "category_labels": {},
+                "category_icons": {},
+                "category_links": {},
+                "cognitive_threshold": 7,
+                "generated_at": latest["created_at"].isoformat(),
+            }
+
     # Gather all counts
     breakdown = {
         "active_projects": await _count_active_projects(db, owner_id),

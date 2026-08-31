@@ -100,9 +100,10 @@ async def resolve_dispute(
         }, sort=[("analyzed_at", -1)])
     else:
         # No client_id — just grab recent invoices by name matching
+        import re
         inv_cursor = db.invoices.find({
             "owner_id": owner_id,
-            "client_name": {"$regex": client_name, "$options": "i"},
+            "client_name": {"$regex": re.escape(client_name), "$options": "i"},
         }).sort("created_at", -1)
         invoices = await inv_cursor.to_list(length=5)
 

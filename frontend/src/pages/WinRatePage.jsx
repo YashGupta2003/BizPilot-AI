@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
 import {
   TrendingUp, Target, Loader2, Plus, Trash2,
   CheckCircle2, XCircle, Clock, Zap, BarChart3,
-  AlertTriangle, ChevronDown, ChevronUp, RefreshCw
+  AlertTriangle, RefreshCw
 } from 'lucide-react'
 import AppLayout from '../components/layout/AppLayout'
 import {
@@ -239,6 +238,8 @@ function PredictPanel({ clients }) {
         client_id: form.client_id || null,
       })
       setResult(res)
+    } catch (err) {
+      console.error('Failed to predict:', err)
     } finally {
       setLoading(false)
     }
@@ -522,8 +523,12 @@ export default function WinRatePage() {
 
   async function handleDelete(id) {
     if (!confirm('Delete this proposal record?')) return
-    await deleteProposal(id)
-    setProposals(p => p.filter(x => x.id !== id))
+    try {
+      await deleteProposal(id)
+      setProposals(p => p.filter(x => x.id !== id))
+    } catch (err) {
+      console.error('Failed to delete:', err)
+    }
   }
 
   async function handleLogged() {

@@ -34,7 +34,7 @@ def extract_month(date_val):
         if isinstance(date_val, str):
             date_val = datetime.fromisoformat(date_val.replace('Z', '+00:00'))
         return date_val.month
-    except:
+    except Exception:
         return None
 
 async def generate_seasonal_plan(db, owner_id: str) -> Dict[str, Any]:
@@ -60,7 +60,7 @@ async def generate_seasonal_plan(db, owner_id: str) -> Dict[str, Any]:
     
     for inv in invoices:
         m = extract_month(inv.get("issue_date") or inv.get("created_at"))
-        if m: month_totals[m].append(float(inv.get("amount", 0) or 0))
+        if m: month_totals[m].append(float(inv.get("total", 0) or 0))
                 
     overall_revenues = [sum(totals) for totals in month_totals.values() if totals]
     avg_monthly_revenue = np.mean(overall_revenues) if overall_revenues else 5000  # fallback baseline

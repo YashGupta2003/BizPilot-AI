@@ -15,6 +15,7 @@ class LocalStorageService(StorageService):
         os.makedirs(self.upload_dir, exist_ok=True)
 
     async def upload_file(self, file: UploadFile, filename: str) -> str:
+        filename = os.path.basename(filename)
         filepath = os.path.join(self.upload_dir, filename)
         with open(filepath, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
@@ -26,6 +27,7 @@ class S3StorageService(StorageService):
         self.region_name = region_name
 
     async def upload_file(self, file: UploadFile, filename: str) -> str:
+        filename = os.path.basename(filename)
         session = aioboto3.Session()
         async with session.client("s3", region_name=self.region_name) as s3_client:
             # Re-wind the file before uploading

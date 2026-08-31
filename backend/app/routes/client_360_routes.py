@@ -16,12 +16,73 @@ One API call. One client. Complete picture.
 """
 from fastapi import APIRouter, Depends, HTTPException
 from bson import ObjectId
+from bson.errors import InvalidId
 from datetime import datetime, timedelta
 from app.core.database import get_database
 from app.core.deps import get_current_user
 from app.models.serializers import serialize_doc, serialize_list
 
 router = APIRouter(prefix="/api/client360", tags=["Client 360"])
+
+
+@router.get("/summary/all")
+async def get_all_clients_summary(
+    current_user: dict = Depends(get_current_user),
+    db=Depends(get_database),
+):
+    """
+    Lightweight summary of ALL clients with their health score.
+    Used by the Clients page to show which clients need attention.
+    """
+    owner_id = current_user["_id"]
+    cursor = db.clients.find({"owner_id": owner_id})
+    clients = await cursor.to_list(length=200)
+
+    summaries = []
+    for client in clients:
+        client_id = client["_id"]
+
+        # Quick invoice stats
+        invoice_pipeline = [
+            {"$match": {"client_id": client_id, "owner_id": owner_id}},
+            {"$group": {
+                "_id": "$status",
+                "total": {"$sum": "$total"},
+                "count": {"$sum": 1},
+            }},
+        ]
+        inv_stats = await db.invoices.aggregate(invoice_pipeline).to_list(length=10)
+        stats_map = {r["_id"]: r for r in inv_stats}
+
+        total_invoiced = sum(r["total"] for r in inv_stats)
+        total_paid = stats_map.get("paid", {}).get("total", 0)
+        overdue_count = stats_map.get("overdue", {}).get("count", 0)
+
+        # Quick health score
+        health = 70
+        if overdue_count > 0:
+            health -= overdue_count * 15
+        if total_paid > 0:
+            health += 10
+        health = max(0, min(100, health))
+
+        has_contract = await db.contracts.find_one({"client_id": client_id, "owner_id": owner_id}) is not None
+
+        summaries.append({
+            "id": str(client["_id"]),
+            "name": client.get("name", ""),
+            "company": client.get("company", ""),
+            "email": client.get("email", ""),
+            "total_invoiced": round(total_invoiced, 2),
+            "total_paid": round(total_paid, 2),
+            "overdue_count": overdue_count,
+            "health_score": health,
+            "health_label": "Healthy" if health >= 70 else "Caution" if health >= 40 else "At Risk",
+            "has_contract": has_contract,
+        })
+
+    summaries.sort(key=lambda x: x["total_invoiced"], reverse=True)
+    return summaries
 
 
 @router.get("/{client_id}")
@@ -35,7 +96,10 @@ async def get_client_360(
     Returns complete 360-degree view of one client across all features.
     """
     owner_id = current_user["_id"]
-    client_obj_id = ObjectId(client_id)
+    try:
+        client_obj_id = ObjectId(client_id)
+    except InvalidId:
+        raise HTTPException(status_code=400, detail="Invalid client ID.")
 
     # 1. Base client record
     client = await db.clients.find_one({
@@ -338,63 +402,3 @@ def _build_timeline(invoices, contracts, meetings, reminders, risk_reports) -> l
 
     events.sort(key=lambda e: e["date"], reverse=True)
     return events
-
-
-@router.get("/summary/all")
-async def get_all_clients_summary(
-    current_user: dict = Depends(get_current_user),
-    db=Depends(get_database),
-):
-    """
-    Lightweight summary of ALL clients with their health score.
-    Used by the Clients page to show which clients need attention.
-    """
-    owner_id = current_user["_id"]
-    cursor = db.clients.find({"owner_id": owner_id})
-    clients = await cursor.to_list(length=200)
-
-    summaries = []
-    for client in clients:
-        client_id = client["_id"]
-
-        # Quick invoice stats
-        invoice_pipeline = [
-            {"$match": {"client_id": client_id, "owner_id": owner_id}},
-            {"$group": {
-                "_id": "$status",
-                "total": {"$sum": "$total"},
-                "count": {"$sum": 1},
-            }},
-        ]
-        inv_stats = await db.invoices.aggregate(invoice_pipeline).to_list(length=10)
-        stats_map = {r["_id"]: r for r in inv_stats}
-
-        total_invoiced = sum(r["total"] for r in inv_stats)
-        total_paid = stats_map.get("paid", {}).get("total", 0)
-        overdue_count = stats_map.get("overdue", {}).get("count", 0)
-
-        # Quick health score
-        health = 70
-        if overdue_count > 0:
-            health -= overdue_count * 15
-        if total_paid > 0:
-            health += 10
-        health = max(0, min(100, health))
-
-        has_contract = await db.contracts.find_one({"client_id": client_id, "owner_id": owner_id}) is not None
-
-        summaries.append({
-            "id": str(client["_id"]),
-            "name": client.get("name", ""),
-            "company": client.get("company", ""),
-            "email": client.get("email", ""),
-            "total_invoiced": round(total_invoiced, 2),
-            "total_paid": round(total_paid, 2),
-            "overdue_count": overdue_count,
-            "health_score": health,
-            "health_label": "Healthy" if health >= 70 else "Caution" if health >= 40 else "At Risk",
-            "has_contract": has_contract,
-        })
-
-    summaries.sort(key=lambda x: x["total_invoiced"], reverse=True)
-    return summaries

@@ -275,10 +275,9 @@ async def get_all_client_health(db, owner_id) -> list:
     cursor = db.clients.find({"owner_id": owner_id})
     clients = await cursor.to_list(length=500)
 
-    results = []
-    for client in clients:
-        health = await calculate_client_health(db, owner_id, client)
-        results.append(health)
+    import asyncio
+    tasks = [calculate_client_health(db, owner_id, client) for client in clients]
+    results = list(await asyncio.gather(*tasks))
 
     results.sort(key=lambda x: x["health_score"], reverse=True)
     return results

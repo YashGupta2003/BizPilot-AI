@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import {
-  FileText, Loader2, CheckCircle2, AlertTriangle, Mail,
+   Loader2, CheckCircle2, AlertTriangle, Mail,
   Package, Clock, DollarSign, RefreshCw, Trash2, Copy, Zap
 } from 'lucide-react'
 import AppLayout from '../components/layout/AppLayout'
@@ -155,16 +155,32 @@ function HistoryTab() {
   const [loading, setLoading] = useState(true)
   const [selected, setSelected] = useState(null)
 
+  async function loadMeetings() {
+    setLoading(true)
+    try {
+      const data = await listMeetings()
+      setMeetings(data)
+    } catch (err) {
+      console.error('Failed to load data:', err)
+    } finally {
+      setLoading(false)
+    }
+  }
+
   useEffect(() => {
-    listMeetings().then(setMeetings).finally(() => setLoading(false))
+    loadMeetings()
   }, [])
 
   async function handleDelete(id, e) {
     e.stopPropagation()
     if (!confirm('Delete this meeting?')) return
-    await deleteMeeting(id)
-    setMeetings((m) => m.filter((item) => item.id !== id))
-    if (selected?.id === id) setSelected(null)
+    try {
+      await deleteMeeting(id)
+      setMeetings((m) => m.filter((item) => item.id !== id))
+      if (selected?.id === id) setSelected(null)
+    } catch (err) {
+      console.error('Failed to delete:', err)
+    }
   }
 
   if (loading) return <div style={{ textAlign: 'center', padding: 24 }}><Loader2 size={24} className="spin" color="#4f46e5" /></div>

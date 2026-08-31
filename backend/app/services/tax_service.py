@@ -219,19 +219,19 @@ def calculate_presumptive_tax(gross_receipts: float) -> dict:
     # New Tax Regime slabs (FY 2024-25)
     new_regime_slabs = [
         (0, 300000, 0),
-        (300001, 600000, 0.05),
-        (600001, 900000, 0.10),
-        (900001, 1200000, 0.15),
-        (1200001, 1500000, 0.20),
-        (1500001, float('inf'), 0.30),
+        (300000, 600000, 0.05),
+        (600000, 900000, 0.10),
+        (900000, 1200000, 0.15),
+        (1200000, 1500000, 0.20),
+        (1500000, float('inf'), 0.30),
     ]
 
     # Old Tax Regime slabs
     old_regime_slabs = [
         (0, 250000, 0),
-        (250001, 500000, 0.05),
-        (500001, 1000000, 0.20),
-        (1000001, float('inf'), 0.30),
+        (250000, 500000, 0.05),
+        (500000, 1000000, 0.20),
+        (1000000, float('inf'), 0.30),
     ]
 
     def calc_tax(income, slabs):
@@ -245,6 +245,12 @@ def calculate_presumptive_tax(gross_receipts: float) -> dict:
 
     new_regime_tax = calc_tax(presumptive_income, new_regime_slabs)
     old_regime_tax = calc_tax(presumptive_income, old_regime_slabs)
+
+    # Section 87A Rebate
+    if presumptive_income <= 700000:
+        new_regime_tax = 0
+    if presumptive_income <= 500000:
+        old_regime_tax = 0
 
     # Health & Education Cess 4%
     new_regime_total = round(new_regime_tax * 1.04, 2)

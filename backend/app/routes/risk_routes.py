@@ -47,6 +47,11 @@ async def analyze_contract(
             detail=f"No content found for '{payload.filename}'. Upload it first via the document upload feature.",
         )
 
+    if payload.client_id:
+        client_doc = await db.clients.find_one({"_id": to_object_id(payload.client_id), "owner_id": owner_id})
+        if not client_doc:
+            raise HTTPException(status_code=404, detail="Client not found")
+
     try:
         analysis = await analyze_contract_risk(full_text)
     except RiskAnalysisError as exc:

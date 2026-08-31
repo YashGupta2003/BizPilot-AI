@@ -3,8 +3,7 @@ import {
   LayoutDashboard, Users, FileText, MessageSquare,
   Bell, Globe, Swords, Brain, Activity, ScrollText,
   Mic2, PieChart, Receipt, Gavel, Shield, DollarSign, LogOut, Scale, TrendingUp, Target,
-  Handshake, Crosshair, MessageCircleWarning, Zap, FileDiff, CalendarDays,
-  ChevronRight
+  Handshake, Crosshair, MessageCircleWarning, Zap, FileDiff, CalendarDays
 } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
 import ActivityFeed from './ActivityFeed'

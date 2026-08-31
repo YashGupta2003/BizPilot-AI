@@ -78,7 +78,7 @@ export default function BurnoutWidget() {
 
       {/* Recommendation */}
       {data.recommendations?.[0] && (
-        <div style={{ background: colors.bg, border: `1px solid ${colors.color}22`, borderRadius: 8, padding: '10px 12px', display: 'flex', gap: 8 }}>
+        <div style={{ background: colors.bg, border: `1px solid ${colors.color}`, borderRadius: 8, padding: '10px 12px', display: 'flex', gap: 8 }}>
           <AlertTriangle size={13} color={colors.color} style={{ flexShrink: 0, marginTop: 2 }} />
           <p style={{ fontSize: 12.5, color: 'var(--text-secondary)', lineHeight: 1.5 }}>
             <strong style={{ color: colors.color }}>{data.recommendations[0].priority}:</strong>{' '}

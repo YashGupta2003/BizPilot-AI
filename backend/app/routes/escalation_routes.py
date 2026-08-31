@@ -8,6 +8,7 @@ GET  /api/escalation/history           → list all escalation documents sent
 """
 from fastapi import APIRouter, Depends, HTTPException, Query
 from bson import ObjectId
+from bson.errors import InvalidId
 from datetime import datetime, date
 from pydantic import BaseModel
 from typing import Optional
@@ -80,8 +81,13 @@ async def generate_document(
     freelancer_name = current_user.get("name", "Freelancer")
     business_name = current_user.get("business_name", "My Business")
 
+    try:
+        inv_id_obj = ObjectId(invoice_id)
+    except (InvalidId, Exception):
+        raise HTTPException(status_code=400, detail="Invalid ID format")
+
     invoice = await db.invoices.find_one({
-        "_id": ObjectId(invoice_id),
+        "_id": inv_id_obj,
         "owner_id": owner_id,
     })
     if not invoice:
@@ -149,10 +155,19 @@ async def log_escalation_sent(
     current_user: dict = Depends(get_current_user),
     db=Depends(get_database),
 ):
+    try:
+        inv_id_obj = ObjectId(invoice_id)
+    except (InvalidId, Exception):
+        raise HTTPException(status_code=400, detail="Invalid ID format")
+
+    invoice = await db.invoices.find_one({"_id": inv_id_obj, "owner_id": current_user["_id"]})
+    if not invoice:
+        raise HTTPException(status_code=404, detail="Invoice not found.")
+
     """Records that an escalation document was sent."""
     record = {
         "owner_id": current_user["_id"],
-        "invoice_id": ObjectId(invoice_id),
+        "invoice_id": inv_id_obj,
         "stage": payload.stage,
         "method": payload.method,
         "notes": payload.notes,

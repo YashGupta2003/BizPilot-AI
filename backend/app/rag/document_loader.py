@@ -38,6 +38,13 @@ def chunk_text(text: str, chunk_size: int = 500, overlap: int = 80) -> list[str]
     overlap = how many characters repeat between consecutive chunks,
               so a sentence split across the boundary isn't lost entirely.
     """
+    if chunk_size <= 0:
+        raise ValueError("chunk_size must be greater than 0")
+    if overlap >= chunk_size:
+        overlap = chunk_size // 2
+        
+    step = max(1, chunk_size - overlap)
+    
     chunks = []
     start = 0
     text = text.strip()
@@ -47,6 +54,6 @@ def chunk_text(text: str, chunk_size: int = 500, overlap: int = 80) -> list[str]
         chunk = text[start:end].strip()
         if chunk:
             chunks.append(chunk)
-        start += chunk_size - overlap
+        start += step
 
     return chunks
