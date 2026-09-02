@@ -57,11 +57,7 @@ async def calculate_client_health(db, owner_id, client) -> dict:
         {"client_id": client_id, "owner_id": owner_id}
     )
 
-    # Escalations
-    escalation_count = await db.escalation_logs.count_documents(
-        {"owner_id": owner_id}
-    )
-    # Check if any escalation is for this client's invoices
+    # Escalations — check if any escalation is for this client's invoices
     client_escalation_count = 0
     if inv_ids:
         client_escalation_count = await db.escalation_logs.count_documents(

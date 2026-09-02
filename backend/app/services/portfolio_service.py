@@ -19,6 +19,7 @@ import re
 import numpy as np
 from datetime import datetime, timedelta
 from collections import defaultdict
+from bson import ObjectId
 
 
 # Service type keywords for auto-classification from invoice descriptions
@@ -183,7 +184,7 @@ async def generate_portfolio_insights(db, owner_id) -> dict:
     for cid in client_ids[:5]:
         client_invoices = [inv for inv in invoices if str(inv.get("client_id", "")) == cid]
         client_total = sum(inv.get("total", 0) for inv in client_invoices)
-        client_doc = await db.clients.find_one({"_id": __import__("bson").ObjectId(cid)})
+        client_doc = await db.clients.find_one({"_id": ObjectId(cid)})
         if client_doc:
             client_insights.append({
                 "client_name": client_doc.get("name", "Unknown"),

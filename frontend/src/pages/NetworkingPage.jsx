@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import AppLayout from '../components/layout/AppLayout'
 import { Loader2, Trash2, Users, Target, Activity, DollarSign, Brain } from 'lucide-react'
-import networkingService from '../services/networkingService'
+import * as networkingService from '../services/networkingService'
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from 'recharts'
 
 export default function NetworkingPage() {
@@ -17,7 +17,7 @@ export default function NetworkingPage() {
     try {
       setLoading(true)
       const res = await networkingService.getOpportunities()
-      setData(res.data)
+      setData(res)
     } catch (err) {
       setError(err.response?.data?.detail || 'Failed to load analysis')
     } finally {
@@ -29,7 +29,7 @@ export default function NetworkingPage() {
     try {
       setHistoryLoading(true)
       const res = await networkingService.getHistory()
-      setHistory(res.data)
+      setHistory(res)
     } catch (err) {
       console.error(err)
     } finally {

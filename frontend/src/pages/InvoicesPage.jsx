@@ -3,7 +3,7 @@ import { Sparkles, Download, Trash2, Mic } from 'lucide-react'
 import AppLayout from '../components/layout/AppLayout'
 import AIInvoiceModal from '../components/invoices/AIInvoiceModal'
 import VoiceInvoiceModal from '../components/invoices/VoiceInvoiceModal'
-import { getInvoices, deleteInvoice, updateInvoiceStatus, getInvoicePdfUrl } from '../services/invoiceService'
+import { getInvoices, deleteInvoice, updateInvoiceStatus, downloadInvoicePdf } from '../services/invoiceService'
 import { useNavigate } from 'react-router-dom'
 
 const STATUS_OPTIONS = ['draft', 'sent', 'paid', 'overdue', 'cancelled']
@@ -130,9 +130,9 @@ export default function InvoicesPage() {
                   </td>
                   <td>{inv.due_date || '—'}</td>
                   <td style={{ display: 'flex', gap: 10 }}>
-                    <a href={getInvoicePdfUrl(inv.id)} target="_blank" rel="noreferrer">
+                    <button onClick={async () => { const url = await downloadInvoicePdf(inv.id); window.open(url, '_blank') }} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
                       <Download size={16} color="#4f46e5" />
-                    </a>
+                    </button>
                     <button onClick={() => handleDelete(inv.id)} style={{ background: 'none', border: 'none' }}>
                       <Trash2 size={16} color="#dc2626" />
                     </button>

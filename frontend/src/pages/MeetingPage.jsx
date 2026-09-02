@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import {
    Loader2, CheckCircle2, AlertTriangle, Mail,
-  Package, Clock, DollarSign, RefreshCw, Trash2, Copy, Zap
+  Package, Clock, DollarSign, RefreshCw, Trash2, Copy, Zap, FileText
 } from 'lucide-react'
 import AppLayout from '../components/layout/AppLayout'
 import { extractMeeting, listMeetings, deleteMeeting } from '../services/meetingService'

@@ -1,6 +1,7 @@
 from datetime import datetime
 import calendar
 from bson import ObjectId
+from app.services.winrate_service import predict_win_probability, _classify_client_type
 
 SERVICE_MARKET_RATES = {
     "Web Development": 45000,
@@ -80,11 +81,23 @@ async def get_goal_progress(db, owner_id: str, goal: dict) -> dict:
     
     for prop in proposals:
         amount = prop.get("amount", 0)
-        prob = prop.get("win_probability", default_win_rate)
+        # Compute actual win probability using historical data
+        try:
+            prediction = await predict_win_probability(
+                db, owner_id,
+                prop.get("service_type", "Unknown"),
+                amount,
+                prop.get("client_type", "Unknown"),
+            )
+            # predict_win_probability returns percentage (0-100), convert to decimal
+            prob = prediction.get("win_probability", default_win_rate * 100) / 100
+        except Exception:
+            prob = default_win_rate
         val = amount * prob
         pipeline += val
         pipeline_items.append({
-            "title": prop.get("title", "Untitled Proposal"),
+            "title": prop.get("service_type", "Unknown Service"),
+            "client": prop.get("client_name", "Unknown"),
             "amount": amount,
             "win_probability": prob,
             "expected_value": val

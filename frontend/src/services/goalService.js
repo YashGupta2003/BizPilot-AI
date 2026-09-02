@@ -1,10 +1,9 @@
 import api from './api'
 
-const goalService = {
-  createGoal: (data) => api.post('/goals', data),
-  getCurrentGoal: () => api.get('/goals/current'),
-  getHistory: () => api.get('/goals/history'),
-  deleteGoal: (id) => api.delete(`/goals/${id}`),
-}
+export const createGoal = async (data) => (await api.post('/goals', data)).data
 
-export default goalService
+export const getCurrentGoal = async () => (await api.get('/goals/current')).data
+
+export const getHistory = async () => (await api.get('/goals/history')).data
+
+export const deleteGoal = async (id) => (await api.delete(`/goals/${id}`)).data

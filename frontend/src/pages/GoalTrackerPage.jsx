@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import AppLayout from '../components/layout/AppLayout'
 import { Target, TrendingUp, Calendar, CheckCircle, Loader2, Plus, Trash2 } from 'lucide-react'
-import goalService from '../services/goalService'
+import { createGoal, getCurrentGoal, getHistory as getGoalHistory, deleteGoal } from '../services/goalService'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 
 export default function GoalTrackerPage() {
@@ -21,11 +21,11 @@ export default function GoalTrackerPage() {
     try {
       setLoading(true)
       const [currentRes, historyRes] = await Promise.all([
-        goalService.getCurrentGoal(),
-        goalService.getHistory()
+        getCurrentGoal(),
+        getGoalHistory()
       ])
-      setCurrentGoal(currentRes.data)
-      setHistory(historyRes.data)
+      setCurrentGoal(currentRes)
+      setHistory(historyRes)
     } catch (err) {
       setError(err.response?.data?.detail || 'Failed to load goals')
     } finally {
@@ -41,7 +41,7 @@ export default function GoalTrackerPage() {
     e.preventDefault()
     try {
       setIsSubmitting(true)
-      await goalService.createGoal({
+      await createGoal({
         monthly_target: parseFloat(formData.monthly_target),
         month: formData.month,
         notes: formData.notes
@@ -57,7 +57,7 @@ export default function GoalTrackerPage() {
   const handleDelete = async (id) => {
     if (!window.confirm('Are you sure you want to delete this goal?')) return
     try {
-      await goalService.deleteGoal(id)
+      await deleteGoal(id)
       await fetchData()
     } catch (err) {
       setError('Failed to delete goal')

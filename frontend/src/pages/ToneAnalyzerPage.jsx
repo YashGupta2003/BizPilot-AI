@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import AppLayout from '../components/layout/AppLayout'
 import { Loader2, MessageSquare, AlertTriangle, TrendingDown, TrendingUp, Heart, Trash2, Send, Users } from 'lucide-react'
-import toneService from '../services/toneService'
+import * as toneService from '../services/toneService'
 import * as clientService from '../services/clientService'
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer } from 'recharts'
 
@@ -32,7 +32,7 @@ export default function ToneAnalyzerPage() {
     try {
       setHistoryLoading(true)
       const res = await toneService.getHistory()
-      setHistory(res.data || [])
+      setHistory(res || [])
     } catch (err) {
       console.error('Failed to load history', err)
       setError('Failed to load history.')
@@ -62,7 +62,7 @@ export default function ToneAnalyzerPage() {
       if (clientId) payload.client_id = clientId
       
       const res = await toneService.analyzeTone(payload)
-      setResult(res.data)
+      setResult(res)
       fetchHistory()
     } catch (err) {
       setError(err.response?.data?.detail || 'Analysis failed. Please try again.')

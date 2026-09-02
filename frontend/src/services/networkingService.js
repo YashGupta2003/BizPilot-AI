@@ -1,10 +1,10 @@
 import api from './api'
 
-const networkingService = {
-  getOpportunities: () => api.get('/networking/opportunities'),
-  analyzeForClient: (clientId) => api.post('/networking/analyze', { client_id: clientId }),
-  getHistory: () => api.get('/networking/history'),
-  deleteAnalysis: (id) => api.delete(`/networking/history/${id}`),
-}
+export const getOpportunities = async () => (await api.get('/networking/opportunities')).data
 
-export default networkingService
+export const analyzeForClient = async (clientId) =>
+  (await api.post('/networking/analyze', { client_id: clientId })).data
+
+export const getHistory = async () => (await api.get('/networking/history')).data
+
+export const deleteAnalysis = async (id) => (await api.delete(`/networking/history/${id}`)).data
