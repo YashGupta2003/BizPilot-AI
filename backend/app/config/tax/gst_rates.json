@@ -1,0 +1,20 @@
+{
+  "effective_periods": [
+    {
+      "from": "2025-09-22",
+      "to": null,
+      "rates": [0, 5, 18],
+      "special_rate": 40,
+      "retired_rates": [12, 28],
+      "source_url": "https://cbic-gst.gov.in",
+      "verified_on": null,
+      "TODO_CA_review": true
+    },
+    {
+      "from": "2017-07-01",
+      "to": "2025-09-21",
+      "rates": [0, 5, 12, 18, 28],
+      "source_url": "https://cbic-gst.gov.in"
+    }
+  ]
+}

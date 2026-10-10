@@ -24,8 +24,8 @@ async def get_exchange_rates(current_user: dict = Depends(get_current_user)):
             "gst_slabs": GST_SLABS,
             "source": "live",
         }
-    except Exception as exc:
-        raise HTTPException(status_code=502, detail=str(exc))
+    except Exception:
+        raise HTTPException(status_code=502, detail="Internal server error")
 
 
 @router.get("/supported")
@@ -48,8 +48,8 @@ async def calculate_gst(
             sac_code=payload.sac_code,
         )
         return result
-    except Exception as exc:
-        raise HTTPException(status_code=500, detail=str(exc))
+    except Exception:
+        raise HTTPException(status_code=500, detail="Internal server error")
 
 
 @router.get("/sac-search")

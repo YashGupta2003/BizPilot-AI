@@ -48,8 +48,8 @@ async def suggest_price(
             deliverable_count=payload.deliverable_count,
         )
         return suggestion
-    except Exception as exc:
-        raise HTTPException(status_code=500, detail=str(exc))
+    except Exception:
+        raise HTTPException(status_code=500, detail="Internal server error")
 
 
 @router.get("/history")
@@ -60,5 +60,5 @@ async def get_pricing_history_route(
     """Returns your historical pricing patterns by service type."""
     try:
         return await get_pricing_history(db, current_user["_id"])
-    except Exception as exc:
-        raise HTTPException(status_code=500, detail=str(exc))
+    except Exception:
+        raise HTTPException(status_code=500, detail="Internal server error")

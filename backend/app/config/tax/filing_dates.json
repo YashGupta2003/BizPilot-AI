@@ -1,0 +1,27 @@
+{
+  "gst": {
+    "monthly": {
+      "gstr1_due_day": 11,
+      "gstr3b_due_day": 20
+    },
+    "qrmp": {
+      "gstr1_due_day": 13,
+      "gstr3b_due_day_cat1": 22,
+      "gstr3b_due_day_cat2": 24,
+      "cat1_states": ["Chhattisgarh", "Madhya Pradesh", "Gujarat", "Maharashtra", "Karnataka", "Goa", "Kerala", "Tamil Nadu", "Telangana", "Andhra Pradesh", "Daman and Diu", "Dadra and Nagar Haveli", "Puducherry", "Andaman and Nicobar Islands", "Lakshadweep"],
+      "note": "TODO-verify: QRMP GSTR-1 due around 13th of month following quarter. GSTR-3B: 22nd for Cat 1 states, 24th for Cat 2."
+    },
+    "registration_threshold": {
+      "services_general": 2000000,
+      "services_special_category": 1000000,
+      "special_category_states": ["Arunachal Pradesh", "Assam", "Manipur", "Meghalaya", "Mizoram", "Nagaland", "Sikkim", "Tripura", "Himachal Pradesh", "Uttarakhand"],
+      "TODO_CA_review": true,
+      "source_url": "https://cbic-gst.gov.in"
+    }
+  },
+  "income_tax": {
+    "itr_due_date": "07-31",
+    "audit_itr_due_date": "10-31",
+    "note": "For non-audit cases, ITR due July 31. For audit cases, October 31."
+  }
+}

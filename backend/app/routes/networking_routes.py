@@ -1,3 +1,4 @@
+from app.core.exceptions import parse_object_id
 from fastapi import APIRouter, Depends, HTTPException
 from bson import ObjectId
 from bson.errors import InvalidId
@@ -28,7 +29,7 @@ async def get_opportunities(
     
     # 3. Compile full analysis
     full_analysis = {
-        "owner_id": ObjectId(owner_id),
+        "owner_id": parse_object_id(owner_id),
         "created_at": datetime.utcnow(),
         "gap_analysis": gap_data,
         "recommendations": ai_recommendations.get("recommendations", []),
@@ -52,7 +53,7 @@ async def analyze_for_client(
     client_id_obj = None
     if req.client_id:
         try:
-            client_id_obj = ObjectId(req.client_id)
+            client_id_obj = parse_object_id(req.client_id)
         except (InvalidId, Exception):
             raise HTTPException(status_code=400, detail="Invalid ID format")
             
@@ -68,7 +69,7 @@ async def analyze_for_client(
     ai_recommendations = await generate_networking_recommendations(gap_data, current_services_list)
     
     full_analysis = {
-        "owner_id": ObjectId(owner_id),
+        "owner_id": parse_object_id(owner_id),
         "client_id": client_id_obj,
         "created_at": datetime.utcnow(),
         "gap_analysis": gap_data,
@@ -99,7 +100,7 @@ async def delete_analysis(
 ):
     owner_id = current_user["_id"]
     try:
-        aid = ObjectId(id)
+        aid = parse_object_id(id)
     except (InvalidId, Exception):
         raise HTTPException(status_code=400, detail="Invalid ID format")
     result = await db["networking_analyses"].delete_one({"_id": aid, "owner_id": owner_id})

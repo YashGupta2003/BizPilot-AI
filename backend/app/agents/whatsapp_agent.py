@@ -171,53 +171,117 @@ class WhatsAppSendError(Exception):
 
 async def send_whatsapp_reminder(
     db,
-    owner_id: ObjectId,
+    owner_id: str | ObjectId,
     invoice_id: str,
-    client_phone: str,
-    message: str,
+    message: str | None = None,
 ) -> dict:
-    if not settings.TWILIO_ACCOUNT_SID or not settings.TWILIO_AUTH_TOKEN:
-        raise WhatsAppSendError(
-            "Twilio credentials not configured. Add TWILIO_ACCOUNT_SID and "
-            "TWILIO_AUTH_TOKEN to backend/.env"
-        )
+    from app.core.exceptions import parse_object_id
+    from fastapi import HTTPException
 
+    owner_obj_id = parse_object_id(str(owner_id))
+    inv_obj_id = parse_object_id(invoice_id)
+
+    # 1. Load invoice with owner check
+    invoice = await db.invoices.find_one({"_id": inv_obj_id, "owner_id": owner_obj_id})
+    if not invoice:
+        raise HTTPException(status_code=404, detail="Invoice not found")
+
+    # 2. Load client with owner check
+    client_id = invoice.get("client_id")
+    if not client_id:
+        raise HTTPException(status_code=400, detail="Invoice has no associated client")
+        
+    client = await db.clients.find_one({"_id": parse_object_id(str(client_id)), "owner_id": owner_obj_id})
+    if not client:
+        raise HTTPException(status_code=400, detail="Associated client not found")
+
+    # 3. Check WhatsApp opt-in
+    if not client.get("whatsapp_opt_in"):
+        raise HTTPException(status_code=400, detail="Client has not opted in to WhatsApp reminders")
+
+    # 4. Validate phone
+    client_phone = client.get("phone")
+    if not client_phone:
+        raise HTTPException(status_code=400, detail="Client has no phone number")
+        
     import phonenumbers
     try:
         parsed_phone = phonenumbers.parse(client_phone, "IN")
         if not phonenumbers.is_valid_number(parsed_phone):
-            raise WhatsAppSendError("Invalid phone number format")
+            raise HTTPException(status_code=400, detail="Invalid phone number format")
         phone = phonenumbers.format_number(parsed_phone, phonenumbers.PhoneNumberFormat.E164)
-    except phonenumbers.NumberParseException as e:
-        raise WhatsAppSendError(f"Phone number parsing failed: {e}")
+    except phonenumbers.NumberParseException:
+        raise HTTPException(status_code=400, detail="Phone number parsing failed")
+
+    today_str = str(date.today())
+
+    # 5. Check duplicate for today (index will also enforce, but good to check)
+    existing = await db.whatsapp_reminders.find_one({
+        "invoice_id": inv_obj_id,
+        "sent_date": today_str
+    })
+    if existing:
+        raise HTTPException(status_code=400, detail="Reminder already sent for this invoice today")
+
+    # 6. Check rate limit
+    daily_count = await db.whatsapp_reminders.count_documents({
+        "owner_id": owner_obj_id,
+        "sent_date": today_str
+    })
+    if daily_count >= getattr(settings, "MAX_WHATSAPP_REMINDERS_PER_DAY", 20):
+        raise HTTPException(status_code=429, detail="Daily WhatsApp reminder limit reached")
+
+    if not settings.TWILIO_ACCOUNT_SID or not settings.TWILIO_AUTH_TOKEN:
+        raise WhatsAppSendError("Twilio credentials not configured")
 
     to_number = f"whatsapp:{phone}"
 
+    # 7. Use template in prod, free text in dev
+    from twilio.rest import Client as TwilioClient
+    import asyncio
+    
+    twilio_client = TwilioClient(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
+    
     try:
-        from twilio.rest import Client as TwilioClient
-        twilio_client = TwilioClient(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
-        import asyncio
-        sent_message = await asyncio.to_thread(
-            twilio_client.messages.create,
-            from_=settings.TWILIO_WHATSAPP_FROM,
-            to=to_number,
-            body=message,
-        )
+        if settings.ENVIRONMENT != 'development' and getattr(settings, 'TWILIO_WHATSAPP_CONTENT_SID', None):
+            # Template sending
+            sent_message = await asyncio.to_thread(
+                twilio_client.messages.create,
+                from_=settings.TWILIO_WHATSAPP_FROM,
+                to=to_number,
+                content_sid=settings.TWILIO_WHATSAPP_CONTENT_SID,
+                content_variables='{"1":"' + str(invoice.get("invoice_number")) + '"}'
+            )
+        else:
+            # Free text sending (Sandbox/Dev)
+            if not message:
+                message = f"Reminder: Invoice {invoice.get('invoice_number')} is due."
+            sent_message = await asyncio.to_thread(
+                twilio_client.messages.create,
+                from_=settings.TWILIO_WHATSAPP_FROM,
+                to=to_number,
+                body=message,
+            )
         message_sid = sent_message.sid
     except Exception as exc:
-        raise WhatsAppSendError(f"Twilio send failed: {exc}")
+        raise WhatsAppSendError("Twilio send failed")
 
-    today_str = str(date.today())
     record = {
-        "owner_id": owner_id,
-        "invoice_id": ObjectId(invoice_id),
+        "owner_id": owner_obj_id,
+        "invoice_id": inv_obj_id,
         "client_phone": phone,
-        "message": message,
+        "message": message if settings.ENVIRONMENT == 'development' else "[TEMPLATE]",
         "twilio_message_sid": message_sid,
         "sent_date": today_str,
-        "sent_at": datetime.utcnow(),
+        "sent_at": datetime.now(timezone.utc),
+        "delivery_status": "sent"
     }
-    await db.whatsapp_reminders.insert_one(record)
+    
+    from pymongo.errors import DuplicateKeyError
+    try:
+        await db.whatsapp_reminders.insert_one(record)
+    except DuplicateKeyError:
+        raise HTTPException(status_code=400, detail="Reminder already sent for this invoice today")
 
     return {
         "success": True,

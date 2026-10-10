@@ -34,12 +34,17 @@ async def _resolve_user_from_token(token: str | None, db) -> dict:
     if user_id is None:
         raise credentials_exception
 
+    token_version = payload.get("token_version", 0)
+    
     try:
         user = await db.users.find_one({"_id": ObjectId(user_id)}, {"password_hash": 0})
     except InvalidId:
         raise credentials_exception
         
     if user is None:
+        raise credentials_exception
+        
+    if user.get("token_version", 0) != token_version:
         raise credentials_exception
 
     return user
@@ -56,11 +61,26 @@ async def get_current_user(request: Request, db=Depends(get_database)) -> dict:
     return await _resolve_user_from_token(token, db)
 
 
-async def get_current_user_from_header_or_query(
+async def get_current_user_or_signed_url(
     request: Request,
+    invoice_id: str,
     query_token: Optional[str] = Query(None, alias="token"),
     db=Depends(get_database),
 ) -> dict:
-    """Alternative auth for endpoints like SSE/WebSockets where setting cookies/headers is hard."""
-    token = request.cookies.get("bizpilot_token") or query_token
-    return await _resolve_user_from_token(token, db)
+    from app.core.security import verify_signed_url
+    
+    # Try signed URL first if token is in query
+    if query_token:
+        payload = verify_signed_url(query_token, invoice_id)
+        if payload:
+            user_id = payload.get("sub")
+            if user_id:
+                try:
+                    user = await db.users.find_one({"_id": ObjectId(user_id)}, {"password_hash": 0})
+                    if user:
+                        return user
+                except InvalidId:
+                    pass
+    
+    # Fallback to standard auth
+    return await get_current_user(request, db)

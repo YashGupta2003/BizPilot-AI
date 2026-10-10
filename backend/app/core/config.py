@@ -31,6 +31,7 @@ class Settings(BaseSettings):
     # App
     ENVIRONMENT: str = "development"
     CORS_ORIGINS: str = "http://localhost:5173"
+    COOKIE_SAMESITE: str = "lax"
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
@@ -38,7 +39,7 @@ class Settings(BaseSettings):
     def validate_jwt_secret(self) -> 'Settings':
         if self.ENVIRONMENT != 'development':
             if self.JWT_SECRET_KEY == "dev_secret_change_me" or len(self.JWT_SECRET_KEY) < 32:
-                logging.warning("INSECURE JWT SECRET KEY FOR PRODUCTION!")
+                raise ValueError("INSECURE JWT SECRET KEY FOR PRODUCTION! Must be at least 32 characters and not default.")
         return self
 
 

@@ -1,23 +1,47 @@
 # Python
+*.pyc
+__pycache__/
+*.pyo
+*.egg-info/
+venv/
+.venv/
 backend/venv/
+backend/.venv/
 backend/__pycache__/
 backend/**/__pycache__/
-backend/*.pyc
+*.pyc
+
+# Secrets
+.env
 backend/.env
 
-# Data
+# Data (keep .gitkeep)
 backend/data/uploads/*
 backend/data/invoices/*
 !backend/data/uploads/.gitkeep
 !backend/data/invoices/.gitkeep
 
 # Node / React
+node_modules/
 frontend/node_modules/
 frontend/dist/
 frontend/.vite/
+dist/
 
 # Editors / OS
 .DS_Store
+**/.DS_Store
 .vscode/
 .idea/
 *.log
+*.swp
+*.swo
+*~
+
+# Archives (should not be committed)
+*.zip
+
+# Coverage / Test
+.coverage
+htmlcov/
+.pytest_cache/

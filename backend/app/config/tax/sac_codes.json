@@ -1,0 +1,16 @@
+[
+  {"code": "998311", "description": "Management consulting services", "rate": 18, "TODO_CA_review": true},
+  {"code": "998312", "description": "Business consulting services", "rate": 18, "TODO_CA_review": true},
+  {"code": "998313", "description": "Information technology (IT) consulting and support services", "rate": 18, "TODO_CA_review": true},
+  {"code": "998314", "description": "Marketing management consulting services", "rate": 18, "TODO_CA_review": true},
+  {"code": "998331", "description": "IT design and development services", "rate": 18, "TODO_CA_review": true},
+  {"code": "998332", "description": "IT hosting and infrastructure provisioning services", "rate": 18, "TODO_CA_review": true},
+  {"code": "998333", "description": "IT infrastructure and network management services", "rate": 18, "TODO_CA_review": true},
+  {"code": "998361", "description": "Accounting and auditing services", "rate": 18, "TODO_CA_review": true},
+  {"code": "998362", "description": "Tax consulting and preparation services", "rate": 18, "TODO_CA_review": true},
+  {"code": "998371", "description": "Market research services", "rate": 18, "TODO_CA_review": true},
+  {"code": "998381", "description": "Photography services", "rate": 18, "TODO_CA_review": true},
+  {"code": "998391", "description": "Specialty design services including interior design, fashion design, industrial design and other specialty design services", "rate": 18, "TODO_CA_review": true},
+  {"code": "998511", "description": "Pre-primary education services", "rate": 18, "TODO_CA_review": true},
+  {"code": "998599", "description": "Other education and training services n.e.c.", "rate": 18, "TODO_CA_review": true}
+]

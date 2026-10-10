@@ -1,3 +1,4 @@
+from app.core.exceptions import parse_object_id
 """
 Client management routes.
 
@@ -20,11 +21,6 @@ from app.models.serializers import serialize_doc, serialize_list
 router = APIRouter(prefix="/api/clients", tags=["Clients"])
 
 
-def to_object_id(id_str: str) -> ObjectId:
-    try:
-        return ObjectId(id_str)
-    except InvalidId:
-        raise HTTPException(status_code=400, detail="Invalid ID format")
 
 
 @router.post("", response_model=dict)
@@ -84,7 +80,7 @@ async def list_clients(current_user: dict = Depends(get_current_user), db=Depend
 
 @router.get("/{client_id}", response_model=dict)
 async def get_client(client_id: str, current_user: dict = Depends(get_current_user), db=Depends(get_database)):
-    client = await db.clients.find_one({"_id": to_object_id(client_id), "owner_id": current_user["_id"]})
+    client = await db.clients.find_one({"_id": parse_object_id(client_id), "owner_id": current_user["_id"]})
     if not client:
         raise HTTPException(status_code=404, detail="Client not found")
     return serialize_doc(client)
@@ -98,7 +94,7 @@ async def update_client(client_id: str, payload: ClientUpdate, current_user: dic
 
     # find_one_and_update does the update AND returns the new document — saves a second query
     updated = await db.clients.find_one_and_update(
-        {"_id": to_object_id(client_id), "owner_id": current_user["_id"]},
+        {"_id": parse_object_id(client_id), "owner_id": current_user["_id"]},
         {"$set": update_data},
         return_document=True
     )
@@ -109,7 +105,13 @@ async def update_client(client_id: str, payload: ClientUpdate, current_user: dic
 
 @router.delete("/{client_id}")
 async def delete_client(client_id: str, current_user: dict = Depends(get_current_user), db=Depends(get_database)):
-    result = await db.clients.delete_one({"_id": to_object_id(client_id), "owner_id": current_user["_id"]})
+    obj_id = parse_object_id(client_id)
+    
+    invoice_count = await db.invoices.count_documents({"client_id": obj_id, "owner_id": current_user["_id"]})
+    if invoice_count > 0:
+        raise HTTPException(status_code=400, detail=f"Cannot delete client with {invoice_count} existing invoice(s).")
+        
+    result = await db.clients.delete_one({"_id": obj_id, "owner_id": current_user["_id"]})
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Client not found")
     return {"message": "Client deleted successfully"}

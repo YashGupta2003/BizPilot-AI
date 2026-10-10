@@ -30,8 +30,8 @@ async def get_all_health_scores(
                 sum(c["health_score"] for c in scores) / len(scores), 1
             ) if scores else 0,
         }
-    except Exception as exc:
-        raise HTTPException(status_code=500, detail=str(exc))
+    except Exception:
+        raise HTTPException(status_code=500, detail="Internal server error")
 
 
 @router.get("/client/{client_id}")
@@ -50,5 +50,5 @@ async def get_client_health_score(
     try:
         health = await calculate_client_health(db, current_user["_id"], client)
         return health
-    except Exception as exc:
-        raise HTTPException(status_code=500, detail=str(exc))
+    except Exception:
+        raise HTTPException(status_code=500, detail="Internal server error")

@@ -1,3 +1,4 @@
+from app.core.exceptions import parse_object_id
 from fastapi import APIRouter, Depends, HTTPException, status
 from bson import ObjectId
 from bson.errors import InvalidId
@@ -43,7 +44,7 @@ async def generate_new_contract(
     # SYNC with clients collection — auto-fill client name if client_id given
     if payload.client_id:
         try:
-            c_id = ObjectId(payload.client_id)
+            c_id = parse_object_id(payload.client_id)
         except (InvalidId, Exception):
             raise HTTPException(status_code=400, detail="Invalid ID format")
         client_doc = await db.clients.find_one({"_id": c_id, "owner_id": current_user["_id"]})
@@ -65,11 +66,11 @@ async def generate_new_contract(
             special_requirements=payload.special_requirements,
         )
     except ContractError as exc:
-        raise HTTPException(status_code=502, detail=str(exc))
+        raise HTTPException(status_code=502, detail="Internal server error")
 
     record = {
         "owner_id": current_user["_id"],
-        "client_id": ObjectId(payload.client_id) if payload.client_id else None,
+        "client_id": parse_object_id(payload.client_id) if payload.client_id else None,
         "client_name": client_name,
         "project_type": payload.project_type,
         "amount": payload.amount,
@@ -104,7 +105,7 @@ async def get_contract(
     db=Depends(get_database),
 ):
     record = await db.contracts.find_one({
-        "_id": ObjectId(contract_id),
+        "_id": parse_object_id(contract_id),
         "owner_id": current_user["_id"],
     })
     if not record:
@@ -119,7 +120,7 @@ async def delete_contract(
     db=Depends(get_database),
 ):
     result = await db.contracts.delete_one({
-        "_id": ObjectId(contract_id),
+        "_id": parse_object_id(contract_id),
         "owner_id": current_user["_id"],
     })
     if result.deleted_count == 0:

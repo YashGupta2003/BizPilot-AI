@@ -1,3 +1,4 @@
+from app.core.exceptions import parse_object_id
 """
 Project Scope Drift Detector — API routes.
 
@@ -64,7 +65,7 @@ async def create_project(
     # SYNC with clients collection
     if payload.client_id:
         client_doc = await db.clients.find_one({
-            "_id": ObjectId(payload.client_id), "owner_id": owner_id
+            "_id": parse_object_id(payload.client_id), "owner_id": owner_id
         })
         if client_doc:
             client_name = client_doc.get("name", client_name)
@@ -75,7 +76,7 @@ async def create_project(
     # SYNC: auto-fill scope from meeting notes
     if payload.meeting_id and not scope_text:
         meeting = await db.meetings.find_one({
-            "_id": ObjectId(payload.meeting_id), "owner_id": owner_id
+            "_id": parse_object_id(payload.meeting_id), "owner_id": owner_id
         })
         if meeting:
             extracted = meeting.get("extracted", {})
@@ -95,7 +96,7 @@ async def create_project(
     # SYNC: auto-fill scope from contract
     if payload.contract_id and not scope_text:
         contract = await db.contracts.find_one({
-            "_id": ObjectId(payload.contract_id), "owner_id": owner_id
+            "_id": parse_object_id(payload.contract_id), "owner_id": owner_id
         })
         if contract:
             c = contract.get("contract", {})
@@ -112,13 +113,13 @@ async def create_project(
     doc = {
         "owner_id": owner_id,
         "project_name": payload.project_name,
-        "client_id": ObjectId(payload.client_id) if payload.client_id else None,
+        "client_id": parse_object_id(payload.client_id) if payload.client_id else None,
         "client_name": client_name,
         "hourly_rate": hourly_rate,
         "scope_text": scope_text,
         "locked_scope": locked_scope,
-        "meeting_id": ObjectId(payload.meeting_id) if payload.meeting_id else None,
-        "contract_id": ObjectId(payload.contract_id) if payload.contract_id else None,
+        "meeting_id": parse_object_id(payload.meeting_id) if payload.meeting_id else None,
+        "contract_id": parse_object_id(payload.contract_id) if payload.contract_id else None,
         "drift_checks": [],           # history of all drift checks
         "total_drift_value": 0,       # accumulated extra value detected
         "status": "active",
@@ -150,7 +151,7 @@ async def get_project(
     db=Depends(get_database),
 ):
     doc = await db.scope_projects.find_one({
-        "_id": ObjectId(project_id),
+        "_id": parse_object_id(project_id),
         "owner_id": current_user["_id"],
     })
     if not doc:
@@ -174,7 +175,7 @@ async def check_drift(
     5. Update total_drift_value accumulator
     """
     doc = await db.scope_projects.find_one({
-        "_id": ObjectId(project_id),
+        "_id": parse_object_id(project_id),
         "owner_id": current_user["_id"],
     })
     if not doc:
@@ -217,7 +218,7 @@ async def check_drift(
     new_total = doc.get("total_drift_value", 0) + drift_result.get("total_extra_value", 0)
 
     await db.scope_projects.update_one(
-        {"_id": ObjectId(project_id)},
+        {"_id": parse_object_id(project_id)},
         {
             "$push": {"drift_checks": check_record},
             "$set": {
@@ -243,7 +244,7 @@ async def update_scope(
 ):
     """Re-locks the scope with new text (e.g. after a scope change is approved)."""
     doc = await db.scope_projects.find_one({
-        "_id": ObjectId(project_id),
+        "_id": parse_object_id(project_id),
         "owner_id": current_user["_id"],
     })
     if not doc:
@@ -252,7 +253,7 @@ async def update_scope(
     new_locked_scope = await extract_scope_from_text(payload.scope_text)
 
     await db.scope_projects.update_one(
-        {"_id": ObjectId(project_id)},
+        {"_id": parse_object_id(project_id)},
         {"$set": {
             "scope_text": payload.scope_text,
             "locked_scope": new_locked_scope,
@@ -270,7 +271,7 @@ async def delete_project(
     db=Depends(get_database),
 ):
     result = await db.scope_projects.delete_one({
-        "_id": ObjectId(project_id),
+        "_id": parse_object_id(project_id),
         "owner_id": current_user["_id"],
     })
     if result.deleted_count == 0:

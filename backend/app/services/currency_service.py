@@ -95,6 +95,10 @@ def _is_cache_valid() -> bool:
 # EXCHANGE RATE FETCHING
 # ---------------------------------------------------------------------------
 
+# ---------------------------------------------------------------------------
+# EXCHANGE RATE FETCHING
+# ---------------------------------------------------------------------------
+
 async def _fetch_from_frankfurter() -> dict:
     async with httpx.AsyncClient(timeout=8.0) as client:
         r = await client.get("https://api.frankfurter.app/latest", params={"from": "USD"})
@@ -106,7 +110,8 @@ async def _fetch_from_frankfurter() -> dict:
 
 
 async def _fetch_from_fawazahmed() -> dict:
-    url = "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/usd.json"
+    # Use pinned version instead of @latest
+    url = "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@2024.1.1/v1/currencies/usd.json"
     async with httpx.AsyncClient(timeout=8.0) as client:
         r = await client.get(url)
         r.raise_for_status()
@@ -114,19 +119,22 @@ async def _fetch_from_fawazahmed() -> dict:
         return {k.upper(): v for k, v in data["usd"].items()}
 
 
-async def get_rates_to_inr() -> dict:
+async def get_rates_to_inr() -> tuple[dict, str]:
     global _rate_cache, _cache_timestamp
 
     if _is_cache_valid():
-        return _rate_cache
+        return _rate_cache, "cache"
 
     usd_to_others: dict = {}
+    source = "fallback"
 
     try:
         usd_to_others = await _fetch_from_frankfurter()
+        source = "live"
     except Exception:
         try:
             usd_to_others = await _fetch_from_fawazahmed()
+            source = "live"
         except Exception:
             pass
 
@@ -143,11 +151,11 @@ async def get_rates_to_inr() -> dict:
 
         _rate_cache = rates_to_inr
         _cache_timestamp = time.time()
-        return _rate_cache
+        return _rate_cache, source
 
     _rate_cache = dict(FALLBACK_RATES_TO_INR)
     _cache_timestamp = time.time()
-    return _rate_cache
+    return _rate_cache, source
 
 
 def convert_to_inr(amount: float, from_currency: str, rates_to_inr: dict) -> float:
@@ -196,11 +204,12 @@ def calculate_gst(
 
 
 def get_sac_suggestions(query: str) -> list:
+    from app.config.tax.loader import get_sac_codes
     q = query.lower()
     return [
-        {"sac_code": code, "description": info["description"], "gst_rate": info["rate"]}
-        for code, info in SAC_GST_MAP.items()
-        if q in info["description"].lower()
+        {"sac_code": info["code"], "description": info["description"], "gst_rate": info["rate"]}
+        for info in get_sac_codes()
+        if q in info["description"].lower() or q in info["code"].lower()
     ][:5]
 
 
@@ -208,14 +217,16 @@ async def calculate_invoice_taxes(
     subtotal_in_invoice_currency: float,
     currency: str,
     gst_rate: int,
-    is_export: bool,
+    is_client_outside_india: bool,
+    has_lut: bool,
     is_inter_state: bool = True,
     sac_code: Optional[str] = None,
 ) -> dict:
-    rates = await get_rates_to_inr()
+    rates, rate_source = await get_rates_to_inr()
     rate_to_inr = rates.get(currency, 1.0)
 
-    effective_is_export = is_export or (currency != "INR")
+    # Zero-rating as export ONLY when: client is outside India AND currency is foreign AND user explicitly confirms LUT
+    effective_is_export = is_client_outside_india and (currency != "INR") and has_lut
     effective_gst_rate = 0 if effective_is_export else gst_rate
 
     gst = calculate_gst(
@@ -234,11 +245,12 @@ async def calculate_invoice_taxes(
         "currency_symbol": SUPPORTED_CURRENCIES.get(currency, {}).get("symbol", currency),
         "subtotal": round(subtotal_in_invoice_currency, 2),
         "exchange_rate_to_inr": rate_to_inr,
+        "exchange_rate_source": rate_source,
         "subtotal_inr": subtotal_inr,
         "total_inr": total_inr,
         "sac_code": sac_code or "998314",
         "gst_compliance_note": (
-            "GST not applicable — Export of services (zero-rated supply under IGST Act)"
+            "GST not applicable — Export of services under LUT (zero-rated supply under IGST Act)"
             if effective_is_export
             else f"GST @ {effective_gst_rate}% applicable as per SAC {sac_code or '998314'}"
         ),

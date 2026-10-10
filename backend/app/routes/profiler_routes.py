@@ -36,7 +36,7 @@ async def analyze_client(
     try:
         profile = await analyze_client_profile(payload.client_text)
     except ProfilerError as exc:
-        raise HTTPException(status_code=502, detail=str(exc))
+        raise HTTPException(status_code=502, detail="Internal server error")
 
     client_id_obj = None
     if payload.client_id:

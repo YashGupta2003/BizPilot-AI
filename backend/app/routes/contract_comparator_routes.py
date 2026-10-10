@@ -1,3 +1,4 @@
+from app.core.exceptions import parse_object_id
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel
 from typing import Optional, List, Dict, Any
@@ -35,7 +36,7 @@ async def analyze_contracts(
     # If contract_id provided, load the actual text from DB
     if request.contract_id:
         try:
-            baseline = await db.contracts.find_one({"_id": ObjectId(request.contract_id), "owner_id": owner_id})
+            baseline = await db.contracts.find_one({"_id": parse_object_id(request.contract_id), "owner_id": owner_id})
             if baseline and baseline.get("contract_text"):
                 your_contract_text = baseline["contract_text"]
         except Exception:
@@ -46,7 +47,7 @@ async def analyze_contracts(
     
     if request.client_id:
         try:
-            client = await db.clients.find_one({"_id": ObjectId(request.client_id), "owner_id": owner_id})
+            client = await db.clients.find_one({"_id": parse_object_id(request.client_id), "owner_id": owner_id})
             if client:
                 client_context = {
                     "risk_score": client.get("risk_score", "low"),
@@ -111,7 +112,7 @@ async def get_comparison(
     """Get a specific contract comparison."""
     owner_id = current_user["_id"]
     try:
-        comparison = await db.contract_comparisons.find_one({"_id": ObjectId(comparison_id), "owner_id": owner_id})
+        comparison = await db.contract_comparisons.find_one({"_id": parse_object_id(comparison_id), "owner_id": owner_id})
         if not comparison:
             raise HTTPException(status_code=404, detail="Comparison not found")
         return serialize_doc(comparison)
@@ -130,7 +131,7 @@ async def delete_comparison(
     """Delete a contract comparison."""
     owner_id = current_user["_id"]
     try:
-        result = await db.contract_comparisons.delete_one({"_id": ObjectId(comparison_id), "owner_id": owner_id})
+        result = await db.contract_comparisons.delete_one({"_id": parse_object_id(comparison_id), "owner_id": owner_id})
         if result.deleted_count == 0:
             raise HTTPException(status_code=404, detail="Comparison not found")
         return {"success": True}

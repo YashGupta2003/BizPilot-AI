@@ -121,8 +121,8 @@ async def get_insights(
     try:
         insights = await get_win_rate_insights(db, current_user["_id"])
         return insights
-    except Exception as exc:
-        raise HTTPException(status_code=500, detail=str(exc))
+    except Exception:
+        raise HTTPException(status_code=500, detail="Internal server error")
 
 
 @router.post("/predict")
@@ -167,8 +167,8 @@ async def predict_win(
         )
         prediction["client_type_used"] = client_type
         return prediction
-    except Exception as exc:
-        raise HTTPException(status_code=500, detail=str(exc))
+    except Exception:
+        raise HTTPException(status_code=500, detail="Internal server error")
 
 
 @router.get("/proposals")

@@ -36,12 +36,33 @@ async def lifespan(app: FastAPI):
         await close_mongo_connection()
 
 
+import uuid
+from fastapi.responses import JSONResponse
+
 app = FastAPI(
     title="BizPilot AI",
     description="Autonomous business assistant for freelancers and small businesses",
     version="1.0.0",
     lifespan=lifespan,
 )
+
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
+
+limiter = Limiter(key_func=get_remote_address)
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+@app.exception_handler(Exception)
+async def global_exception_handler(request, exc):
+    # Log the exception here ideally
+    request_id = str(uuid.uuid4())
+    print(f"Error [{request_id}]: {exc}")
+    return JSONResponse(
+        status_code=500,
+        content={"error": "Internal server error", "request_id": request_id},
+    )
 
 # CORS — lets the React frontend (running on a different port) talk to this API
 app.add_middleware(
