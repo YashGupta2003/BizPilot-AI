@@ -9,15 +9,15 @@ from pydantic import BaseModel, EmailStr, Field
 
 
 class UserSignup(BaseModel):
-    name: str = Field(..., min_length=2, max_length=80)
+    name: str = Field(..., min_length=2, max_length=200)
     email: EmailStr
-    password: str = Field(..., min_length=6)
+    password: str = Field(..., min_length=10)
     business_name: str = Field(..., min_length=2, max_length=120)
 
 
 class UserLogin(BaseModel):
     email: EmailStr
-    password: str
+    password: str = Field(..., min_length=1)
 
 
 class UserOut(BaseModel):

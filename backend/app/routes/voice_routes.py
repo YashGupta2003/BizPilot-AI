@@ -24,7 +24,7 @@ async def voice_to_invoice(
     try:
         transcription_result = await transcribe_audio(audio.filename, audio_bytes)
     except VoiceTranscriptionError as exc:
-        raise HTTPException(status_code=422, detail=str(exc))
+        raise HTTPException(status_code=422, detail="Internal server error")
 
     transcript = transcription_result["transcript"]
     preview = await process_voice_invoice(db, current_user["_id"], transcript)

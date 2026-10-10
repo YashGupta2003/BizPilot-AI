@@ -58,7 +58,7 @@ async def analyze_contract(
         # A clean, predictable error for the frontend instead of a raw 500 —
         # this happens if no GROQ_API_KEY is set, or the LLM's output couldn't
         # be parsed as valid JSON even after our cleanup attempts.
-        raise HTTPException(status_code=502, detail=str(exc))
+        raise HTTPException(status_code=502, detail="Internal server error")
 
     report_doc = {
         "owner_id": owner_id,

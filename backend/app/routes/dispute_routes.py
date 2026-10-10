@@ -1,3 +1,4 @@
+from app.core.exceptions import parse_object_id
 """
 AI Invoice Dispute Resolver — API routes.
 
@@ -46,7 +47,7 @@ async def resolve_dispute(
     client_id_obj = None
     if payload.client_id:
         try:
-            client_id_obj = ObjectId(payload.client_id)
+            client_id_obj = parse_object_id(payload.client_id)
             client_doc = await db.clients.find_one({
                 "_id": client_id_obj,
                 "owner_id": owner_id,
@@ -119,7 +120,7 @@ async def resolve_dispute(
             freelancer_name=freelancer_name,
         )
     except DisputeAnalysisError as exc:
-        raise HTTPException(status_code=502, detail=str(exc))
+        raise HTTPException(status_code=502, detail="Internal server error")
 
     # Save dispute record
     record = {
@@ -158,7 +159,7 @@ async def delete_dispute(
     db=Depends(get_database),
 ):
     result = await db.disputes.delete_one({
-        "_id": ObjectId(dispute_id),
+        "_id": parse_object_id(dispute_id),
         "owner_id": current_user["_id"],
     })
     if result.deleted_count == 0:

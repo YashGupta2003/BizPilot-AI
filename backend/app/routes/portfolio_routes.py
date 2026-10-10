@@ -18,5 +18,5 @@ async def get_portfolio_insights(
     try:
         insights = await generate_portfolio_insights(db, current_user["_id"])
         return insights
-    except Exception as exc:
-        raise HTTPException(status_code=500, detail=str(exc))
+    except Exception:
+        raise HTTPException(status_code=500, detail="Internal server error")

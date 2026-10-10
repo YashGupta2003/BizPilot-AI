@@ -36,10 +36,20 @@ class InvoiceOut(BaseModel):
     client_id: str
     client_name: str
     items: List[InvoiceItem]
-    subtotal: float
+    
+    subtotal_paise: int = 0
     tax_percent: float
+    tax_amount_paise: int = 0
+    total_paise: int = 0
+    amount_paid_paise: int = 0
+    balance_due_paise: int = 0
+    
+    subtotal: float
     tax_amount: float
     total: float
+    amount_paid: float = 0
+    balance_due: float = 0
+    
     status: str
     currency: str
     issue_date: str

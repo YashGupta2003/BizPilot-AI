@@ -62,8 +62,8 @@ async def get_escalation_overview(
             "total_count": len(escalations),
             "stage_breakdown": stage_counts,
         }
-    except Exception as exc:
-        raise HTTPException(status_code=500, detail=str(exc))
+    except Exception:
+        raise HTTPException(status_code=500, detail="Internal server error")
 
 
 @router.post("/generate/{invoice_id}")
@@ -142,8 +142,8 @@ async def generate_document(
             freelancer_name=freelancer_name,
             business_name=business_name,
         )
-    except Exception as exc:
-        raise HTTPException(status_code=502, detail=str(exc))
+    except Exception:
+        raise HTTPException(status_code=502, detail="Internal server error")
 
     return doc
 

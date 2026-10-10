@@ -1,3 +1,4 @@
+from app.core.exceptions import parse_object_id
 from fastapi import APIRouter, Depends, HTTPException
 from bson import ObjectId
 from datetime import datetime
@@ -79,7 +80,7 @@ async def send_message(
     db=Depends(get_database),
 ):
     session = await db.negotiation_sessions.find_one({
-        "_id": ObjectId(payload.session_id),
+        "_id": parse_object_id(payload.session_id),
         "owner_id": current_user["_id"],
     })
     if not session:
@@ -143,7 +144,7 @@ async def send_message(
         update_data["score"] = score
 
     await db.negotiation_sessions.update_one(
-        {"_id": ObjectId(payload.session_id)},
+        {"_id": parse_object_id(payload.session_id)},
         {"$set": update_data},
     )
 
@@ -163,7 +164,7 @@ async def end_session(
     db=Depends(get_database),
 ):
     session = await db.negotiation_sessions.find_one({
-        "_id": ObjectId(session_id),
+        "_id": parse_object_id(session_id),
         "owner_id": current_user["_id"],
     })
     if not session:
@@ -176,7 +177,7 @@ async def end_session(
     score = await score_negotiation(messages, scenario, session["asking_rate"])
 
     await db.negotiation_sessions.update_one(
-        {"_id": ObjectId(session_id)},
+        {"_id": parse_object_id(session_id)},
         {"$set": {"status": "completed", "score": score, "updated_at": datetime.utcnow()}},
     )
     session["status"] = "completed"
@@ -214,7 +215,7 @@ async def get_session(
     db=Depends(get_database),
 ):
     session = await db.negotiation_sessions.find_one({
-        "_id": ObjectId(session_id),
+        "_id": parse_object_id(session_id),
         "owner_id": current_user["_id"],
     })
     if not session:

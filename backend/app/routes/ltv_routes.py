@@ -35,8 +35,8 @@ async def get_ltv_leaderboard(
             "at_risk": [r for r in results if r["segment"] == "At Risk"],
             "retainer_candidates": [r for r in results if r["retainer_tip"]["should_pitch"]],
         }
-    except Exception as exc:
-        raise HTTPException(status_code=500, detail=str(exc))
+    except Exception:
+        raise HTTPException(status_code=500, detail="Internal server error")
 
 
 @router.get("/client/{client_id}")
@@ -56,5 +56,5 @@ async def get_client_ltv(
     try:
         ltv = await _calculate_client_ltv(db, current_user["_id"], client)
         return ltv
-    except Exception as exc:
-        raise HTTPException(status_code=500, detail=str(exc))
+    except Exception:
+        raise HTTPException(status_code=500, detail="Internal server error")

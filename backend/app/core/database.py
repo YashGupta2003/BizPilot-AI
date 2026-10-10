@@ -40,15 +40,37 @@ async def connect_to_mongo():
     indexes = [
         (mongodb.db.users, "email", {"unique": True}),
         (mongodb.db.clients, "owner_id", {}),
+        
+        # Invoices
         (mongodb.db.invoices, "owner_id", {}),
         (mongodb.db.invoices, "client_id", {}),
+        (mongodb.db.invoices, [("owner_id", 1), ("invoice_number", 1)], {"unique": True}),
+        (mongodb.db.invoices, [("owner_id", 1), ("status", 1), ("due_date", 1)], {}),
+        (mongodb.db.invoices, [("owner_id", 1), ("created_at", 1)], {}),
+        
+        # Documents
         (mongodb.db.documents, "owner_id", {}),
+        (mongodb.db.documents, [("doc_id", 1), ("chunk_index", 1)], {}),
+        (mongodb.db.documents_meta, [("owner_id", 1), ("sha256", 1)], {"unique": True}),
         (mongodb.db.contract_risk_reports, "owner_id", {}),
         (mongodb.db.contract_risk_reports, "filename", {}),
+        
+        # WhatsApp Reminders
         (mongodb.db.whatsapp_reminders, "owner_id", {}),
-        (mongodb.db.whatsapp_reminders, [("invoice_id", 1), ("sent_date", 1)], {}),
+        (mongodb.db.whatsapp_reminders, [("invoice_id", 1), ("sent_date", 1)], {"unique": True}),
+        
+        # Negotiation Sessions
         (mongodb.db.negotiation_sessions, "owner_id", {}),
         (mongodb.db.negotiation_sessions, "status", {}),
+        
+        # Payments
+        (mongodb.db.payments, [("invoice_id", 1), ("owner_id", 1)], {}),
+        (mongodb.db.payments, [("owner_id", 1), ("paid_at", 1)], {}),
+        
+        # Counters
+        (mongodb.db.counters, [("owner_id", 1), ("fy", 1)], {"unique": True}),
+
+        # Others
         (mongodb.db.client_profiles, "owner_id", {}),
         (mongodb.db.client_profiles, "analyzed_at", {}),
         (mongodb.db.contracts, "owner_id", {}),

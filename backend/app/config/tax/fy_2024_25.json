@@ -1,0 +1,56 @@
+{
+  "fy": "2024-25",
+  "source_url": "https://incometax.gov.in",
+  "verified_on": null,
+  "TODO_CA_review": true,
+  "new_regime": {
+    "slabs": [
+      {"from": 0, "to": 300000, "rate": 0},
+      {"from": 300000, "to": 600000, "rate": 5},
+      {"from": 600000, "to": 900000, "rate": 10},
+      {"from": 900000, "to": 1200000, "rate": 15},
+      {"from": 1200000, "to": 1500000, "rate": 20},
+      {"from": 1500000, "to": null, "rate": 30}
+    ],
+    "rebate_limit": 700000,
+    "rebate_section": "87A",
+    "marginal_relief": true,
+    "standard_deduction": 75000
+  },
+  "old_regime": {
+    "slabs": [
+      {"from": 0, "to": 250000, "rate": 0},
+      {"from": 250000, "to": 500000, "rate": 5},
+      {"from": 500000, "to": 1000000, "rate": 20},
+      {"from": 1000000, "to": null, "rate": 30}
+    ],
+    "rebate_limit": 500000,
+    "rebate_section": "87A"
+  },
+  "cess_rate": 4,
+  "surcharge_tiers": [
+    {"from": 5000000, "to": 10000000, "rate": 10},
+    {"from": 10000000, "to": 20000000, "rate": 15},
+    {"from": 20000000, "to": 50000000, "rate": 25},
+    {"from": 50000000, "to": null, "rate": 37}
+  ],
+  "presumptive_44ada": {
+    "section": "44ADA",
+    "new_act_section": "44ADA",
+    "gross_receipts_limit": 5000000,
+    "enhanced_limit": 7500000,
+    "enhanced_limit_cash_threshold_pct": 5,
+    "deemed_profit_pct": 50,
+    "note": ""
+  },
+  "advance_tax": {
+    "dates": [
+      {"quarter": 1, "due_date": "06-15", "cumulative_pct": 15},
+      {"quarter": 2, "due_date": "09-15", "cumulative_pct": 45},
+      {"quarter": 3, "due_date": "12-15", "cumulative_pct": 75},
+      {"quarter": 4, "due_date": "03-15", "cumulative_pct": 100}
+    ],
+    "presumptive_single_installment_date": "03-15",
+    "presumptive_single_installment_note": "Presumptive taxpayers may pay entire advance tax by 15 March. TODO-verify."
+  }
+}

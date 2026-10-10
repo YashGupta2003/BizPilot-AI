@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import Optional
 
 
@@ -18,8 +18,7 @@ class ReminderPreview(BaseModel):
 
 class SendReminderRequest(BaseModel):
     invoice_id: str
-    client_phone: str
-    message: str
+    message: Optional[str] = Field(None, max_length=1000)
 
 
 class ReminderSentOut(BaseModel):

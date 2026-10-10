@@ -23,6 +23,6 @@ async def get_cash_flow_forecast(
     try:
         result = await generate_cash_flow_forecast(db, current_user["_id"], forecast_months=months)
     except InsufficientDataError as exc:
-        raise HTTPException(status_code=404, detail=str(exc))
+        raise HTTPException(status_code=404, detail="Internal server error")
 
     return result

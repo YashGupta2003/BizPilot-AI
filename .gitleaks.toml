@@ -1,0 +1,7 @@
+[allowlist]
+description = "Allow dummy keys in tests and example files"
+paths = [
+    '''backend/\.env\.example''',
+    '''backend/\.env\.test''',
+    '''tests/.*''',
+]

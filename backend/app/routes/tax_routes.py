@@ -33,8 +33,8 @@ async def get_tax_report(
     try:
         report = await generate_tax_report(db, current_user["_id"], fy_start, fy_end)
         return report
-    except Exception as exc:
-        raise HTTPException(status_code=500, detail=str(exc))
+    except Exception:
+        raise HTTPException(status_code=500, detail="Internal server error")
 
 
 @router.get("/checklist")
@@ -51,5 +51,5 @@ async def get_checklist(
             "urgent_count": report["urgent_count"],
             "current_quarter": report["current_quarter"],
         }
-    except Exception as exc:
-        raise HTTPException(status_code=500, detail=str(exc))
+    except Exception:
+        raise HTTPException(status_code=500, detail="Internal server error")

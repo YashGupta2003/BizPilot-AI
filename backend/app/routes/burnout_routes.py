@@ -20,4 +20,4 @@ async def get_burnout_prediction(
         result = await generate_burnout_prediction(db, current_user["_id"])
         return result
     except BurnoutAnalysisError as exc:
-        raise HTTPException(status_code=404, detail=str(exc))
+        raise HTTPException(status_code=404, detail="Internal server error")

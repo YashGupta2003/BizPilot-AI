@@ -29,8 +29,7 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 
 def create_access_token(data: dict) -> str:
     """
-    data usually looks like {"sub": user_id}
-    'sub' (subject) is the JWT-standard field for "who this token belongs to"
+    data usually looks like {"sub": user_id, "token_version": int}
     """
     to_encode = data.copy()
     expire = datetime.now(timezone.utc) + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
@@ -41,6 +40,32 @@ def create_access_token(data: dict) -> str:
 def decode_access_token(token: str) -> dict | None:
     try:
         payload = jwt.decode(token, settings.JWT_SECRET_KEY, algorithms=[settings.JWT_ALGORITHM])
+        return payload
+    except JWTError:
+        return None
+
+COMMON_PASSWORDS = [
+    "password", "password123", "qwerty", "qwerty12345", "1234567890",
+    "admin123", "letmein123", "iloveyou"
+]
+
+def is_common_password(password: str) -> bool:
+    return password.lower() in COMMON_PASSWORDS
+
+def create_signed_url(invoice_id: str, owner_id: str, expires_in: int = 60) -> str:
+    payload = {
+        "sub": owner_id,
+        "purpose": "pdf_download",
+        "invoice_id": invoice_id,
+        "exp": datetime.now(timezone.utc) + timedelta(seconds=expires_in)
+    }
+    return jwt.encode(payload, settings.JWT_SECRET_KEY, algorithm=settings.JWT_ALGORITHM)
+
+def verify_signed_url(token: str, invoice_id: str) -> dict | None:
+    try:
+        payload = jwt.decode(token, settings.JWT_SECRET_KEY, algorithms=[settings.JWT_ALGORITHM])
+        if payload.get("purpose") != "pdf_download" or payload.get("invoice_id") != invoice_id:
+            return None
         return payload
     except JWTError:
         return None

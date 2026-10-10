@@ -1,3 +1,4 @@
+from app.core.exceptions import parse_object_id
 """
 Meeting Notes → Deliverable Extractor — API routes.
 
@@ -51,7 +52,7 @@ async def extract_meeting(
     try:
         extracted = await extract_meeting_data(payload.notes)
     except MeetingExtractionError as exc:
-        raise HTTPException(status_code=502, detail=str(exc))
+        raise HTTPException(status_code=502, detail="Internal server error")
 
     freelancer_name = current_user.get("name", "Freelancer")
     business_name = current_user.get("business_name", "My Business")
@@ -65,7 +66,7 @@ async def extract_meeting(
 
     if payload.client_id:
         client_doc = await db.clients.find_one({
-            "_id": ObjectId(payload.client_id),
+            "_id": parse_object_id(payload.client_id),
             "owner_id": current_user["_id"],
         })
         
@@ -176,7 +177,7 @@ async def get_meeting(
     db=Depends(get_database),
 ):
     record = await db.meetings.find_one({
-        "_id": ObjectId(meeting_id),
+        "_id": parse_object_id(meeting_id),
         "owner_id": current_user["_id"],
     })
     if not record:
@@ -191,7 +192,7 @@ async def delete_meeting(
     db=Depends(get_database),
 ):
     result = await db.meetings.delete_one({
-        "_id": ObjectId(meeting_id),
+        "_id": parse_object_id(meeting_id),
         "owner_id": current_user["_id"],
     })
     if result.deleted_count == 0:
